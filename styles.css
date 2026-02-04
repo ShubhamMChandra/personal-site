@@ -143,14 +143,24 @@ body {
 
 .hero-label {
     font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: var(--text-label);
     color: var(--accent);
-    letter-spacing: 0.2em;
+    letter-spacing: var(--text-label-tracking);
     text-transform: uppercase;
     margin-bottom: var(--space-md);
     display: flex;
     align-items: center;
     gap: var(--space-sm);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity var(--duration-slow) var(--ease-out-expo),
+                transform var(--duration-slow) var(--ease-out-expo);
+}
+
+.hero-label.is-revealed,
+.hero-label[data-reveal].is-revealed {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .hero-label::before {
@@ -161,10 +171,10 @@ body {
 }
 
 .hero-title {
-    font-size: clamp(2.8rem, 7vw, 5rem);
-    font-weight: 500;
-    line-height: 1.1;
-    letter-spacing: -0.03em;
+    font-size: var(--text-display);
+    font-weight: var(--text-display-weight);
+    line-height: 1.05;
+    letter-spacing: var(--text-display-tracking);
     margin-bottom: var(--space-lg);
 }
 
@@ -176,6 +186,16 @@ body {
 .hero-side {
     padding-left: var(--space-lg);
     border-left: 1px solid var(--border);
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity var(--duration-slow) var(--ease-out-expo),
+                transform var(--duration-slow) var(--ease-out-expo);
+}
+
+.hero-side.is-revealed,
+.hero-side[data-reveal].is-revealed {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .status {
@@ -215,13 +235,24 @@ body {
     bottom: var(--space-lg);
     left: var(--gutter);
     font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font-size: var(--text-label);
     color: var(--text-tertiary);
     text-transform: uppercase;
-    letter-spacing: 0.15em;
+    letter-spacing: var(--text-label-tracking);
     display: flex;
-    align-items: center;
-    gap: var(--space-sm);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity var(--duration-slow) var(--ease-out-expo),
+                transform var(--duration-slow) var(--ease-out-expo);
+}
+
+.scroll-hint.is-revealed,
+.scroll-hint[data-reveal].is-revealed {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .scroll-line {
@@ -954,13 +985,6 @@ body {
 
 .hero-title .line {
     display: block;
-}
-
-/* Enhanced scroll indicator */
-.scroll-hint {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-xs);
 }
 
 .scroll-progress {
