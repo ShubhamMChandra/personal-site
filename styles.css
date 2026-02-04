@@ -1750,7 +1750,9 @@ body.has-custom-cursor * {
   flex: 1;
   padding: 2.125rem;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
   background:
@@ -2203,6 +2205,8 @@ body.has-custom-cursor * {
 .spread-left,
 .spread-right {
   height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Chapter Divider (Left Page) */
@@ -3292,33 +3296,117 @@ body.has-custom-cursor * {
    ═══════════════════════════════════════════════════════════ */
 
 @media (max-width: 900px) {
+  /* Mobile: constrain book view to fit viewport with fixed nav at bottom */
+  .book-view {
+    display: flex;
+    flex-direction: column;
+  }
+
   .book-container {
     flex-direction: column;
-    height: auto;
-    max-height: none;
+    flex: 1;
+    min-height: 0; /* Allow flex shrinking */
+    max-height: calc(100vh - 120px); /* Leave room for nav at bottom */
+    padding-top: 60px; /* Space for shelf button */
+    display: flex;
+    justify-content: center;
   }
 
   .open-book {
     flex-direction: column;
-    width: 100%;
+    width: calc(100% - 24px);
+    max-width: 400px;
+    margin: 0 auto;
+    border-radius: 4px 8px 8px 4px;
+    overflow: hidden;
+    /* Constrain height and make content scrollable */
+    max-height: calc(100vh - 180px);
+    display: flex;
+    /* Add book-like left edge (spine indicator) */
+    border-left: 6px solid var(--book-work); /* Default, overridden per book */
+    box-shadow:
+      0 15px 40px rgba(0, 0, 0, 0.3),
+      0 5px 15px rgba(0, 0, 0, 0.2),
+      inset 3px 0 8px -3px rgba(0, 0, 0, 0.15);
   }
+
+  /* Book-specific spine colors on mobile */
+  .book-view[data-active-book="work"] .open-book { border-left-color: var(--book-work); }
+  .book-view[data-active-book="about"] .open-book { border-left-color: var(--book-about); }
+  .book-view[data-active-book="contact"] .open-book { border-left-color: var(--book-contact); }
+  .book-view[data-active-book="references"] .open-book { border-left-color: var(--book-references); }
 
   .page {
     padding: var(--space-md);
+    transform: none; /* Remove desktop 3D rotation */
+    border-radius: 0 4px 4px 0;
   }
 
   .page-left {
     display: none;
   }
 
+  .page-right {
+    transform: none; /* Remove 3D tilt */
+    box-shadow: none;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .book-spine-center {
-    width: 100%;
-    height: 10px;
     display: none;
   }
 
   .page-edge {
     display: none;
+  }
+
+  /* Better page curl positioning on mobile */
+  .page-curl {
+    width: 45px;
+    height: 45px;
+    bottom: 8px;
+    right: 8px;
+  }
+
+  /* Nav shelf button positioning */
+  .nav-shelf-btn {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 100;
+    background: rgba(10, 9, 8, 0.9);
+    backdrop-filter: blur(8px);
+  }
+
+  /* Reduced top padding - shelf button is fixed, not overlapping book */
+  .page-content,
+  .spread-right {
+    padding-top: 1rem;
+  }
+
+  /* Ensure page numbers don't overlap with shelf button */
+  .page-number {
+    top: auto;
+    bottom: 16px;
+    font-size: 0.7rem;
+  }
+
+  /* Fixed page navigation at bottom of screen */
+  .page-nav {
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    justify-content: center;
+    margin-top: 0;
+    z-index: 100;
+    background: rgba(10, 9, 8, 0.9);
+    backdrop-filter: blur(8px);
+    padding: 12px 0;
+    border-radius: 0;
   }
 }
 
