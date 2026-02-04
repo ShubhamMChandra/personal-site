@@ -6,7 +6,15 @@
   "description": "Shubham Chandra's personal site",
   "scripts": {
     "lint": "eslint scripts/",
-    "lint:fix": "eslint scripts/ --fix"
+    "lint:fix": "eslint scripts/ --fix",
+    "audit:shelf": "node scripts/audit/shelf.mjs",
+    "audit:work": "node scripts/audit/work.mjs",
+    "audit:about": "node scripts/audit/about.mjs",
+    "audit:contact": "node scripts/audit/contact.mjs",
+    "audit:references": "node scripts/audit/references.mjs",
+    "audit:mobile": "node scripts/audit/mobile.mjs",
+    "audit:all": "node scripts/audit/all.mjs",
+    "audit": "node audit.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",

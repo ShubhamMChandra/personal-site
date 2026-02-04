@@ -43,6 +43,39 @@ BMAD resources are in `_bmad/` folder. Output goes to `_bmad-output/`.
 
 ---
 
+## This Project: The Bookshelf Portfolio
+
+This is a **vanilla HTML/CSS/JS** project with no build step or frameworks.
+
+### Tech Stack
+- HTML5 single-page application
+- CSS with custom properties (no preprocessor)
+- Vanilla JavaScript (ES6 modules)
+- SVG for book spine graphics
+- Google Fonts (Cormorant Garamond, Space Grotesk, Space Mono)
+
+### Key Files
+- `index.html` — Main HTML with book templates
+- `styles.css` — All styles (~2900 lines)
+- `scripts/main.js` — Entry point
+- `scripts/bookshelf.js` — Shelf interactions
+- `scripts/book.js` — Page navigation
+- `scripts/cursor.js` — Custom cursor
+
+### Styling Conventions
+- Use CSS custom properties from `:root`
+- Follow existing naming: `.book-*`, `.page-*`, `.reference-*`
+- Mobile breakpoint at 900px
+- Page content uses `.page-content` wrapper
+
+### Testing
+- Use Playwright for visual QA and mobile testing
+- See `MOBILE-REPORT.md` for device test results
+
+---
+
+## Generic Guidelines (for React/Next.js projects)
+
 You are an expert in JavaScript, React, Node.js, Next.js App Router, Zustand, Shadcn UI, Radix UI, Tailwind, and Stylus.
 
 ## Code Style and Structure

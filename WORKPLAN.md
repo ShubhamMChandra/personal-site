@@ -42,7 +42,7 @@ An immersive bookshelf experience - not a styled website, but a **place you expl
 | **Work** | Crimson red | Project case studies | 5 (TOC + 4 projects) |
 | **About** | Navy blue | Personal intro, beyond work, currently, technical | 4 |
 | **Contact** | Forest green | Email, LinkedIn, availability | 1 |
-| **References** | Warm brown | Testimonials from colleagues | 3 |
+| **References** | Deep purple | Testimonials from colleagues | 3 |
 | **Mystery** | Purple | Placeholder for future content | — |
 
 ### Features Implemented
@@ -60,7 +60,9 @@ An immersive bookshelf experience - not a styled website, but a **place you expl
 - ✅ Collapsed navigation bar when book is open
 - ✅ URL routing (#work, #about, #contact, #references)
 - ✅ Keyboard navigation (arrow keys for pages)
-- ✅ Responsive mobile layout
+- ✅ Responsive mobile layout (verified via Playwright QA)
+- ✅ Brass nameplate with decorative corner screws
+- ✅ Interaction hint with subtle pulse animation
 
 ---
 
@@ -107,7 +109,7 @@ An immersive bookshelf experience - not a styled website, but a **place you expl
 - Work: Crimson red (`#a52a2a`)
 - About: Navy blue (`#2a4d8c`)
 - Contact: Forest green (`#3d7a57`)
-- References: Warm brown (`#5c3d2a`)
+- References: Deep purple (`#4a3a5c`)
 - Mystery: Purple (`#553d62`)
 
 ---
@@ -123,7 +125,7 @@ An immersive bookshelf experience - not a styled website, but a **place you expl
 │   ├── book-work.svg       # Crimson spine
 │   ├── book-about.svg      # Navy spine
 │   ├── book-contact.svg    # Green spine
-│   ├── book-references.svg # Brown spine
+│   ├── book-references.svg # Deep purple spine
 │   └── book-mystery.svg    # Purple spine
 ├── scripts/
 │   ├── main.js             # Entry point, orchestration

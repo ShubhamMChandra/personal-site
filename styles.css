@@ -436,6 +436,22 @@ body.has-custom-cursor * {
   margin-top: -2px;
 }
 
+/* Glass highlight - thin rim light along curved edge */
+.bulb-glass::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 4px;
+  width: 12px;
+  height: 35px;
+  background: transparent;
+  border-left: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50% 0 0 50% / 50% 0 0 50%;
+  transform: rotate(-10deg);
+  pointer-events: none;
+  filter: blur(0.5px);
+}
+
 /* Filament container */
 .filament {
   position: absolute;
@@ -509,6 +525,19 @@ body.has-custom-cursor * {
   );
   pointer-events: none;
   contain: strict;
+  animation: haloBreathe 4s ease-in-out 0.15s infinite;
+}
+
+/* Halo breathing - synced with filament but slightly delayed for light-travel effect */
+@keyframes haloBreathe {
+  0%, 100% { 
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% { 
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.02);
+  }
 }
 
 /* Floating dust in light */
@@ -597,7 +626,7 @@ body.has-custom-cursor * {
   z-index: 2;
 }
 
-/* Light overlay - radial falloff from bulb position */
+/* Light overlay - radial falloff from bulb position (behind books) */
 .light-overlay {
   position: absolute;
   top: -400px;
@@ -614,7 +643,7 @@ body.has-custom-cursor * {
     transparent 70%
   );
   pointer-events: none;
-  z-index: 3;
+  z-index: 1;
   mix-blend-mode: screen;
 }
 
@@ -632,6 +661,69 @@ body.has-custom-cursor * {
   padding: 0;
   cursor: pointer;
   pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Position-aware top lighting - varies based on distance from center light */
+.book::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 2px 4px 4px 2px;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: soft-light;
+}
+
+/* Work (far left) - light catches right edge more */
+.book:nth-child(1)::before {
+  background: linear-gradient(
+    160deg,
+    rgba(255, 220, 180, 0.08) 0%,
+    rgba(255, 200, 150, 0.12) 20%,
+    transparent 50%
+  );
+}
+
+/* About (center-left) - light slightly from right */
+.book:nth-child(2)::before {
+  background: linear-gradient(
+    170deg,
+    rgba(255, 220, 180, 0.1) 0%,
+    rgba(255, 200, 150, 0.08) 20%,
+    transparent 45%
+  );
+}
+
+/* Contact (center) - light straight from above */
+.book:nth-child(3)::before {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 220, 180, 0.14) 0%,
+    rgba(255, 200, 150, 0.06) 15%,
+    transparent 40%
+  );
+}
+
+/* References (center-right) - light slightly from left */
+.book:nth-child(4)::before {
+  background: linear-gradient(
+    190deg,
+    rgba(255, 220, 180, 0.1) 0%,
+    rgba(255, 200, 150, 0.08) 20%,
+    transparent 45%
+  );
+}
+
+/* Mystery (far right) - light catches left edge more */
+.book:nth-child(5)::before {
+  background: linear-gradient(
+    200deg,
+    rgba(255, 220, 180, 0.08) 0%,
+    rgba(255, 200, 150, 0.12) 20%,
+    transparent 50%
+  );
 }
 
 .book-spine-img {
@@ -642,19 +734,36 @@ body.has-custom-cursor * {
   border-radius: 2px 4px 4px 2px;
 }
 
-/* Simple drop shadows - let radial glow handle atmosphere */
-.book {
-  filter: drop-shadow(2px 8px 15px rgba(0, 0, 0, 0.6));
+/* Position-aware shadows - angled based on light source position (centered above) */
+/* Work (far left) - shadow angles right */
+.book:nth-child(1) { 
+  transform: rotate(-0.5deg);
+  filter: drop-shadow(4px 8px 15px rgba(0, 0, 0, 0.6));
 }
-
-.book:nth-child(1) { transform: rotate(-0.5deg); }
-.book:nth-child(2) { transform: rotate(0.3deg); }
-.book:nth-child(3) { transform: rotate(-0.2deg); }
-.book:nth-child(4) { transform: rotate(0.4deg); }
+/* About (center-left) - shadow slightly right */
+.book:nth-child(2) { 
+  transform: rotate(0.3deg);
+  filter: drop-shadow(2px 8px 15px rgba(0, 0, 0, 0.55));
+}
+/* Contact (center) - shadow straight down */
+.book:nth-child(3) { 
+  transform: rotate(-0.2deg);
+  filter: drop-shadow(0px 8px 14px rgba(0, 0, 0, 0.5));
+}
+/* References (center-right) - shadow slightly left */
+.book:nth-child(4) { 
+  transform: rotate(0.4deg);
+  filter: drop-shadow(-2px 8px 15px rgba(0, 0, 0, 0.55));
+}
+/* Mystery (far right) - shadow angles left */
+.book:nth-child(5) { 
+  transform: rotate(0.2deg);
+  filter: drop-shadow(-4px 8px 15px rgba(0, 0, 0, 0.6));
+}
 
 .book:hover {
   transform: translateY(-12px) rotate(0deg);
-  filter: drop-shadow(4px 12px 20px rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0px 12px 20px rgba(0, 0, 0, 0.6));
   z-index: 10;
 }
 
@@ -1288,6 +1397,40 @@ body.has-custom-cursor * {
   pointer-events: none;
 }
 
+/* Decorative screws on nameplate corners */
+.nameplate-screw {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 35%, #d4b070 0%, #a08040 40%, #705020 100%);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.4),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.3),
+    0 1px 2px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+}
+
+/* Screw slot */
+.nameplate-screw::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.4);
+  transform: translate(-50%, -50%);
+  border-radius: 0.5px;
+}
+
+/* Position each screw */
+.nameplate-screw-tl { top: 6px; left: 6px; }
+.nameplate-screw-tr { top: 6px; right: 6px; }
+.nameplate-screw-bl { bottom: 6px; left: 6px; }
+.nameplate-screw-br { bottom: 6px; right: 6px; }
+
 .nameplate-name {
   display: block;
   font-family: var(--font-serif);
@@ -1318,29 +1461,47 @@ body.has-custom-cursor * {
   text-align: center;
   margin-top: var(--space-md);
   font-family: var(--font-serif);
-  font-size: 0.85rem;
+  font-size: 1.4rem;
   font-style: italic;
-  color: rgba(255, 220, 180, 0.5);
+  color: rgba(255, 220, 180, 0.6);
   letter-spacing: 0.05em;
   opacity: 0;
-  animation: hintFadeIn 0.8s ease-out 1.5s forwards;
+  animation: hintFadeIn 1.2s ease-out 1.5s forwards, hintGlow 6s ease-in-out 2.7s infinite;
 }
 
 @keyframes hintFadeIn {
   from {
     opacity: 0;
-    transform: translateY(5px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
-/* Hide hint on mobile - space is limited */
+/* Calm pulse: 100% → 75% → glow peak → 100% */
+@keyframes hintGlow {
+  0%, 100% {
+    opacity: 1;
+    text-shadow: none;
+  }
+  40% {
+    opacity: 0.75;
+    text-shadow: none;
+  }
+  55% {
+    opacity: 1;
+    text-shadow: 0 0 8px rgba(255, 220, 180, 0.4);
+  }
+  70% {
+    opacity: 1;
+    text-shadow: none;
+  }
+}
+
+/* Hint on mobile - keep readable */
 @media (max-width: 600px) {
   .interaction-hint {
-    font-size: 0.75rem;
+    font-size: 1.1rem;
     margin-top: var(--space-sm);
   }
 }
@@ -1816,6 +1977,8 @@ body.has-custom-cursor * {
   align-items: center;
   justify-content: center;
   transition: all var(--duration-fast) var(--ease-out-expo);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .page-nav-btn:hover:not(:disabled) {
@@ -3259,6 +3422,21 @@ body.has-custom-cursor * {
   }
 }
 
+/* Very small screens (iPhone SE) */
+@media (max-width: 375px) {
+  .nameplate-title {
+    display: none;
+  }
+  
+  .nameplate {
+    padding: 6px 12px;
+  }
+  
+  .nameplate-name {
+    font-size: 0.8rem;
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════
    REDUCED MOTION
    ═══════════════════════════════════════════════════════════ */
@@ -3274,8 +3452,21 @@ body.has-custom-cursor * {
 
   /* Cursor still works with reduced motion - it's not animated */
 
-  /* Exception: filament glow is subtle and non-disorienting */
+  /* Exception: filament and halo glow are subtle and non-disorienting */
   .filament-coil {
-    animation: filamentGlow 4s ease-in-out infinite !important;
+    animation-name: filamentGlow !important;
+    animation-duration: 4s !important;
+    animation-timing-function: ease-in-out !important;
+    animation-iteration-count: infinite !important;
+  }
+  .bulb-glow {
+    animation-name: haloBreathe !important;
+    animation-duration: 4s !important;
+    animation-delay: 0.15s !important;
+    animation-timing-function: ease-in-out !important;
+    animation-iteration-count: infinite !important;
+  }
+  .interaction-hint {
+    animation: hintFadeIn 1s ease-out 1.5s forwards, hintGlow 6s ease-in-out 2.5s infinite !important;
   }
 }

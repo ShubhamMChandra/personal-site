@@ -52,7 +52,9 @@ Inspired by Skyrim's inventory UI. Tactile, warm, physical.
 ├── assets/
 │   ├── headshot.jpg
 │   └── book-*.svg      # Spine graphics
-└── WORKPLAN.md         # Design documentation
+├── WORKPLAN.md         # Design documentation
+├── MOBILE-REPORT.md    # Mobile QA test results
+└── vercel.json         # Deployment config
 ```
 
 ---
@@ -97,19 +99,20 @@ Or connect the GitHub repo to Vercel for automatic deploys on push.
 
 ## Books
 
-| Book | Content |
-|------|---------|
-| **Work** | Project case studies |
-| **About** | Personal intro, interests, skills |
-| **Contact** | Email and LinkedIn |
-| **References** | Testimonials |
-| **Mystery** | Coming soon |
+| Book | Color | Content |
+|------|-------|---------|
+| **Work** | Crimson red | Project case studies |
+| **About** | Navy blue | Personal intro, beyond work, currently, technical |
+| **Contact** | Forest green | Email and LinkedIn |
+| **References** | Deep purple | Testimonials from colleagues |
+| **Mystery** | Purple | Coming soon |
 
 ---
 
 ## Features
 
 - 3D bookshelf with warm wood aesthetic
+- Brass nameplate with decorative corner screws
 - Book hover effects (tilt, glow)
 - Custom animated cursor
 - Page turn animations
@@ -117,7 +120,8 @@ Or connect the GitHub repo to Vercel for automatic deploys on push.
 - Click outside to close
 - URL routing (`#work`, `#about`, etc.)
 - Keyboard navigation (arrow keys)
-- Responsive mobile layout
+- Responsive mobile layout (verified via Playwright QA)
+- Subtle interaction hint with pulse animation
 
 ---
 
