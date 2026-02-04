@@ -1405,14 +1405,14 @@ body.has-custom-cursor * {
 
 /* Page Edge Effects - stacked pages look */
 .page-edge {
-  width: 12px;
-  height: 90%;
+  width: 16px;
+  height: 92%;
   flex-shrink: 0;
   position: relative;
 }
 
 .page-edge-left {
-  border-radius: 3px 0 0 3px;
+  border-radius: 4px 0 0 4px;
   background:
     /* Individual page lines */
     repeating-linear-gradient(
@@ -1427,17 +1427,18 @@ body.has-custom-cursor * {
     /* Base gradient for depth */
     linear-gradient(
       90deg,
-      #c8c0b4 0%,
-      #e0d8cc 40%,
+      #b8b0a4 0%,
+      #d8d0c4 30%,
       #ebe4d8 100%
     );
   box-shadow:
-    -3px 0 10px rgba(0, 0, 0, 0.25),
-    inset 2px 0 4px rgba(255, 255, 255, 0.3);
+    -4px 0 12px rgba(0, 0, 0, 0.3),
+    -1px 0 3px rgba(0, 0, 0, 0.15),
+    inset 3px 0 6px rgba(255, 255, 255, 0.25);
 }
 
 .page-edge-right {
-  border-radius: 0 3px 3px 0;
+  border-radius: 0 4px 4px 0;
   background:
     /* Individual page lines */
     repeating-linear-gradient(
@@ -1453,12 +1454,13 @@ body.has-custom-cursor * {
     linear-gradient(
       90deg,
       #ebe4d8 0%,
-      #e0d8cc 60%,
-      #c8c0b4 100%
+      #d8d0c4 70%,
+      #b8b0a4 100%
     );
   box-shadow:
-    3px 0 10px rgba(0, 0, 0, 0.25),
-    inset -2px 0 4px rgba(255, 255, 255, 0.3);
+    4px 0 12px rgba(0, 0, 0, 0.3),
+    1px 0 3px rgba(0, 0, 0, 0.15),
+    inset -3px 0 6px rgba(255, 255, 255, 0.25);
 }
 
 /* Open Book - mild V shape like holding a real book */
@@ -1468,8 +1470,14 @@ body.has-custom-cursor * {
   display: flex;
   background: var(--page-bg);
   box-shadow:
-    0 10px 40px rgba(0, 0, 0, 0.5),
-    0 0 80px rgba(0, 0, 0, 0.3);
+    /* Soft ambient shadow - furthest */
+    0 25px 60px rgba(0, 0, 0, 0.25),
+    /* Medium spread shadow */
+    0 15px 35px rgba(0, 0, 0, 0.2),
+    /* Tight contact shadow */
+    0 5px 15px rgba(0, 0, 0, 0.15),
+    /* Soft glow for depth */
+    0 0 80px rgba(0, 0, 0, 0.2);
   position: relative;
   z-index: 1;
   transform-style: preserve-3d;
@@ -1503,16 +1511,24 @@ body.has-custom-cursor * {
   display: flex;
   flex-direction: column;
   background:
-    /* Paper grain texture */
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"),
-    /* Subtle warm tint variation */
+    /* Subtle warm tint variation - like aged paper */
     linear-gradient(
       180deg,
-      #f7f2e8 0%,
-      #f5f0e6 50%,
-      #f3ede3 100%
+      #f8f4ec 0%,
+      #f6f2ea 50%,
+      #f4f0e6 100%
     );
-  background-blend-mode: soft-light, normal;
+}
+
+/* Paper texture overlay - extremely subtle */
+.page::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  mix-blend-mode: multiply;
 }
 
 /* Left page - tilts up slightly, shadow toward spine */
@@ -1735,6 +1751,11 @@ body.has-custom-cursor * {
 .page-nav-btn:hover:not(:disabled) {
   border-color: var(--accent);
   color: var(--accent);
+  transform: scale(1.05);
+}
+
+.page-nav-btn:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 .page-nav-btn:disabled {
@@ -2085,6 +2106,7 @@ body.has-custom-cursor * {
 
 .toc-entry:hover {
   border-bottom-color: var(--page-rule);
+  transform: translateX(2px);
 }
 
 .toc-entry:focus {
