@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="300" viewBox="0 0 48 300">
+  <defs>
+    <linearGradient id="spine-mystery" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#453050"/>
+      <stop offset="50%" style="stop-color:#553d62"/>
+      <stop offset="100%" style="stop-color:#3d2845"/>
+    </linearGradient>
+    <linearGradient id="mysteryBronze" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#7a6545"/>
+      <stop offset="50%" style="stop-color:#b8a070"/>
+      <stop offset="100%" style="stop-color:#7a6545"/>
+    </linearGradient>
+    <!-- Right book: brightest at TOP-LEFT, darkest at BOTTOM-RIGHT -->
+    <radialGradient id="corner-light-mystery" cx="0%" cy="0%" r="150%" fx="0%" fy="0%">
+      <stop offset="0%" style="stop-color:rgba(255,220,180,0.15)"/>
+      <stop offset="40%" style="stop-color:rgba(255,200,150,0.05)"/>
+      <stop offset="70%" style="stop-color:rgba(0,0,0,0)"/>
+      <stop offset="100%" style="stop-color:rgba(0,0,0,0.35)"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Main spine -->
+  <rect width="48" height="300" fill="url(#spine-mystery)" rx="2"/>
+  <rect width="48" height="300" fill="url(#corner-light-mystery)" rx="2"/>
+
+  <!-- Texture lines -->
+  <line x1="2" y1="0" x2="2" y2="300" stroke="#1f1525" stroke-width="0.5" opacity="0.5"/>
+  <line x1="46" y1="0" x2="46" y2="300" stroke="#352540" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- Top band -->
+  <rect x="4" y="12" width="40" height="2.5" fill="url(#mysteryBronze)" opacity="0.7"/>
+
+  <!-- Question mark -->
+  <text x="24" y="105" font-family="Georgia, serif" font-size="40" fill="#b8a070" text-anchor="middle" opacity="0.6">?</text>
+
+  <!-- Ornament circle -->
+  <circle cx="24" cy="165" r="14" fill="none" stroke="url(#mysteryBronze)" stroke-width="1" opacity="0.5"/>
+  <circle cx="24" cy="165" r="6" fill="url(#mysteryBronze)" opacity="0.3"/>
+
+  <!-- Vertical line detail -->
+  <line x1="24" y1="195" x2="24" y2="265" stroke="url(#mysteryBronze)" stroke-width="0.75" opacity="0.5"/>
+  <circle cx="24" cy="195" r="2" fill="url(#mysteryBronze)" opacity="0.6"/>
+  <circle cx="24" cy="265" r="2" fill="url(#mysteryBronze)" opacity="0.6"/>
+
+  <!-- Bottom band -->
+  <rect x="4" y="282" width="40" height="2.5" fill="url(#mysteryBronze)" opacity="0.7"/>
+</svg>

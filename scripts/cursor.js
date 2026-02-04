@@ -18,8 +18,8 @@ class CustomCursor {
     this.ringPos = { x: 0, y: 0 }
 
     this.lerp = {
-      cursor: 0.2,
-      ring: 0.08
+      cursor: 0.85,
+      ring: 0.15
     }
 
     this.state = 'default'

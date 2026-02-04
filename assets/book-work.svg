@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="65" height="320" viewBox="0 0 65 320">
+  <defs>
+    <linearGradient id="spine-work" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6a1e1e"/>
+      <stop offset="50%" style="stop-color:#a52a2a"/>
+      <stop offset="100%" style="stop-color:#8b2323"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#b8860b"/>
+      <stop offset="50%" style="stop-color:#ffd700"/>
+      <stop offset="100%" style="stop-color:#b8860b"/>
+    </linearGradient>
+    <!-- Corner lighting: brightest at TOP-RIGHT, darkest at BOTTOM-LEFT -->
+    <radialGradient id="corner-light-work" cx="100%" cy="0%" r="150%" fx="100%" fy="0%">
+      <stop offset="0%" style="stop-color:rgba(255,220,180,0.2)"/>
+      <stop offset="40%" style="stop-color:rgba(255,200,150,0.08)"/>
+      <stop offset="70%" style="stop-color:rgba(0,0,0,0)"/>
+      <stop offset="100%" style="stop-color:rgba(0,0,0,0.3)"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Main spine -->
+  <rect width="65" height="320" fill="url(#spine-work)" rx="2"/>
+  <!-- Corner-based lighting overlay -->
+  <rect width="65" height="320" fill="url(#corner-light-work)" rx="2"/>
+
+  <!-- Leather texture lines -->
+  <line x1="3" y1="0" x2="3" y2="320" stroke="#4a1515" stroke-width="0.5" opacity="0.5"/>
+  <line x1="62" y1="0" x2="62" y2="320" stroke="#6b2020" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- Top decorative band -->
+  <rect x="5" y="12" width="55" height="4" fill="url(#gold)" opacity="0.9"/>
+  <rect x="5" y="20" width="55" height="1.5" fill="url(#gold)" opacity="0.7"/>
+
+  <!-- Top ornament -->
+  <path d="M32.5 35 L38 48 L32.5 44 L27 48 Z" fill="url(#gold)" opacity="0.8"/>
+  <circle cx="32.5" cy="62" r="10" fill="none" stroke="url(#gold)" stroke-width="1.5" opacity="0.7"/>
+  <circle cx="32.5" cy="62" r="4" fill="url(#gold)" opacity="0.6"/>
+
+  <!-- Title area -->
+  <text x="32.5" y="110" font-family="Georgia, serif" font-size="14" fill="#ffd700" text-anchor="middle" font-weight="bold" letter-spacing="3">W</text>
+  <text x="32.5" y="130" font-family="Georgia, serif" font-size="14" fill="#ffd700" text-anchor="middle" font-weight="bold" letter-spacing="3">O</text>
+  <text x="32.5" y="150" font-family="Georgia, serif" font-size="14" fill="#ffd700" text-anchor="middle" font-weight="bold" letter-spacing="3">R</text>
+  <text x="32.5" y="170" font-family="Georgia, serif" font-size="14" fill="#ffd700" text-anchor="middle" font-weight="bold" letter-spacing="3">K</text>
+
+  <!-- Decorative lines around title -->
+  <line x1="10" y1="92" x2="55" y2="92" stroke="url(#gold)" stroke-width="0.5" opacity="0.6"/>
+  <line x1="10" y1="182" x2="55" y2="182" stroke="url(#gold)" stroke-width="0.5" opacity="0.6"/>
+
+  <!-- Center ornament -->
+  <ellipse cx="32.5" cy="215" rx="14" ry="18" fill="none" stroke="url(#gold)" stroke-width="1" opacity="0.6"/>
+  <path d="M32.5 202 Q39 215 32.5 228 Q26 215 32.5 202" fill="url(#gold)" opacity="0.5"/>
+
+  <!-- Bottom decorative band -->
+  <rect x="5" y="295" width="55" height="1.5" fill="url(#gold)" opacity="0.7"/>
+  <rect x="5" y="302" width="55" height="4" fill="url(#gold)" opacity="0.9"/>
+
+  <!-- Bottom ornament -->
+  <path d="M32.5 280 L38 268 L32.5 272 L27 268 Z" fill="url(#gold)" opacity="0.8"/>
+</svg>

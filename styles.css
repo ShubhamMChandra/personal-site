@@ -9,17 +9,17 @@
 }
 
 :root {
-  /* Core Colors */
-  --bg: #0a1614;
-  --bg-warm: #0d1a17;
-  --accent: #4ecdc4;
-  --accent-dim: rgba(78, 205, 196, 0.15);
-  --accent-glow: rgba(78, 205, 196, 0.3);
-  --text: #e8f4f2;
-  --text-secondary: #94b3ad;
-  --text-tertiary: #5a7a74;
+  /* Core Colors - Dark Study (keeping original) */
+  --bg: #0a0908;
+  --bg-warm: #12100c;
+  --accent: #c4956a;
+  --accent-dim: rgba(196, 149, 106, 0.15);
+  --accent-glow: rgba(196, 149, 106, 0.3);
+  --text: #f5f0e8;
+  --text-secondary: #c4b8a8;
+  --text-tertiary: #8a7a6a;
 
-  /* Wood Colors */
+  /* Wood Colors - Rich dark wood */
   --wood-dark: #1a0f0a;
   --wood-mid: #2d1810;
   --wood-light: #4a2c1a;
@@ -190,38 +190,34 @@ body.has-custom-cursor * {
 
 .collapsed-nav {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background: var(--bg);
-  border-bottom: 1px solid rgba(78, 205, 196, 0.1);
-  display: flex;
-  align-items: center;
-  padding: 0 var(--space-lg);
-  gap: var(--space-lg);
+  top: var(--space-md);
+  left: var(--space-md);
   z-index: 1000;
-  transform: translateY(-100%);
   opacity: 0;
+  transform: translateX(-10px);
   transition: transform var(--duration-slow) var(--ease-out-expo),
               opacity var(--duration-slow) var(--ease-out-expo);
 }
 
 .collapsed-nav.is-visible {
-  transform: translateY(0);
+  transform: translateX(0);
   opacity: 1;
 }
 
 .nav-shelf-btn {
-  width: 40px;
-  height: 40px;
+  height: 36px;
+  padding: 0 var(--space-sm) 0 var(--space-xs);
   background: transparent;
   border: 1px solid var(--text-tertiary);
   border-radius: 4px;
-  color: var(--text);
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   transition: all var(--duration-fast) var(--ease-out-expo);
 }
 
@@ -231,8 +227,8 @@ body.has-custom-cursor * {
 }
 
 .nav-shelf-btn svg {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
 }
 
 .nav-books {
@@ -280,109 +276,209 @@ body.has-custom-cursor * {
   pointer-events: none;
 }
 
-/* Atmospheric Space - Private study at night (Grainy gradient technique) */
+/* Atmospheric Space - Clean dark with Edison bulb */
 .atmosphere {
   position: absolute;
   inset: 0;
   pointer-events: none;
   overflow: hidden;
-  /* Isolate for blend modes */
   isolation: isolate;
 }
 
-/* Base layer - warm dark gradient */
+/* Base layer - neutral dark, no brown */
 .atmosphere::before {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    /* Warm vignette - darker at edges, warm in center */
     radial-gradient(
-      ellipse 80% 80% at 50% 40%,
-      #1a1512 0%,
-      #0f0d0b 40%,
-      #080706 70%,
-      #050404 100%
+      ellipse 80% 70% at 50% 35%,
+      #151413 0%,
+      #0e0d0c 40%,
+      #080807 70%,
+      #030303 100%
     );
 }
 
-/* Noise texture overlay - grainy gradient technique */
+/* Subtle grain texture */
 .atmosphere::after {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.15;
-  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.08;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 1;
 }
 
-/* Warm light cone from visible lamp */
-.warm-glow {
+/* Edison Bulb - Beautiful hanging light */
+.edison-bulb {
   position: absolute;
-  top: 5%;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 100%;
-  height: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 100;
+}
+
+/* Hanging cord */
+.bulb-cord {
+  width: 2px;
+  height: 40px;
+  background: linear-gradient(
+    180deg,
+    #1a1a18 0%,
+    #252420 50%,
+    #1a1a18 100%
+  );
+  border-radius: 1px;
+}
+
+/* Socket/base */
+.bulb-socket {
+  width: 18px;
+  height: 22px;
+  background: linear-gradient(
+    180deg,
+    #3d3530 0%,
+    #2a2520 30%,
+    #1f1a18 100%
+  );
+  border-radius: 3px 3px 4px 4px;
+  box-shadow:
+    inset 0 2px 3px rgba(255, 200, 150, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+/* Socket ridges - subtle metallic texture */
+.bulb-socket::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 3px;
+  right: 3px;
+  height: 12px;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(80, 70, 60, 0.3) 2px,
+    rgba(50, 40, 35, 0.4) 3px
+  );
+  border-radius: 2px;
+}
+
+/* Glass bulb */
+.bulb-glass {
+  width: 44px;
+  height: 70px;
+  background: radial-gradient(
+    ellipse 70% 60% at 50% 40%,
+    rgba(255, 220, 180, 0.08) 0%,
+    rgba(255, 200, 150, 0.04) 50%,
+    rgba(255, 180, 120, 0.02) 100%
+  );
+  border: 1px solid rgba(255, 200, 150, 0.1);
+  border-radius: 50% 50% 45% 45% / 40% 40% 60% 60%;
+  position: relative;
+  box-shadow:
+    inset 0 0 20px rgba(255, 180, 120, 0.1),
+    0 0 30px rgba(255, 160, 100, 0.15);
+  margin-top: -2px;
+}
+
+/* Filament container */
+.filament {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 35px;
+}
+
+/* Filament stem */
+.filament-stem {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 15px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 200, 120, 0.6) 0%,
+    rgba(80, 60, 40, 0.8) 100%
+  );
+}
+
+/* Filament coil - the glowing part */
+.filament-coil {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 20px;
+  background:
+    /* Coil shape using gradients */
+    radial-gradient(ellipse 100% 30% at 50% 15%, rgba(255, 200, 130, 0.9) 0%, transparent 70%),
+    radial-gradient(ellipse 100% 30% at 50% 40%, rgba(255, 180, 100, 0.7) 0%, transparent 70%),
+    radial-gradient(ellipse 100% 30% at 50% 65%, rgba(255, 200, 130, 0.9) 0%, transparent 70%),
+    radial-gradient(ellipse 100% 30% at 50% 90%, rgba(255, 180, 100, 0.7) 0%, transparent 70%);
+  filter: blur(0.5px);
+  animation: filamentFlicker 4s ease-in-out infinite;
+}
+
+@keyframes filamentFlicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+  52% { opacity: 0.95; }
+  54% { opacity: 0.88; }
+}
+
+/* The soft glow emanating from bulb - radiates in all directions */
+.bulb-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 900px;
+  height: 900px;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 190, 120, 0.25) 0%,
+    rgba(255, 170, 100, 0.15) 10%,
+    rgba(255, 150, 80, 0.08) 25%,
+    rgba(255, 140, 70, 0.03) 45%,
+    transparent 70%
+  );
   pointer-events: none;
 }
 
-/* The lamp fixture itself - visible light source */
-.warm-glow::before {
+/* Floating dust in light */
+.bookshelf-scene::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 6px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 220, 180, 0.6) 20%,
-    rgba(255, 230, 200, 0.8) 50%,
-    rgba(255, 220, 180, 0.6) 80%,
-    transparent 100%
-  );
-  border-radius: 3px;
-  box-shadow:
-    0 0 20px 8px rgba(255, 200, 140, 0.4),
-    0 0 40px 15px rgba(255, 180, 120, 0.2),
-    0 0 60px 25px rgba(255, 160, 100, 0.1);
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1.5px 1.5px at 25% 30%, rgba(255,240,200,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 45% 20%, rgba(255,235,180,0.4) 0%, transparent 100%),
+    radial-gradient(2px 2px at 60% 35%, rgba(255,240,200,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 75% 25%, rgba(255,230,170,0.35) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 35% 45%, rgba(255,240,200,0.4) 0%, transparent 100%);
+  animation: dustFloat 20s ease-in-out infinite;
+  opacity: 0.6;
 }
 
-/* Light cone cast from the lamp */
-.warm-glow::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60%;
-  height: 100%;
-  background:
-    /* Main cone of light */
-    conic-gradient(
-      from 180deg at 50% 0%,
-      transparent 30deg,
-      rgba(255, 200, 140, 0.12) 60deg,
-      rgba(255, 190, 130, 0.18) 85deg,
-      rgba(255, 200, 140, 0.18) 95deg,
-      rgba(255, 190, 130, 0.12) 120deg,
-      transparent 150deg
-    );
-  mask-image: linear-gradient(
-    to bottom,
-    black 0%,
-    black 60%,
-    transparent 100%
-  );
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    black 0%,
-    black 60%,
-    transparent 100%
-  );
+@keyframes dustFloat {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-8px) translateX(4px); }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -391,26 +487,91 @@ body.has-custom-cursor * {
 
 .bookshelf {
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
   perspective: 1200px;
+  position: relative;
 }
 
-/* Books Container */
+
+/* Floor reflection - grounds everything */
+.floor-reflection {
+  width: 100%;
+  max-width: 1000px;
+  height: 120px;
+  margin: 0 auto;
+  margin-top: -10px;
+  background:
+    /* Reflection of shelf - very subtle */
+    linear-gradient(
+      180deg,
+      rgba(30, 20, 15, 0.6) 0%,
+      rgba(20, 15, 10, 0.3) 30%,
+      transparent 100%
+    );
+  mask-image: linear-gradient(
+    180deg,
+    rgba(0,0,0,0.3) 0%,
+    transparent 80%
+  );
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    rgba(0,0,0,0.3) 0%,
+    transparent 80%
+  );
+  filter: blur(2px);
+  transform: scaleY(-0.3) translateY(-100%);
+  transform-origin: top center;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* Hide SVG filters */
+.svg-filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* Books Container - packed tight, aligned to bottom like real shelf */
 .books {
   display: flex;
   justify-content: center;
-  gap: 6px;
+  align-items: flex-end;
+  gap: 0;
   padding: 0 20px;
   margin-bottom: -2px;
   position: relative;
   z-index: 2;
 }
 
+/* Light overlay - radial falloff from bulb position */
+.light-overlay {
+  position: absolute;
+  top: -400px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 184, 112, 0.3) 0%,
+    rgba(255, 170, 100, 0.2) 15%,
+    rgba(255, 155, 85, 0.1) 30%,
+    rgba(255, 140, 70, 0.04) 50%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 3;
+  mix-blend-mode: screen;
+}
+
+
 /* Individual Book */
 .book {
   width: auto;
-  height: 280px;
+  height: auto;
   position: relative;
   transform-style: preserve-3d;
   transition: transform var(--duration-medium) var(--ease-out-back),
@@ -420,8 +581,19 @@ body.has-custom-cursor * {
   padding: 0;
   cursor: pointer;
   pointer-events: auto;
-  /* Slight random rotation for organic feel */
-  filter: drop-shadow(2px 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+.book-spine-img {
+  height: auto;
+  width: auto;
+  max-height: 320px;
+  display: block;
+  border-radius: 2px 4px 4px 2px;
+}
+
+/* Simple drop shadows - let radial glow handle atmosphere */
+.book {
+  filter: drop-shadow(2px 8px 15px rgba(0, 0, 0, 0.6));
 }
 
 .book:nth-child(1) { transform: rotate(-0.5deg); }
@@ -449,17 +621,6 @@ body.has-custom-cursor * {
   transform: translateY(-6px) rotate(0deg);
 }
 
-/* Book spine image */
-.book-spine-img {
-  height: 100%;
-  width: auto;
-  display: block;
-  border-radius: 2px 4px 4px 2px;
-  /* Slight 3D effect */
-  box-shadow:
-    inset -2px 0 4px rgba(0, 0, 0, 0.2),
-    inset 1px 0 2px rgba(255, 255, 255, 0.1);
-}
 
 /* Book Spine (front face) - Weathered manuscript style */
 .book-spine {
@@ -808,6 +969,38 @@ body.has-custom-cursor * {
   animation-delay: 0.5s;
 }
 
+/* Subtle idle animation - hints interactivity */
+@keyframes bookBreathe {
+  0%, 100% {
+    transform: translateY(0) rotate(var(--book-rotate, 0deg));
+  }
+  50% {
+    transform: translateY(-2px) rotate(var(--book-rotate, 0deg));
+  }
+}
+
+.books .book:not(:hover) {
+  --book-rotate: -0.5deg;
+}
+
+.books .book:nth-child(1) { --book-rotate: -0.5deg; }
+.books .book:nth-child(2) { --book-rotate: 0.3deg; }
+.books .book:nth-child(3) { --book-rotate: -0.2deg; }
+.books .book:nth-child(4) { --book-rotate: 0.4deg; }
+
+/* After entrance animation, add subtle breathe */
+.books .book {
+  animation:
+    bookSlideIn 0.8s var(--ease-out-expo) both,
+    bookBreathe 4s ease-in-out 1.5s infinite;
+}
+
+.books .book:nth-child(4) {
+  animation:
+    bookSlideInMystery 0.8s var(--ease-out-expo) both,
+    bookBreathe 4s ease-in-out 2s infinite;
+}
+
 /* Shelf also fades in */
 @keyframes shelfFadeIn {
   from {
@@ -831,7 +1024,7 @@ body.has-custom-cursor * {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   SHELF SURFACE
+   SHELF SURFACE - Rich mahogany with depth
    ═══════════════════════════════════════════════════════════ */
 
 .shelf-surface {
@@ -841,67 +1034,155 @@ body.has-custom-cursor * {
   margin: 0 auto;
 }
 
-/* Shelf Top */
+/* Shelf Top - polished wood surface catching the light */
 .shelf-top {
-  height: 20px;
-  background: linear-gradient(
-    180deg,
-    var(--wood-highlight) 0%,
-    var(--wood-light) 50%,
-    var(--wood-mid) 100%
-  );
-  border-radius: 3px 3px 0 0;
+  height: 24px;
+  background:
+    /* Subtle light reflection from lamp */
+    radial-gradient(
+      ellipse 40% 100% at 50% 0%,
+      rgba(255, 200, 150, 0.15) 0%,
+      transparent 70%
+    ),
+    /* Rich wood gradient */
+    linear-gradient(
+      180deg,
+      #6b4423 0%,
+      #5c3a1e 30%,
+      #4a2c16 70%,
+      #3d2212 100%
+    );
+  border-radius: 4px 4px 0 0;
   box-shadow:
-    0 -2px 10px rgba(255, 200, 150, 0.1),
-    inset 0 2px 4px rgba(255, 255, 255, 0.1);
+    0 -3px 15px rgba(255, 200, 150, 0.08),
+    inset 0 2px 3px rgba(255, 255, 255, 0.15),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.2);
+  position: relative;
 }
 
-/* Wood grain texture */
+/* Wood grain texture on top */
 .shelf-top::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(
-    90deg,
-    transparent 0px,
-    transparent 40px,
-    var(--wood-grain) 40px,
-    var(--wood-grain) 42px,
-    transparent 42px,
-    transparent 100px
-  );
-  opacity: 0.5;
+  border-radius: 4px 4px 0 0;
+  background:
+    /* Fine grain lines */
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 25px,
+      rgba(90, 60, 30, 0.3) 25px,
+      rgba(90, 60, 30, 0.15) 27px,
+      transparent 28px,
+      transparent 45px,
+      rgba(80, 50, 25, 0.2) 45px,
+      rgba(80, 50, 25, 0.1) 46px,
+      transparent 47px,
+      transparent 80px
+    ),
+    /* Subtle knot pattern */
+    radial-gradient(
+      ellipse 8px 4px at 25% 50%,
+      rgba(60, 35, 15, 0.3) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 6px 3px at 75% 60%,
+      rgba(60, 35, 15, 0.2) 0%,
+      transparent 100%
+    );
 }
 
-/* Shelf Front */
-.shelf-front {
-  height: 80px;
+/* Glossy reflection strip on shelf edge */
+.shelf-top::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 10%;
+  right: 10%;
+  height: 2px;
   background: linear-gradient(
-    180deg,
-    var(--wood-mid) 0%,
-    var(--wood-dark) 100%
+    90deg,
+    transparent 0%,
+    rgba(255, 240, 220, 0.2) 20%,
+    rgba(255, 245, 230, 0.35) 50%,
+    rgba(255, 240, 220, 0.2) 80%,
+    transparent 100%
   );
+  border-radius: 1px;
+}
+
+/* Shelf Front - deep shadow, vertical wood grain */
+.shelf-front {
+  height: 90px;
+  background:
+    /* Vertical grain pattern */
+    repeating-linear-gradient(
+      180deg,
+      transparent 0px,
+      transparent 8px,
+      rgba(0, 0, 0, 0.05) 8px,
+      rgba(0, 0, 0, 0.05) 10px,
+      transparent 10px,
+      transparent 20px
+    ),
+    /* Base gradient */
+    linear-gradient(
+      180deg,
+      #4a2c16 0%,
+      #3d2212 20%,
+      #2d1810 60%,
+      #1a0f0a 100%
+    );
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow:
-    inset 0 2px 8px rgba(0, 0, 0, 0.3),
-    0 8px 24px rgba(0, 0, 0, 0.4);
+    /* Top shadow from shelf overhang */
+    inset 0 8px 16px rgba(0, 0, 0, 0.5),
+    /* Depth shadow below */
+    0 15px 40px rgba(0, 0, 0, 0.6),
+    0 5px 15px rgba(0, 0, 0, 0.4);
+  position: relative;
 }
 
-/* Wood grain on front */
+/* Vertical wood grain detail */
 .shelf-front::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 50px,
+      rgba(0, 0, 0, 0.08) 50px,
+      rgba(0, 0, 0, 0.04) 52px,
+      transparent 53px,
+      transparent 90px,
+      rgba(0, 0, 0, 0.06) 90px,
+      rgba(0, 0, 0, 0.03) 91px,
+      transparent 92px,
+      transparent 140px
+    );
+}
+
+/* Subtle edge highlight */
+.shelf-front::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
     90deg,
-    transparent 0px,
-    transparent 60px,
-    rgba(0, 0, 0, 0.1) 60px,
-    rgba(0, 0, 0, 0.1) 62px,
-    transparent 62px,
-    transparent 150px
+    transparent 0%,
+    rgba(120, 80, 50, 0.4) 20%,
+    rgba(140, 100, 60, 0.5) 50%,
+    rgba(120, 80, 50, 0.4) 80%,
+    transparent 100%
   );
 }
 
@@ -955,6 +1236,39 @@ body.has-custom-cursor * {
   letter-spacing: 0.15em;
 }
 
+/* Interaction hint for first-time visitors */
+.interaction-hint {
+  display: block;
+  text-align: center;
+  margin-top: var(--space-md);
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  font-style: italic;
+  color: rgba(255, 220, 180, 0.5);
+  letter-spacing: 0.05em;
+  opacity: 0;
+  animation: hintFadeIn 0.8s ease-out 1.5s forwards;
+}
+
+@keyframes hintFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hide hint on mobile - space is limited */
+@media (max-width: 600px) {
+  .interaction-hint {
+    font-size: 0.75rem;
+    margin-top: var(--space-sm);
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════
    BOOK VIEW (Open Book State)
    ═══════════════════════════════════════════════════════════ */
@@ -962,7 +1276,6 @@ body.has-custom-cursor * {
 .book-view {
   position: fixed;
   inset: 0;
-  top: 60px;
   background: var(--bg);
   display: flex;
   flex-direction: column;
@@ -972,6 +1285,25 @@ body.has-custom-cursor * {
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--duration-slow) var(--ease-out-expo);
+}
+
+/* Warm ambient light from above - Edison bulb continuity */
+.book-view::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 500px;
+  background: radial-gradient(
+    ellipse 60% 80% at 50% 0%,
+    rgba(255, 190, 130, 0.12) 0%,
+    rgba(255, 170, 100, 0.06) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
 }
 
 .book-view.is-visible {
@@ -993,52 +1325,98 @@ body.has-custom-cursor * {
   width: 100%;
   height: calc(100vh - 180px);
   max-height: 700px;
+  perspective: 1800px;
 }
 
-/* Page Edge Effects */
+/* Page Edge Effects - stacked pages look */
 .page-edge {
-  width: 8px;
+  width: 12px;
   height: 90%;
-  background: linear-gradient(
-    90deg,
-    #d4cfc5 0%,
-    #e8e0d4 100%
-  );
   flex-shrink: 0;
+  position: relative;
 }
 
 .page-edge-left {
-  border-radius: 2px 0 0 2px;
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+  border-radius: 3px 0 0 3px;
+  background:
+    /* Individual page lines */
+    repeating-linear-gradient(
+      to bottom,
+      #f5f0e6 0px,
+      #f5f0e6 1px,
+      #e0d8cc 1px,
+      #e0d8cc 2px,
+      #f2ede3 2px,
+      #f2ede3 3px
+    ),
+    /* Base gradient for depth */
+    linear-gradient(
+      90deg,
+      #c8c0b4 0%,
+      #e0d8cc 40%,
+      #ebe4d8 100%
+    );
+  box-shadow:
+    -3px 0 10px rgba(0, 0, 0, 0.25),
+    inset 2px 0 4px rgba(255, 255, 255, 0.3);
 }
 
 .page-edge-right {
-  border-radius: 0 2px 2px 0;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+  border-radius: 0 3px 3px 0;
+  background:
+    /* Individual page lines */
+    repeating-linear-gradient(
+      to bottom,
+      #f5f0e6 0px,
+      #f5f0e6 1px,
+      #e0d8cc 1px,
+      #e0d8cc 2px,
+      #f2ede3 2px,
+      #f2ede3 3px
+    ),
+    /* Base gradient for depth */
+    linear-gradient(
+      90deg,
+      #ebe4d8 0%,
+      #e0d8cc 60%,
+      #c8c0b4 100%
+    );
+  box-shadow:
+    3px 0 10px rgba(0, 0, 0, 0.25),
+    inset -2px 0 4px rgba(255, 255, 255, 0.3);
 }
 
-/* Page lines */
-.page-edge::before {
-  content: '';
-  position: absolute;
-  inset: 10px 1px;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent 3px,
-    rgba(180, 170, 160, 0.4) 3px,
-    rgba(180, 170, 160, 0.4) 4px
-  );
-}
-
-/* Open Book */
+/* Open Book - mild V shape like holding a real book */
 .open-book {
   flex: 1;
   height: 100%;
   display: flex;
   background: var(--page-bg);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.5),
+    0 0 80px rgba(0, 0, 0, 0.3);
   position: relative;
+  z-index: 1;
+  transform-style: preserve-3d;
+}
+
+/* Warm light hitting the top of the book */
+.open-book::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 200, 150, 0.08) 0%,
+    rgba(255, 190, 140, 0.03) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 10;
+  border-radius: 2px 2px 0 0;
 }
 
 /* Pages */
@@ -1048,14 +1426,33 @@ body.has-custom-cursor * {
   position: relative;
   overflow-y: auto;
   overflow-x: hidden;
+  background:
+    /* Paper grain texture */
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"),
+    /* Subtle warm tint variation */
+    linear-gradient(
+      180deg,
+      #f7f2e8 0%,
+      #f5f0e6 50%,
+      #f3ede3 100%
+    );
+  background-blend-mode: soft-light, normal;
 }
 
+/* Left page - tilts up slightly, shadow toward spine */
 .page-left {
   border-right: none;
+  box-shadow: inset -20px 0 30px -15px rgba(0, 0, 0, 0.1);
+  transform: rotateY(3deg);
+  transform-origin: right center;
 }
 
+/* Right page - tilts up slightly, shadow toward spine */
 .page-right {
   border-left: none;
+  box-shadow: inset 20px 0 30px -15px rgba(0, 0, 0, 0.1);
+  transform: rotateY(-3deg);
+  transform-origin: left center;
 }
 
 /* Page Content Area */
@@ -1071,44 +1468,86 @@ body.has-custom-cursor * {
 .page-curl {
   position: absolute;
   bottom: 0;
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   pointer-events: none;
 }
 
 .page-left .page-curl {
   left: 0;
-  background: linear-gradient(
-    -45deg,
-    transparent 50%,
-    rgba(0, 0, 0, 0.03) 50%
-  );
+  background:
+    linear-gradient(
+      -45deg,
+      transparent 48%,
+      #e8e0d4 49%,
+      #ddd5c8 52%,
+      rgba(0, 0, 0, 0.08) 52%,
+      rgba(0, 0, 0, 0.03) 60%,
+      transparent 70%
+    );
+  box-shadow: 2px -2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .page-right .page-curl {
   right: 0;
-  background: linear-gradient(
-    45deg,
-    transparent 50%,
-    rgba(0, 0, 0, 0.03) 50%
-  );
+  background:
+    linear-gradient(
+      45deg,
+      transparent 48%,
+      #e8e0d4 49%,
+      #ddd5c8 52%,
+      rgba(0, 0, 0, 0.08) 52%,
+      rgba(0, 0, 0, 0.03) 60%,
+      transparent 70%
+    );
+  box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Center Spine */
+/* Center Spine - deep book binding */
 .book-spine-center {
-  width: 20px;
-  background: linear-gradient(
-    90deg,
-    var(--page-spine) 0%,
-    #d8d0c4 20%,
-    var(--page-spine) 50%,
-    #d8d0c4 80%,
-    var(--page-spine) 100%
-  );
+  width: 24px;
+  background:
+    /* Stitching line hint */
+    repeating-linear-gradient(
+      180deg,
+      transparent 0px,
+      transparent 8px,
+      rgba(120, 100, 80, 0.15) 8px,
+      rgba(120, 100, 80, 0.15) 10px
+    ),
+    /* Deep gutter shadow */
+    linear-gradient(
+      90deg,
+      #b8ad9d 0%,
+      #a89d8d 15%,
+      #8a7d6d 40%,
+      #7a6d5d 50%,
+      #8a7d6d 60%,
+      #a89d8d 85%,
+      #b8ad9d 100%
+    );
   box-shadow:
-    inset 3px 0 8px rgba(0, 0, 0, 0.15),
-    inset -3px 0 8px rgba(0, 0, 0, 0.15);
+    inset 6px 0 12px rgba(0, 0, 0, 0.35),
+    inset -6px 0 12px rgba(0, 0, 0, 0.35),
+    inset 0 3px 6px rgba(0, 0, 0, 0.2);
   flex-shrink: 0;
+  position: relative;
+}
+
+/* Spine highlight from above */
+.book-spine-center::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 220, 180, 0.15) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1538,25 +1977,51 @@ body.has-custom-cursor * {
     max-width: 100%;
   }
 
-  .book {
-    width: 65px;
-    height: 200px;
+  /* Scale down image-based books for mobile */
+  .book-spine-img {
+    max-height: 180px;
   }
 
-  .spine-text {
-    font-size: 0.85rem;
+  .books {
+    gap: 0;
+    padding: 0 10px;
+  }
+
+  /* Hide back panel on mobile - too complex */
+  .shelf-back {
+    display: none;
+  }
+
+  /* Simplify floor reflection */
+  .floor-reflection {
+    height: 60px;
+    opacity: 0.2;
+  }
+
+  /* Hide wall brackets on mobile */
+  .bookshelf::before,
+  .bookshelf::after {
+    display: none;
+  }
+
+  .shelf-top {
+    height: 16px;
   }
 
   .shelf-front {
-    height: 70px;
+    height: 60px;
   }
 
   .nameplate {
-    padding: 8px 20px;
+    padding: 8px 16px;
   }
 
   .nameplate-name {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  .nameplate-title {
+    font-size: 0.55rem;
   }
 
   .collapsed-nav {

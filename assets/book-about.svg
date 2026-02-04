@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="58" height="290" viewBox="0 0 58 290">
+  <defs>
+    <linearGradient id="spine-about" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1e3050"/>
+      <stop offset="50%" style="stop-color:#2a4d8c"/>
+      <stop offset="100%" style="stop-color:#234170"/>
+    </linearGradient>
+    <linearGradient id="silver" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#808080"/>
+      <stop offset="50%" style="stop-color:#c0c0c0"/>
+      <stop offset="100%" style="stop-color:#808080"/>
+    </linearGradient>
+    <!-- Center-left book: light from top-center, slight bias to right -->
+    <radialGradient id="corner-light-about" cx="60%" cy="0%" r="120%" fx="60%" fy="0%">
+      <stop offset="0%" style="stop-color:rgba(255,220,180,0.15)"/>
+      <stop offset="35%" style="stop-color:rgba(255,200,150,0.06)"/>
+      <stop offset="65%" style="stop-color:rgba(0,0,0,0)"/>
+      <stop offset="100%" style="stop-color:rgba(0,0,0,0.2)"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Main spine -->
+  <rect width="58" height="290" fill="url(#spine-about)" rx="2"/>
+  <rect width="58" height="290" fill="url(#corner-light-about)" rx="2"/>
+
+  <!-- Leather texture -->
+  <line x1="3" y1="0" x2="3" y2="290" stroke="#152238" stroke-width="0.5" opacity="0.5"/>
+  <line x1="55" y1="0" x2="55" y2="290" stroke="#1e3557" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- Top band -->
+  <rect x="4" y="10" width="50" height="3" fill="url(#silver)" opacity="0.8"/>
+  <rect x="4" y="17" width="50" height="1" fill="url(#silver)" opacity="0.5"/>
+
+  <!-- Top flourish -->
+  <path d="M29 30 C20 36, 20 48, 29 44 C38 48, 38 36, 29 30" fill="none" stroke="url(#silver)" stroke-width="1.2" opacity="0.7"/>
+
+  <!-- Title -->
+  <text x="29" y="80" font-family="Georgia, serif" font-size="12" fill="#c0c0c0" text-anchor="middle" font-weight="bold" letter-spacing="2">A</text>
+  <text x="29" y="98" font-family="Georgia, serif" font-size="12" fill="#c0c0c0" text-anchor="middle" font-weight="bold" letter-spacing="2">B</text>
+  <text x="29" y="116" font-family="Georgia, serif" font-size="12" fill="#c0c0c0" text-anchor="middle" font-weight="bold" letter-spacing="2">O</text>
+  <text x="29" y="134" font-family="Georgia, serif" font-size="12" fill="#c0c0c0" text-anchor="middle" font-weight="bold" letter-spacing="2">U</text>
+  <text x="29" y="152" font-family="Georgia, serif" font-size="12" fill="#c0c0c0" text-anchor="middle" font-weight="bold" letter-spacing="2">T</text>
+
+  <!-- Decorative diamond -->
+  <rect x="21" y="175" width="16" height="16" fill="none" stroke="url(#silver)" stroke-width="1.2" transform="rotate(45 29 183)" opacity="0.6"/>
+  <circle cx="29" cy="183" r="5" fill="url(#silver)" opacity="0.4"/>
+
+  <!-- Vertical line ornament -->
+  <line x1="29" y1="210" x2="29" y2="255" stroke="url(#silver)" stroke-width="1" opacity="0.5"/>
+  <circle cx="29" cy="210" r="2.5" fill="url(#silver)" opacity="0.6"/>
+  <circle cx="29" cy="255" r="2.5" fill="url(#silver)" opacity="0.6"/>
+
+  <!-- Bottom band -->
+  <rect x="4" y="270" width="50" height="1" fill="url(#silver)" opacity="0.5"/>
+  <rect x="4" y="276" width="50" height="3" fill="url(#silver)" opacity="0.8"/>
+</svg>

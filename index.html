@@ -10,6 +10,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Space+Grotesk:wght@400;500;600&family=Space+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- SVG Lighting Filter -->
+  <svg class="svg-filters" aria-hidden="true">
+    <defs>
+      <filter id="point-light" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur"/>
+        <feSpecularLighting in="blur" surfaceScale="5" specularConstant="1" specularExponent="20" lighting-color="#ffb870" result="specular">
+          <fePointLight x="150" y="-100" z="200"/>
+        </feSpecularLighting>
+        <feComposite in="specular" in2="SourceAlpha" operator="in" result="specular"/>
+        <feComposite in="SourceGraphic" in2="specular" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
+      </filter>
+    </defs>
+  </svg>
+
   <!-- Custom Cursor -->
   <div class="cursor"></div>
   <div class="cursor-ring"></div>
@@ -18,23 +32,28 @@
   <nav class="collapsed-nav" aria-label="Book navigation">
     <button class="nav-shelf-btn" data-action="return-to-shelf" aria-label="Return to bookshelf">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-        <path d="M8 7h8M8 11h8M8 15h4"/>
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
       </svg>
+      <span>Shelf</span>
     </button>
-    <div class="nav-books">
-      <button class="nav-book-btn" data-book="work">Work</button>
-      <button class="nav-book-btn" data-book="about">About</button>
-      <button class="nav-book-btn" data-book="contact">Contact</button>
-    </div>
   </nav>
 
   <!-- Main Bookshelf View -->
   <main class="bookshelf-scene">
     <!-- Atmospheric space above shelf -->
     <div class="atmosphere">
-      <div class="warm-glow"></div>
+      <!-- Edison bulb with filament -->
+      <div class="edison-bulb">
+        <div class="bulb-cord"></div>
+        <div class="bulb-socket"></div>
+        <div class="bulb-glass">
+          <div class="filament">
+            <div class="filament-stem"></div>
+            <div class="filament-coil"></div>
+          </div>
+        </div>
+        <div class="bulb-glow"></div>
+      </div>
     </div>
 
     <!-- The Bookshelf -->
@@ -42,28 +61,30 @@
       <!-- Book Spines - Image-based for premium look -->
       <div class="books">
         <button class="book" data-book="work" aria-label="Open Work book">
-          <!-- Replace src with your actual book spine image -->
-          <img class="book-spine-img" src="assets/book-work.png" alt="Work" />
+          <img class="book-spine-img" src="assets/book-work.svg" alt="Work" />
           <div class="book-edge"></div>
         </button>
 
         <button class="book" data-book="about" aria-label="Open About book">
-          <img class="book-spine-img" src="assets/book-about.png" alt="About" />
+          <img class="book-spine-img" src="assets/book-about.svg" alt="About" />
           <div class="book-edge"></div>
         </button>
 
         <button class="book" data-book="contact" aria-label="Open Contact book">
-          <img class="book-spine-img" src="assets/book-contact.png" alt="Contact" />
+          <img class="book-spine-img" src="assets/book-contact.svg" alt="Contact" />
           <div class="book-edge"></div>
         </button>
 
         <!-- Mystery book - coming soon -->
         <button class="book book-mystery" data-book="mystery" aria-label="Coming soon" disabled>
-          <img class="book-spine-img" src="assets/book-mystery.png" alt="Coming soon" />
+          <img class="book-spine-img" src="assets/book-mystery.svg" alt="Coming soon" />
           <div class="book-edge"></div>
           <div class="mystery-glow"></div>
         </button>
       </div>
+
+      <!-- Light overlay - radial from bulb position -->
+      <div class="light-overlay"></div>
 
       <!-- Shelf Surface -->
       <div class="shelf-surface">
@@ -74,8 +95,12 @@
             <span class="nameplate-title">Developer & Designer</span>
           </div>
         </div>
+        <span class="interaction-hint">Select a book to explore</span>
       </div>
     </div>
+
+    <!-- Floor reflection - grounds the scene -->
+    <div class="floor-reflection"></div>
   </main>
 
   <!-- Open Book View (hidden initially) -->
