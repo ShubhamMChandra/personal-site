@@ -61,7 +61,7 @@
   --book-work: #a52a2a;
   --book-about: #2a4d8c;
   --book-contact: #3d7a57;
-  --book-references: #5c3d2a;
+  --book-references: #4a3060;
   --book-mystery: #553d62;
 
   /* Page Colors - Harvard Press warmth */
@@ -2932,9 +2932,9 @@ body.has-custom-cursor * {
 .reference-attribution {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: flex-start;
-  padding: var(--space-lg) var(--space-md);
+  padding: var(--space-xl) var(--space-md) var(--space-lg);
 }
 
 .reference-label {
