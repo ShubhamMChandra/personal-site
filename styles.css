@@ -1710,6 +1710,7 @@ body.has-custom-cursor * {
 .open-book {
   flex: 1;
   height: 100%;
+  min-height: 500px; /* Ensure readable height on ultrawide monitors */
   display: flex;
   background: var(--page-bg);
   box-shadow:
@@ -1801,6 +1802,25 @@ body.has-custom-cursor * {
   margin: 0 auto;
   padding: 1.25rem;
   flex: 1;
+  min-height: 0; /* Safari flexbox fix */
+}
+
+/* Subtle scrollbar for page content overflow */
+.page::-webkit-scrollbar {
+  width: 6px;
+}
+
+.page::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.page::-webkit-scrollbar-thumb {
+  background: rgba(42, 37, 32, 0.2);
+  border-radius: 3px;
+}
+
+.page::-webkit-scrollbar-thumb:hover {
+  background: rgba(42, 37, 32, 0.35);
 }
 
 /* Book page articles */
@@ -2205,8 +2225,7 @@ body.has-custom-cursor * {
 .spread-left,
 .spread-right {
   height: 100%;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  min-height: 0; /* Safari flexbox fix */
 }
 
 /* Chapter Divider (Left Page) */
