@@ -6,9 +6,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="65" height="320" viewBox="0 0 65 320">
   <defs>
     <linearGradient id="spine-work" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#6a1e1e"/>
-      <stop offset="50%" style="stop-color:#a52a2a"/>
-      <stop offset="100%" style="stop-color:#8b2323"/>
+      <stop offset="0%" style="stop-color:#5a1a1a"/>
+      <stop offset="50%" style="stop-color:#952626"/>
+      <stop offset="100%" style="stop-color:#7a1f1f"/>
     </linearGradient>
     <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" style="stop-color:#b8860b"/>
