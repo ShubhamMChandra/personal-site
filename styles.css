@@ -713,8 +713,8 @@ body {
    ───────────────────────────────────────────────────────────── */
 .cursor {
     position: fixed;
-    top: 0;
-    left: 0;
+    top: -100px;
+    left: -100px;
     width: 12px;
     height: 12px;
     background: #e8f4f2;
@@ -722,16 +722,22 @@ body {
     pointer-events: none;
     z-index: 9999;
     transform: translate(-50%, -50%);
+    opacity: 0;
     transition: width 0.15s cubic-bezier(0.16, 1, 0.3, 1),
                 height 0.15s cubic-bezier(0.16, 1, 0.3, 1),
                 opacity 0.15s cubic-bezier(0.16, 1, 0.3, 1),
                 background 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, width, height;
+}
+
+.cursor.is-visible {
+    opacity: 1;
 }
 
 .cursor-ring {
     position: fixed;
-    top: 0;
-    left: 0;
+    top: -100px;
+    left: -100px;
     width: 40px;
     height: 40px;
     border: 1px solid #4ecdc4;
@@ -739,16 +745,21 @@ body {
     pointer-events: none;
     z-index: 9998;
     transform: translate(-50%, -50%);
-    opacity: 0.5;
+    opacity: 0;
     transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
                 height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
                 opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, width, height;
+}
+
+.cursor-ring.is-visible {
+    opacity: 0.5;
 }
 
 .cursor-text {
     position: fixed;
-    top: 0;
-    left: 0;
+    top: -100px;
+    left: -100px;
     pointer-events: none;
     z-index: 9999;
     font-family: 'Space Mono', monospace;
