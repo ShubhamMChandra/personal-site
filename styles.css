@@ -265,8 +265,10 @@ body.has-custom-cursor * {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  padding-bottom: 10vh;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 5vh;
+  padding-top: 10vh;
   position: relative;
   transition: transform var(--duration-book) var(--ease-in-out),
               opacity var(--duration-book) var(--ease-in-out);
@@ -278,69 +280,109 @@ body.has-custom-cursor * {
   pointer-events: none;
 }
 
-/* Atmospheric Space - Private study at night */
+/* Atmospheric Space - Private study at night (Grainy gradient technique) */
 .atmosphere {
   position: absolute;
   inset: 0;
   pointer-events: none;
   overflow: hidden;
+  /* Isolate for blend modes */
+  isolation: isolate;
 }
 
-/* Wall texture - visible warmth */
+/* Base layer - warm dark gradient */
 .atmosphere::before {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    /* Warm vignette - darker at edges */
+    /* Warm vignette - darker at edges, warm in center */
     radial-gradient(
-      ellipse 70% 70% at 50% 60%,
-      transparent 0%,
-      rgba(0, 0, 0, 0.6) 100%
-    ),
-    /* Base - warm dark brown, not pure black */
-    linear-gradient(
-      180deg,
-      #12100e 0%,
-      #0d0b09 100%
+      ellipse 80% 80% at 50% 40%,
+      #1a1512 0%,
+      #0f0d0b 40%,
+      #080706 70%,
+      #050404 100%
     );
 }
 
-/* Lamp light cone - visible warm glow on shelf */
+/* Noise texture overlay - grainy gradient technique */
+.atmosphere::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.15;
+  mix-blend-mode: soft-light;
+}
+
+/* Warm light cone from visible lamp */
 .warm-glow {
   position: absolute;
-  bottom: 15%;
+  top: 5%;
   left: 50%;
   transform: translateX(-50%);
-  width: 80%;
-  height: 70%;
-  background:
-    /* Main lamp cone - actually visible */
-    radial-gradient(
-      ellipse 50% 70% at 50% 10%,
-      rgba(255, 200, 140, 0.25) 0%,
-      rgba(255, 180, 120, 0.15) 30%,
-      rgba(255, 160, 100, 0.05) 60%,
-      transparent 80%
-    );
+  width: 100%;
+  height: 90%;
+  pointer-events: none;
 }
 
-/* Lamp source at top */
+/* The lamp fixture itself - visible light source */
 .warm-glow::before {
   content: '';
   position: absolute;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 120px;
-  height: 40px;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(255, 220, 180, 0.4) 0%,
-    rgba(255, 200, 150, 0.2) 40%,
-    transparent 70%
+  width: 80px;
+  height: 6px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 220, 180, 0.6) 20%,
+    rgba(255, 230, 200, 0.8) 50%,
+    rgba(255, 220, 180, 0.6) 80%,
+    transparent 100%
   );
-  filter: blur(20px);
+  border-radius: 3px;
+  box-shadow:
+    0 0 20px 8px rgba(255, 200, 140, 0.4),
+    0 0 40px 15px rgba(255, 180, 120, 0.2),
+    0 0 60px 25px rgba(255, 160, 100, 0.1);
+}
+
+/* Light cone cast from the lamp */
+.warm-glow::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 100%;
+  background:
+    /* Main cone of light */
+    conic-gradient(
+      from 180deg at 50% 0%,
+      transparent 30deg,
+      rgba(255, 200, 140, 0.12) 60deg,
+      rgba(255, 190, 130, 0.18) 85deg,
+      rgba(255, 200, 140, 0.18) 95deg,
+      rgba(255, 190, 130, 0.12) 120deg,
+      transparent 150deg
+    );
+  mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 60%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 60%,
+    transparent 100%
+  );
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -349,9 +391,9 @@ body.has-custom-cursor * {
 
 .bookshelf {
   width: 100%;
-  max-width: 900px;
+  max-width: 800px;
   margin: 0 auto;
-  perspective: 1000px;
+  perspective: 1200px;
 }
 
 /* Books Container */
@@ -367,20 +409,30 @@ body.has-custom-cursor * {
 
 /* Individual Book */
 .book {
-  width: 90px;
+  width: auto;
   height: 280px;
   position: relative;
   transform-style: preserve-3d;
-  transition: transform var(--duration-medium) var(--ease-out-back);
+  transition: transform var(--duration-medium) var(--ease-out-back),
+              filter var(--duration-medium) var(--ease-out-expo);
   border: none;
   background: none;
   padding: 0;
   cursor: pointer;
   pointer-events: auto;
+  /* Slight random rotation for organic feel */
+  filter: drop-shadow(2px 4px 8px rgba(0, 0, 0, 0.5));
 }
 
+.book:nth-child(1) { transform: rotate(-0.5deg); }
+.book:nth-child(2) { transform: rotate(0.3deg); }
+.book:nth-child(3) { transform: rotate(-0.2deg); }
+.book:nth-child(4) { transform: rotate(0.4deg); }
+
 .book:hover {
-  transform: translateY(-10px) rotateY(-5deg);
+  transform: translateY(-12px) rotate(0deg);
+  filter: drop-shadow(4px 12px 20px rgba(0, 0, 0, 0.6));
+  z-index: 10;
 }
 
 .book:focus {
@@ -388,13 +440,25 @@ body.has-custom-cursor * {
 }
 
 .book:focus-visible {
-  transform: translateY(-10px) rotateY(-5deg);
+  transform: translateY(-12px) rotate(0deg);
   outline: 2px solid var(--accent);
   outline-offset: 4px;
 }
 
 .book:active {
-  transform: translateY(-5px) rotateY(-3deg);
+  transform: translateY(-6px) rotate(0deg);
+}
+
+/* Book spine image */
+.book-spine-img {
+  height: 100%;
+  width: auto;
+  display: block;
+  border-radius: 2px 4px 4px 2px;
+  /* Slight 3D effect */
+  box-shadow:
+    inset -2px 0 4px rgba(0, 0, 0, 0.2),
+    inset 1px 0 2px rgba(255, 255, 255, 0.1);
 }
 
 /* Book Spine (front face) - Weathered manuscript style */
@@ -773,7 +837,7 @@ body.has-custom-cursor * {
 .shelf-surface {
   position: relative;
   width: 100%;
-  max-width: 1000px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
