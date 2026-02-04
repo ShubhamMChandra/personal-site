@@ -74,8 +74,8 @@
   --page-spine: #e8e0d4;
   --page-rule: rgba(26, 23, 20, 0.12);
   
-  /* Accent - subtle crimson nod */
-  --accent-crimson: #8b2332;
+  /* Accent - UChicago maroon */
+  --accent-maroon: #800000;
 
   /* Typography */
   --font-serif: 'Cormorant Garamond', Georgia, serif;
@@ -1977,7 +1977,7 @@ body.has-custom-cursor * {
 }
 
 .chapter-company a:hover {
-  border-bottom-color: var(--accent-crimson);
+  border-bottom-color: var(--accent-maroon);
 }
 
 .chapter-backing a {
@@ -1988,7 +1988,7 @@ body.has-custom-cursor * {
 }
 
 .chapter-backing a:hover {
-  border-bottom-color: var(--accent-crimson);
+  border-bottom-color: var(--accent-maroon);
 }
 
 .chapter-role {
@@ -2089,7 +2089,7 @@ body.has-custom-cursor * {
 
 .toc-entry:focus {
   outline: none;
-  border-bottom-color: var(--accent-crimson);
+  border-bottom-color: var(--accent-maroon);
 }
 
 .toc-entry-title {
@@ -2103,7 +2103,7 @@ body.has-custom-cursor * {
 }
 
 .toc-entry:hover .toc-entry-title {
-  color: var(--accent-crimson);
+  color: var(--accent-maroon);
 }
 
 .toc-entry-meta {
@@ -2185,7 +2185,7 @@ body.has-custom-cursor * {
 }
 
 .engagement-title a:hover {
-  border-bottom-color: var(--accent-crimson);
+  border-bottom-color: var(--accent-maroon);
 }
 
 .engagement-role {
@@ -2566,7 +2566,7 @@ body.has-custom-cursor * {
 }
 
 .currently-value a:hover {
-  border-bottom-color: var(--accent-crimson);
+  border-bottom-color: var(--accent-maroon);
 }
 
 .education-note {
@@ -2632,7 +2632,7 @@ body.has-custom-cursor * {
 .status-dot {
   width: 5px;
   height: 5px;
-  background: var(--accent-crimson);
+  background: var(--accent-maroon);
   border-radius: 50%;
   animation: pulse var(--duration-slow) ease-in-out infinite;
 }
@@ -2717,8 +2717,8 @@ body.has-custom-cursor * {
 }
 
 .contact-email:hover {
-  color: var(--accent-crimson);
-  border-color: var(--accent-crimson);
+  color: var(--accent-maroon);
+  border-color: var(--accent-maroon);
 }
 
 .social-links {
