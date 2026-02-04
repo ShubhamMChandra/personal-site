@@ -69,6 +69,8 @@ class CustomCursor {
                 this.isVisible = true;
                 this.cursorPos = { ...this.mouse };
                 this.ringPos = { ...this.mouse };
+                // Only hide default cursor after custom cursor is visible
+                document.body.classList.add('has-custom-cursor');
             }
         });
 

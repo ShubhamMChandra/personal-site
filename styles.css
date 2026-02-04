@@ -715,35 +715,34 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    width: var(--cursor-size);
-    height: var(--cursor-size);
-    background: var(--text);
+    width: 12px;
+    height: 12px;
+    background: #e8f4f2;
     border-radius: 50%;
     pointer-events: none;
     z-index: 9999;
     transform: translate(-50%, -50%);
-    transition: width var(--duration-fast) var(--ease-out-expo),
-                height var(--duration-fast) var(--ease-out-expo),
-                opacity var(--duration-fast) var(--ease-out-expo),
-                background var(--duration-fast) var(--ease-out-expo);
+    transition: width 0.15s cubic-bezier(0.16, 1, 0.3, 1),
+                height 0.15s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.15s cubic-bezier(0.16, 1, 0.3, 1),
+                background 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .cursor-ring {
     position: fixed;
     top: 0;
     left: 0;
-    width: var(--cursor-ring-size);
-    height: var(--cursor-ring-size);
-    border: 1px solid var(--accent);
+    width: 40px;
+    height: 40px;
+    border: 1px solid #4ecdc4;
     border-radius: 50%;
     pointer-events: none;
     z-index: 9998;
     transform: translate(-50%, -50%);
     opacity: 0.5;
-    transition: width var(--duration-medium) var(--ease-out-expo),
-                height var(--duration-medium) var(--ease-out-expo),
-                opacity var(--duration-medium) var(--ease-out-expo),
-                border-color var(--duration-medium) var(--ease-out-expo);
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .cursor-text {
@@ -752,26 +751,25 @@ body {
     left: 0;
     pointer-events: none;
     z-index: 9999;
-    font-family: var(--font-mono);
-    font-size: var(--text-label);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
     text-transform: uppercase;
-    letter-spacing: var(--text-label-tracking);
-    color: var(--accent);
+    letter-spacing: 0.12em;
+    color: #4ecdc4;
     opacity: 0;
-    transform: translate(-50%, -50%);
-    transition: opacity var(--duration-medium) var(--ease-out-expo);
+    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     white-space: nowrap;
 }
 
 /* Cursor states */
 .cursor.is-hovering {
-    width: calc(var(--cursor-size) * 0.5);
-    height: calc(var(--cursor-size) * 0.5);
+    width: 6px;
+    height: 6px;
 }
 
 .cursor-ring.is-hovering {
-    width: calc(var(--cursor-ring-size) * var(--cursor-expand-scale));
-    height: calc(var(--cursor-ring-size) * var(--cursor-expand-scale));
+    width: 60px;
+    height: 60px;
     opacity: 0.8;
 }
 
@@ -816,14 +814,9 @@ body {
 }
 
 /* Hide default cursor when custom cursor is active */
-@media (hover: hover) and (pointer: fine) {
-    body {
-        cursor: none;
-    }
-
-    a, button, [data-cursor] {
-        cursor: none;
-    }
+.has-custom-cursor,
+.has-custom-cursor * {
+    cursor: none !important;
 }
 
 /* ─────────────────────────────────────────────────────────────
