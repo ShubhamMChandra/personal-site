@@ -1402,115 +1402,129 @@ body.has-custom-cursor * {
   perspective: 1800px;
 }
 
-/* Page Edge Effects - stacked pages with cover binding */
+/* Page Edge Effects - solid cover with page edges */
 .page-edge {
-  width: 18px;
+  width: 20px;
   height: 92%;
   flex-shrink: 0;
   position: relative;
+  display: flex;
 }
 
+/* Left edge: Cover (outer) + Pages (inner) */
 .page-edge-left {
   border-radius: 4px 0 0 4px;
-  background:
-    /* Individual page lines */
-    repeating-linear-gradient(
-      to bottom,
-      #f5f0e6 0px,
-      #f5f0e6 1px,
-      #e8e0d4 1px,
-      #e8e0d4 2px,
-      #f2ede3 2px,
-      #f2ede3 3px
-    ),
-    /* Base gradient for depth */
-    linear-gradient(
-      90deg,
-      #c8c0b4 0%,
-      #dcd4c8 25%,
-      #ebe4d8 100%
-    );
-  box-shadow:
-    -4px 0 12px rgba(0, 0, 0, 0.3),
-    -1px 0 3px rgba(0, 0, 0, 0.15),
-    inset 3px 0 6px rgba(255, 255, 255, 0.2);
+  overflow: hidden;
 }
 
-/* Left cover binding strip */
+/* Solid cover portion - left */
 .page-edge-left::before {
   content: '';
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
-  width: 4px;
+  width: 10px;
+  background: var(--book-work);
   border-radius: 4px 0 0 4px;
-  background: var(--book-work); /* Default, overridden per book */
-  box-shadow: inset -1px 0 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 
+    inset -2px 0 4px rgba(0, 0, 0, 0.4),
+    inset 2px 0 3px rgba(255, 255, 255, 0.1);
 }
 
-.page-edge-right {
-  border-radius: 0 4px 4px 0;
+/* Page edges portion - left */
+.page-edge-left::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 2px;
+  bottom: 2px;
+  width: 10px;
   background:
-    /* Individual page lines */
     repeating-linear-gradient(
       to bottom,
-      #f5f0e6 0px,
-      #f5f0e6 1px,
+      #f8f4ec 0px,
+      #f8f4ec 1px,
       #e8e0d4 1px,
-      #e8e0d4 2px,
-      #f2ede3 2px,
-      #f2ede3 3px
+      #e8e0d4 2px
     ),
-    /* Base gradient for depth */
-    linear-gradient(
-      90deg,
-      #ebe4d8 0%,
-      #dcd4c8 75%,
-      #c8c0b4 100%
-    );
-  box-shadow:
-    4px 0 12px rgba(0, 0, 0, 0.3),
-    1px 0 3px rgba(0, 0, 0, 0.15),
-    inset -3px 0 6px rgba(255, 255, 255, 0.2);
+    linear-gradient(90deg, #d0c8bc 0%, #f0ebe0 100%);
+  box-shadow: inset 2px 0 3px rgba(0, 0, 0, 0.1);
 }
 
-/* Right cover binding strip */
+/* Right edge: Pages (inner) + Cover (outer) */
+.page-edge-right {
+  border-radius: 0 4px 4px 0;
+  overflow: hidden;
+}
+
+/* Page edges portion - right */
 .page-edge-right::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 2px;
+  bottom: 2px;
+  width: 10px;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      #f8f4ec 0px,
+      #f8f4ec 1px,
+      #e8e0d4 1px,
+      #e8e0d4 2px
+    ),
+    linear-gradient(90deg, #f0ebe0 0%, #d0c8bc 100%);
+  box-shadow: inset -2px 0 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Solid cover portion - right */
+.page-edge-right::after {
   content: '';
   position: absolute;
   right: 0;
   top: 0;
   bottom: 0;
-  width: 4px;
+  width: 10px;
+  background: var(--book-work);
   border-radius: 0 4px 4px 0;
-  background: var(--book-work); /* Default, overridden per book */
-  box-shadow: inset 1px 0 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 
+    inset 2px 0 4px rgba(0, 0, 0, 0.4),
+    inset -2px 0 3px rgba(255, 255, 255, 0.1);
+}
+
+/* Overall edge shadows */
+.page-edge-left {
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.35);
+}
+
+.page-edge-right {
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.35);
 }
 
 /* Book-specific cover colors */
 .book-view[data-active-book="work"] .page-edge-left::before,
-.book-view[data-active-book="work"] .page-edge-right::before {
+.book-view[data-active-book="work"] .page-edge-right::after {
   background: var(--book-work);
 }
 
 .book-view[data-active-book="about"] .page-edge-left::before,
-.book-view[data-active-book="about"] .page-edge-right::before {
+.book-view[data-active-book="about"] .page-edge-right::after {
   background: var(--book-about);
 }
 
 .book-view[data-active-book="contact"] .page-edge-left::before,
-.book-view[data-active-book="contact"] .page-edge-right::before {
+.book-view[data-active-book="contact"] .page-edge-right::after {
   background: var(--book-contact);
 }
 
 .book-view[data-active-book="references"] .page-edge-left::before,
-.book-view[data-active-book="references"] .page-edge-right::before {
+.book-view[data-active-book="references"] .page-edge-right::after {
   background: var(--book-references);
 }
 
 .book-view[data-active-book="mystery"] .page-edge-left::before,
-.book-view[data-active-book="mystery"] .page-edge-right::before {
+.book-view[data-active-book="mystery"] .page-edge-right::after {
   background: var(--book-mystery);
 }
 
