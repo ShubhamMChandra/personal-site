@@ -1,210 +1,348 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shubham Chandra</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shubham Chandra</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Space+Grotesk:wght@400;500;600&family=Space+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Page loader -->
-    <div class="page-loader"></div>
+  <!-- Custom Cursor -->
+  <div class="cursor"></div>
+  <div class="cursor-ring"></div>
 
-    <!-- Minimal fixed nav -->
-    <nav class="nav">
-        <a href="#work" class="nav-link link-animated">Work</a>
-        <a href="#about" class="nav-link link-animated">About</a>
-        <a href="#contact" class="nav-link link-animated">Contact</a>
-    </nav>
+  <!-- Collapsed Navigation (hidden initially, shown when book is open) -->
+  <nav class="collapsed-nav" aria-label="Book navigation">
+    <button class="nav-shelf-btn" data-action="return-to-shelf" aria-label="Return to bookshelf">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        <path d="M8 7h8M8 11h8M8 15h4"/>
+      </svg>
+    </button>
+    <div class="nav-books">
+      <button class="nav-book-btn" data-book="work">Work</button>
+      <button class="nav-book-btn" data-book="about">About</button>
+      <button class="nav-book-btn" data-book="contact">Contact</button>
+    </div>
+  </nav>
 
-    <!-- Hero - asymmetric, bold -->
-    <section class="hero">
-        <div class="hero-content">
-            <p class="hero-label" data-reveal="0">Creative Developer</p>
-            <h1 class="hero-title">
-                <span class="line" data-reveal="0.1">
-                    <span class="reveal-inner">I craft digital</span>
-                </span>
-                <span class="line" data-reveal="0.2">
-                    <span class="reveal-inner">experiences with</span>
-                </span>
-                <span class="line" data-reveal="0.3">
-                    <span class="reveal-inner"><em>intention</em></span>
-                </span>
-            </h1>
+  <!-- Main Bookshelf View -->
+  <main class="bookshelf-scene">
+    <!-- Atmospheric space above shelf -->
+    <div class="atmosphere">
+      <div class="warm-glow"></div>
+    </div>
+
+    <!-- The Bookshelf -->
+    <div class="bookshelf">
+      <!-- Book Spines -->
+      <div class="books">
+        <button class="book" data-book="work" aria-label="Open Work book">
+          <div class="book-spine">
+            <span class="spine-text">Work</span>
+          </div>
+          <div class="book-edge"></div>
+        </button>
+
+        <button class="book" data-book="about" aria-label="Open About book">
+          <div class="book-spine">
+            <span class="spine-text">About</span>
+          </div>
+          <div class="book-edge"></div>
+        </button>
+
+        <button class="book" data-book="contact" aria-label="Open Contact book">
+          <div class="book-spine">
+            <span class="spine-text">Contact</span>
+          </div>
+          <div class="book-edge"></div>
+        </button>
+
+        <!-- Mystery book - coming soon -->
+        <button class="book book-mystery" data-book="mystery" aria-label="Coming soon" disabled>
+          <div class="book-spine">
+            <span class="spine-text">???</span>
+          </div>
+          <div class="book-edge"></div>
+          <div class="mystery-glow"></div>
+        </button>
+      </div>
+
+      <!-- Shelf Surface -->
+      <div class="shelf-surface">
+        <div class="shelf-top"></div>
+        <div class="shelf-front">
+          <div class="nameplate">
+            <span class="nameplate-name">Shubham Chandra</span>
+            <span class="nameplate-title">Developer & Designer</span>
+          </div>
         </div>
-        <div class="hero-side" data-reveal="0.5">
-            <div class="status">
-                <span class="status-dot"></span>
-                Available for projects
-            </div>
-            <p class="hero-sub">
-                Currently in San Francisco, crafting products
-                for people who value the details.
-            </p>
-        </div>
-        <div class="scroll-hint" data-reveal="0.7">
-            <span>Scroll</span>
-            <div class="scroll-progress"></div>
-        </div>
-    </section>
+      </div>
+    </div>
+  </main>
 
-    <!-- Selected Work - Sequoia-inspired gallery -->
-    <section id="work" class="work" data-scroll-reveal>
-        <header class="section-header">
-            <span class="section-number">01</span>
-            <h2>Selected Work</h2>
-        </header>
+  <!-- Open Book View (hidden initially) -->
+  <div class="book-view" aria-hidden="true">
+    <div class="book-container">
+      <!-- Left page edge effect -->
+      <div class="page-edge page-edge-left"></div>
 
-        <div class="projects-gallery" data-scroll-stagger>
-            <a href="#" class="project-card" data-cursor="project" data-preview="/images/project-1.jpg">
-                <span class="project-index">01</span>
-                <div class="project-card-content">
-                    <h3 class="project-card-title">Project Name</h3>
-                    <div class="project-card-meta">
-                        <span>Web App</span>
-                        <span>2024</span>
-                    </div>
-                </div>
-                <div class="project-arrow">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M7 17L17 7M17 7H7M17 7V17"/>
-                    </svg>
-                </div>
-            </a>
-
-            <a href="#" class="project-card" data-cursor="project" data-preview="/images/project-2.jpg">
-                <span class="project-index">02</span>
-                <div class="project-card-content">
-                    <h3 class="project-card-title">Another Project</h3>
-                    <div class="project-card-meta">
-                        <span>Website</span>
-                        <span>2024</span>
-                    </div>
-                </div>
-                <div class="project-arrow">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M7 17L17 7M17 7H7M17 7V17"/>
-                    </svg>
-                </div>
-            </a>
-
-            <a href="#" class="project-card" data-cursor="project" data-preview="/images/project-3.jpg">
-                <span class="project-index">03</span>
-                <div class="project-card-content">
-                    <h3 class="project-card-title">Third Project</h3>
-                    <div class="project-card-meta">
-                        <span>Platform</span>
-                        <span>2023</span>
-                    </div>
-                </div>
-                <div class="project-arrow">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M7 17L17 7M17 7H7M17 7V17"/>
-                    </svg>
-                </div>
-            </a>
-        </div>
-    </section>
-
-    <!-- About - two column, offset -->
-    <section id="about" class="about">
-        <header class="section-header" data-scroll-reveal>
-            <span class="section-number">02</span>
-            <h2>About</h2>
-        </header>
-
-        <div class="about-grid">
-            <div class="about-main" data-scroll-reveal data-scroll-delay="0.1">
-                <p class="about-lead">
-                    I'm a developer and designer who believes the best
-                    digital products are the ones you don't notice using.
-                </p>
-                <p>
-                    My work sits at the intersection of engineering and aesthetics.
-                    I care deeply about the invisible things: how an interaction feels,
-                    the rhythm of a scroll, the moment of delight that makes
-                    someone pause and think "this is nice."
-                </p>
-                <p>
-                    Before this, I spent time building products at startups where
-                    moving fast meant nothing without building right. Now I help
-                    companies and individuals create digital experiences that
-                    stand out by being genuinely thoughtful.
-                </p>
-
-                <!-- Currently widget -->
-                <div class="currently" data-scroll-reveal data-scroll-delay="0.3">
-                    <h4>Currently</h4>
-                    <div class="currently-item">
-                        <span class="currently-label">Exploring</span>
-                        <span class="currently-value">WebGL shaders, generative art</span>
-                    </div>
-                </div>
-            </div>
-
-            <aside class="about-aside" data-scroll-reveal data-scroll-delay="0.2">
-                <div class="experience">
-                    <h4>Experience</h4>
-                    <ul>
-                        <li>
-                            <span class="exp-role">Senior Developer</span>
-                            <span class="exp-company">Studio Name — Present</span>
-                        </li>
-                        <li>
-                            <span class="exp-role">Full-Stack Engineer</span>
-                            <span class="exp-company">Startup Co — 2023</span>
-                        </li>
-                        <li>
-                            <span class="exp-role">Freelance</span>
-                            <span class="exp-company">Independent — 2022</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="skills">
-                    <h4>Capabilities</h4>
-                    <ul>
-                        <li>Product Design</li>
-                        <li>Frontend Development</li>
-                        <li>Interaction Design</li>
-                        <li>Creative Development</li>
-                        <li>Design Systems</li>
-                    </ul>
-                </div>
-            </aside>
-        </div>
-    </section>
-
-    <!-- Contact - bold, simple -->
-    <section id="contact" class="contact">
-        <div class="contact-content" data-scroll-reveal>
-            <p class="contact-label">Got a project in mind?</p>
-            <h2 class="contact-title" data-reveal="0">
-                <span class="reveal-inner">Let's talk.</span>
-            </h2>
-            <a href="mailto:your@email.com" class="contact-email link-animated glow-hover">your@email.com</a>
+      <!-- The open book -->
+      <div class="open-book">
+        <!-- Left Page -->
+        <div class="page page-left">
+          <div class="page-content" data-page="left"></div>
+          <div class="page-curl"></div>
         </div>
 
-        <div class="contact-links" data-scroll-reveal data-scroll-delay="0.2">
-            <a href="#" class="link-animated">LinkedIn</a>
-            <a href="#" class="link-animated">GitHub</a>
-            <a href="#" class="link-animated">Twitter</a>
+        <!-- Center Spine -->
+        <div class="book-spine-center"></div>
+
+        <!-- Right Page -->
+        <div class="page page-right">
+          <div class="page-content" data-page="right"></div>
+          <div class="page-curl"></div>
         </div>
-    </section>
+      </div>
 
-    <!-- Footer - just the essentials -->
-    <footer class="footer" data-scroll-reveal>
-        <p>© 2025</p>
-        <p>Crafted with care</p>
-    </footer>
+      <!-- Right page edge effect -->
+      <div class="page-edge page-edge-right"></div>
+    </div>
 
-    <!-- Scripts -->
-    <script src="scripts/cursor.js"></script>
-    <script src="scripts/scroll-reveal.js"></script>
-    <script src="scripts/main.js"></script>
+    <!-- Page Navigation -->
+    <div class="page-nav">
+      <button class="page-nav-btn page-prev" aria-label="Previous page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </button>
+      <span class="page-indicator">
+        <span class="current-page">1</span>
+        <span class="page-sep">of</span>
+        <span class="total-pages">4</span>
+      </span>
+      <button class="page-nav-btn page-next" aria-label="Next page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Book Contents (data, rendered into pages) -->
+  <template id="work-book">
+    <!-- Page 1: Tempo -->
+    <article class="book-page" data-page-num="1">
+      <header class="project-header">
+        <span class="project-label">Featured Project</span>
+        <h2 class="project-title">Tempo</h2>
+      </header>
+      <p class="project-description">
+        A minimalist time-tracking app for freelancers who hate time-tracking.
+        Sits quietly in your menubar, learns your patterns, and generates
+        invoices that don't make clients wince.
+      </p>
+      <div class="project-image">
+        <div class="image-placeholder">Tempo Dashboard</div>
+      </div>
+      <div class="project-meta">
+        <div class="meta-item">
+          <span class="meta-label">Role</span>
+          <span class="meta-value">Design & Development</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Tech</span>
+          <span class="meta-value">Electron, React, SQLite</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Year</span>
+          <span class="meta-value">2025</span>
+        </div>
+      </div>
+      <a href="#" class="project-link">View Project</a>
+    </article>
+
+    <!-- Page 2: Wanderlust -->
+    <article class="book-page" data-page-num="2">
+      <header class="project-header">
+        <span class="project-label">Web Application</span>
+        <h2 class="project-title">Wanderlust</h2>
+      </header>
+      <p class="project-description">
+        A travel journal that turns your trips into visual stories. Upload photos,
+        drop pins, and watch your journey unfold as an interactive map
+        you'll actually want to share.
+      </p>
+      <div class="project-image">
+        <div class="image-placeholder">Wanderlust Map View</div>
+      </div>
+      <div class="project-meta">
+        <div class="meta-item">
+          <span class="meta-label">Role</span>
+          <span class="meta-value">Frontend Development</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Tech</span>
+          <span class="meta-value">Next.js, Mapbox, Cloudinary</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Year</span>
+          <span class="meta-value">2024</span>
+        </div>
+      </div>
+      <a href="#" class="project-link">View Project</a>
+    </article>
+
+    <!-- Page 3: Nexus -->
+    <article class="book-page" data-page-num="3">
+      <header class="project-header">
+        <span class="project-label">Developer Tool</span>
+        <h2 class="project-title">Nexus</h2>
+      </header>
+      <p class="project-description">
+        A CLI that connects your scattered dev tools into one workflow.
+        GitHub, Linear, Slack, Notion—unified under commands that
+        actually make sense. Because context-switching is a bug.
+      </p>
+      <div class="project-image">
+        <div class="image-placeholder">Nexus Terminal</div>
+      </div>
+      <div class="project-meta">
+        <div class="meta-item">
+          <span class="meta-label">Role</span>
+          <span class="meta-value">Full-Stack Development</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Tech</span>
+          <span class="meta-value">Go, OAuth2, REST APIs</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Year</span>
+          <span class="meta-value">2024</span>
+        </div>
+      </div>
+      <a href="#" class="project-link">View Project</a>
+    </article>
+  </template>
+
+  <template id="about-book">
+    <!-- Page 1: Introduction -->
+    <article class="book-page" data-page-num="1">
+      <header class="about-header">
+        <h2>Hello, I'm Shubham</h2>
+      </header>
+      <p class="about-lead">
+        I'm a developer and designer who believes the best digital products
+        are the ones you don't notice using.
+      </p>
+      <p>
+        My work sits at the intersection of engineering and aesthetics.
+        I care deeply about the invisible things: how an interaction feels,
+        the rhythm of a scroll, the moment of delight that makes someone
+        pause and think "this is nice."
+      </p>
+      <p>
+        I've spent the last few years building products at startups where
+        moving fast meant nothing without building right. Now I focus on
+        creating digital experiences that stand out by being genuinely
+        thoughtful—not loud.
+      </p>
+    </article>
+
+    <!-- Page 2: Experience -->
+    <article class="book-page" data-page-num="2">
+      <header class="about-header">
+        <h2>Experience</h2>
+      </header>
+      <div class="experience-list">
+        <div class="experience-item">
+          <span class="exp-role">Senior Frontend Engineer</span>
+          <span class="exp-company">Vercel</span>
+          <span class="exp-period">Present</span>
+        </div>
+        <div class="experience-item">
+          <span class="exp-role">Full-Stack Developer</span>
+          <span class="exp-company">Linear</span>
+          <span class="exp-period">2023</span>
+        </div>
+        <div class="experience-item">
+          <span class="exp-role">Frontend Engineer</span>
+          <span class="exp-company">Stripe</span>
+          <span class="exp-period">2021</span>
+        </div>
+      </div>
+      <div class="capabilities">
+        <h3>Capabilities</h3>
+        <ul>
+          <li>Product Design</li>
+          <li>Frontend Development</li>
+          <li>Interaction Design</li>
+          <li>Creative Development</li>
+          <li>Design Systems</li>
+        </ul>
+      </div>
+    </article>
+
+    <!-- Page 3: Currently -->
+    <article class="book-page" data-page-num="3">
+      <header class="about-header">
+        <h2>Currently</h2>
+      </header>
+      <div class="currently-section">
+        <div class="currently-item">
+          <span class="currently-label">Exploring</span>
+          <span class="currently-value">WebGL shaders, generative art</span>
+        </div>
+        <div class="currently-item">
+          <span class="currently-label">Reading</span>
+          <span class="currently-value">A Philosophy of Software Design</span>
+        </div>
+        <div class="currently-item">
+          <span class="currently-label">Building</span>
+          <span class="currently-value">Tools that make devs' lives easier</span>
+        </div>
+        <div class="currently-item">
+          <span class="currently-label">Location</span>
+          <span class="currently-value">San Francisco, CA</span>
+        </div>
+      </div>
+      <div class="availability">
+        <span class="status-dot"></span>
+        <span>Available for projects</span>
+      </div>
+    </article>
+  </template>
+
+  <template id="contact-book">
+    <!-- Single Page: Contact -->
+    <article class="book-page contact-page" data-page-num="1">
+      <header class="contact-header">
+        <span class="contact-label">Got a project in mind?</span>
+        <h2>Let's talk.</h2>
+      </header>
+      <p class="contact-note">
+        I'm always interested in hearing about new projects and opportunities.
+        Whether you have a question or just want to say hi, feel free to reach out.
+      </p>
+      <a href="mailto:hello@shubham.dev" class="contact-email">hello@shubham.dev</a>
+      <div class="social-links">
+        <a href="https://linkedin.com/in/" class="social-link">LinkedIn</a>
+        <a href="https://github.com/" class="social-link">GitHub</a>
+        <a href="https://twitter.com/" class="social-link">Twitter</a>
+      </div>
+      <footer class="book-footer">
+        <p>© 2026 · Crafted with care</p>
+      </footer>
+    </article>
+  </template>
+
+  <script src="scripts/cursor.js"></script>
+  <script src="scripts/bookshelf.js"></script>
+  <script src="scripts/book.js"></script>
+  <script src="scripts/main.js"></script>
 </body>
 </html>
