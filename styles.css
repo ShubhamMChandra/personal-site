@@ -446,29 +446,29 @@ body.has-custom-cursor * {
   height: 35px;
 }
 
-/* Filament stem */
+/* Filament stem - connects socket to coil */
 .filament-stem {
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 2px;
-  height: 15px;
+  height: 12px;
   background: linear-gradient(
     180deg,
-    rgba(255, 200, 120, 0.6) 0%,
-    rgba(80, 60, 40, 0.8) 100%
+    rgba(80, 60, 40, 0.8) 0%,
+    rgba(255, 200, 120, 0.6) 100%
   );
 }
 
-/* Filament coil - the glowing part */
+/* Filament coil - the glowing part, hangs below stem */
 .filament-coil {
   position: absolute;
-  top: 2px;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
   width: 14px;
-  height: 20px;
+  height: 22px;
   background:
     /* Coil shape using gradients */
     radial-gradient(ellipse 100% 30% at 50% 15%, rgba(255, 200, 130, 0.9) 0%, transparent 70%),
@@ -2975,9 +2975,9 @@ body.has-custom-cursor * {
 .reference-attribution {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: flex-start;
-  padding: var(--space-lg) var(--space-md);
+  padding: var(--space-xl) var(--space-md) var(--space-lg);
 }
 
 .reference-label {
@@ -3034,8 +3034,8 @@ body.has-custom-cursor * {
 .reference-quote-page {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: var(--space-md);
+  justify-content: flex-start;
+  padding: var(--space-xl) var(--space-md) var(--space-md);
 }
 
 .reference-quote-page .reference-quote {
@@ -3273,4 +3273,9 @@ body.has-custom-cursor * {
   }
 
   /* Cursor still works with reduced motion - it's not animated */
+
+  /* Exception: filament glow is subtle and non-disorienting */
+  .filament-coil {
+    animation: filamentGlow 4s ease-in-out infinite !important;
+  }
 }
