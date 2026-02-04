@@ -113,6 +113,8 @@
 
 html {
   font-size: 16px;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
 }
 
 body {
@@ -121,6 +123,7 @@ body {
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
+  overscroll-behavior-x: none;
   -webkit-font-smoothing: antialiased;
 }
 
