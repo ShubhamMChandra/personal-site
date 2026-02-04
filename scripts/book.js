@@ -13,6 +13,10 @@ class Book {
     this.currentPageEl = document.querySelector('.current-page')
     this.totalPagesEl = document.querySelector('.total-pages')
 
+    // Page curl elements for click-to-turn
+    this.leftPageCurl = document.querySelector('.page-left .page-curl')
+    this.rightPageCurl = document.querySelector('.page-right .page-curl')
+
     this.currentBook = null
     this.pages = []
     this.currentPage = 0
@@ -32,6 +36,33 @@ class Book {
 
     if (this.nextBtn) {
       this.nextBtn.addEventListener('click', () => this.nextPage())
+    }
+
+    // Page curl click handlers
+    if (this.leftPageCurl) {
+      this.leftPageCurl.addEventListener('click', () => this.prevPage())
+      this.leftPageCurl.setAttribute('role', 'button')
+      this.leftPageCurl.setAttribute('aria-label', 'Previous page')
+      this.leftPageCurl.setAttribute('tabindex', '0')
+      this.leftPageCurl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          this.prevPage()
+        }
+      })
+    }
+
+    if (this.rightPageCurl) {
+      this.rightPageCurl.addEventListener('click', () => this.nextPage())
+      this.rightPageCurl.setAttribute('role', 'button')
+      this.rightPageCurl.setAttribute('aria-label', 'Next page')
+      this.rightPageCurl.setAttribute('tabindex', '0')
+      this.rightPageCurl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          this.nextPage()
+        }
+      })
     }
 
     // Keyboard navigation
@@ -85,35 +116,43 @@ class Book {
       return
     }
 
-    // For desktop: show two pages (left and right)
-    // For mobile: only right page is visible
     const isMobile = window.innerWidth <= 900
+    const currentSpread = this.pages[this.currentPage]
 
-    if (isMobile) {
-      // Mobile: single page view
-      this.rightPage.innerHTML = ''
-      if (this.pages[this.currentPage]) {
-        this.rightPage.appendChild(this.pages[this.currentPage].cloneNode(true))
+    this.leftPage.innerHTML = ''
+    this.rightPage.innerHTML = ''
+
+    if (!currentSpread) return
+
+    // Check if this is a two-page spread (has .spread-left and .spread-right)
+    const leftContent = currentSpread.querySelector('.spread-left')
+    const rightContent = currentSpread.querySelector('.spread-right')
+
+    if (leftContent && rightContent) {
+      // Two-page spread layout
+      if (isMobile) {
+        // Mobile: show right content only, or combine both
+        this.rightPage.appendChild(rightContent.cloneNode(true))
+      } else {
+        this.leftPage.appendChild(leftContent.cloneNode(true))
+        this.rightPage.appendChild(rightContent.cloneNode(true))
       }
     } else {
-      // Desktop: two page spread
-      // Left page shows nothing on first page, or previous info
-      this.leftPage.innerHTML = ''
-      this.rightPage.innerHTML = ''
-
-      if (this.pages[this.currentPage]) {
-        this.rightPage.appendChild(this.pages[this.currentPage].cloneNode(true))
-      }
-
-      // Optionally show book title or chapter info on left
-      if (this.currentPage === 0 && this.currentBook) {
-        const titleDiv = document.createElement('div')
-        titleDiv.className = 'book-title-page'
-        titleDiv.innerHTML = `
-          <span class="book-chapter">Chapter ${this.currentPage + 1}</span>
-          <h2 class="book-section-title">${this.formatBookTitle(this.currentBook)}</h2>
-        `
-        this.leftPage.appendChild(titleDiv)
+      // Legacy single-page layout (fallback)
+      if (isMobile) {
+        this.rightPage.appendChild(currentSpread.cloneNode(true))
+      } else {
+        this.rightPage.appendChild(currentSpread.cloneNode(true))
+        // Show chapter title on left for first page
+        if (this.currentPage === 0 && this.currentBook) {
+          const titleDiv = document.createElement('div')
+          titleDiv.className = 'book-title-page'
+          titleDiv.innerHTML = `
+            <span class="book-chapter">Chapter ${this.currentPage + 1}</span>
+            <h2 class="book-section-title">${this.formatBookTitle(this.currentBook)}</h2>
+          `
+          this.leftPage.appendChild(titleDiv)
+        }
       }
     }
 
@@ -143,11 +182,24 @@ class Book {
   }
 
   updateNavButtons() {
+    const isFirstPage = this.currentPage === 0
+    const isLastPage = this.currentPage >= this.pages.length - 1
+
     if (this.prevBtn) {
-      this.prevBtn.disabled = this.currentPage === 0
+      this.prevBtn.disabled = isFirstPage
     }
     if (this.nextBtn) {
-      this.nextBtn.disabled = this.currentPage >= this.pages.length - 1
+      this.nextBtn.disabled = isLastPage
+    }
+
+    // Update page curl states
+    if (this.leftPageCurl) {
+      this.leftPageCurl.classList.toggle('is-disabled', isFirstPage)
+      this.leftPageCurl.setAttribute('aria-disabled', isFirstPage)
+    }
+    if (this.rightPageCurl) {
+      this.rightPageCurl.classList.toggle('is-disabled', isLastPage)
+      this.rightPageCurl.setAttribute('aria-disabled', isLastPage)
     }
   }
 

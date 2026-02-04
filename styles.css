@@ -1,5 +1,23 @@
 /* ═══════════════════════════════════════════════════════════
    THE BOOKSHELF - An Immersive Portfolio Experience
+   ═══════════════════════════════════════════════════════════
+
+   TABLE OF CONTENTS:
+   ------------------
+   1. VARIABLES & BASE ........... Line ~11
+   2. CUSTOM CURSOR .............. Line ~85
+   3. COLLAPSED NAVIGATION ....... Line ~190
+   4. BOOKSHELF SCENE ............ Line ~260
+      - Atmosphere & Bulb
+      - Books Container
+      - Book Spines
+      - Shelf Surface
+   5. BOOK VIEW (Open Book) ...... Line ~1290
+      - Page Layout
+      - Page Content Styles
+   6. ANIMATIONS ................. Line ~1050
+   7. RESPONSIVE ................. Line ~1940
+
    ═══════════════════════════════════════════════════════════ */
 
 *, *::before, *::after {
@@ -226,6 +244,11 @@ body.has-custom-cursor * {
   color: var(--accent);
 }
 
+.nav-shelf-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .nav-shelf-btn svg {
   width: 16px;
   height: 16px;
@@ -251,6 +274,11 @@ body.has-custom-cursor * {
 .nav-book-btn:hover,
 .nav-book-btn.is-active {
   color: var(--accent);
+}
+
+.nav-book-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -458,6 +486,7 @@ body.has-custom-cursor * {
     transparent 70%
   );
   pointer-events: none;
+  contain: strict;
 }
 
 /* Floating dust in light */
@@ -993,6 +1022,11 @@ body.has-custom-cursor * {
   animation:
     bookSlideIn 0.8s var(--ease-out-expo) both,
     bookBreathe 4s ease-in-out 1.5s infinite;
+  will-change: transform;
+}
+
+.books .book:hover {
+  animation-play-state: paused, paused;
 }
 
 .books .book:nth-child(4) {
@@ -1437,6 +1471,25 @@ body.has-custom-cursor * {
       #f3ede3 100%
     );
   background-blend-mode: soft-light, normal;
+  scrollbar-width: thin;
+  scrollbar-color: var(--page-secondary) transparent;
+}
+
+.page::-webkit-scrollbar {
+  width: 6px;
+}
+
+.page::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.page::-webkit-scrollbar-thumb {
+  background: var(--page-secondary);
+  border-radius: 3px;
+}
+
+.page::-webkit-scrollbar-thumb:hover {
+  background: var(--page-text);
 }
 
 /* Left page - tilts up slightly, shadow toward spine */
@@ -1464,13 +1517,37 @@ body.has-custom-cursor * {
   margin: 0 auto;
 }
 
-/* Page Curl Effect */
+/* Page Curl Effect - Interactive page turn triggers */
 .page-curl {
   position: absolute;
   bottom: 0;
   width: 80px;
   height: 80px;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-out-expo),
+              filter var(--duration-fast) var(--ease-out-expo);
+  z-index: 10;
+}
+
+.page-curl:hover {
+  transform: scale(1.1);
+  filter: brightness(0.95);
+}
+
+.page-curl:active {
+  transform: scale(1.05);
+}
+
+.page-curl.is-disabled {
   pointer-events: none;
+  opacity: 0.3;
+  cursor: default;
+}
+
+.page-curl:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .page-left .page-curl {
@@ -1488,6 +1565,10 @@ body.has-custom-cursor * {
   box-shadow: 2px -2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.page-left .page-curl:hover {
+  transform: scale(1.1) rotate(-3deg);
+}
+
 .page-right .page-curl {
   right: 0;
   background:
@@ -1501,6 +1582,10 @@ body.has-custom-cursor * {
       transparent 70%
     );
   box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.page-right .page-curl:hover {
+  transform: scale(1.1) rotate(3deg);
 }
 
 /* Center Spine - deep book binding */
@@ -1581,6 +1666,11 @@ body.has-custom-cursor * {
 
 .page-nav-btn:disabled {
   opacity: 0.3;
+}
+
+.page-nav-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .page-nav-btn svg {
@@ -1703,6 +1793,134 @@ body.has-custom-cursor * {
   color: var(--page-bg);
 }
 
+/* ═══════════════════════════════════════════════════════════
+   TWO-PAGE SPREADS - Chapter Dividers & Role Details
+   ═══════════════════════════════════════════════════════════ */
+
+/* Spread container */
+.spread-left,
+.spread-right {
+  height: 100%;
+}
+
+/* Chapter Divider (Left Page) */
+.chapter-divider {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: var(--space-lg);
+  padding-right: var(--space-xl);
+}
+
+.chapter-period {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--page-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: var(--space-sm);
+}
+
+.chapter-company {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--page-text);
+  line-height: 1.1;
+  margin-bottom: var(--space-xs);
+}
+
+.chapter-role {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--page-secondary);
+  margin-bottom: var(--space-lg);
+}
+
+.chapter-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: var(--space-md);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.chapter-location,
+.chapter-backing {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--page-secondary);
+  letter-spacing: 0.05em;
+}
+
+.chapter-backing {
+  color: var(--page-text);
+  font-weight: 500;
+}
+
+/* Role Details (Right Page) */
+.spread-right {
+  padding: var(--space-lg);
+}
+
+.role-tagline {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--page-text);
+  margin-bottom: var(--space-md);
+  line-height: 1.4;
+}
+
+.role-details {
+  margin-bottom: var(--space-lg);
+}
+
+.role-details p {
+  font-size: 0.95rem;
+  color: var(--page-secondary);
+  line-height: 1.7;
+  margin-bottom: var(--space-sm);
+}
+
+.role-details p:last-child {
+  margin-bottom: 0;
+}
+
+/* Role Metrics */
+.role-metrics {
+  display: flex;
+  gap: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.metric {
+  text-align: center;
+  flex: 1;
+}
+
+.metric-value {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--page-text);
+  line-height: 1.2;
+}
+
+.metric-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--page-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+}
+
 /* About Pages */
 .about-header h2 {
   font-family: var(--font-serif);
@@ -1820,7 +2038,7 @@ body.has-custom-cursor * {
   height: 8px;
   background: var(--accent);
   border-radius: 50%;
-  animation: pulse 2s ease-in-out infinite;
+  animation: pulse var(--duration-slow) ease-in-out infinite;
 }
 
 @keyframes pulse {
@@ -1877,8 +2095,8 @@ body.has-custom-cursor * {
 }
 
 .contact-email:hover {
-  color: #2a7a72;
-  border-color: #2a7a72;
+  color: var(--book-contact-light);
+  border-color: var(--book-contact-light);
 }
 
 .social-links {
