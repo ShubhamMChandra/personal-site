@@ -324,6 +324,7 @@ body.has-custom-cursor * {
   padding-bottom: 5vh;
   padding-top: 10vh;
   position: relative;
+  overflow: hidden;
   transition: transform var(--duration-book) var(--ease-in-out),
               opacity var(--duration-book) var(--ease-in-out);
 }
@@ -1751,9 +1752,7 @@ body.has-custom-cursor * {
   flex: 1;
   padding: 2.125rem;
   position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   background:
@@ -3338,8 +3337,10 @@ body.has-custom-cursor * {
     margin: 0 auto;
     border-radius: 4px 8px 8px 4px;
     overflow: hidden;
-    /* Constrain height and make content scrollable */
-    max-height: calc(100vh - 180px);
+    /* Fixed height so all pages are the same size */
+    height: calc(100vh - 180px);
+    max-height: 600px;
+    min-height: 400px;
     display: flex;
     /* Add book-like left edge (spine indicator) */
     border-left: 6px solid var(--book-work); /* Default, overridden per book */
