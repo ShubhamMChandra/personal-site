@@ -1,3 +1,8 @@
+<!--
+  book-mystery.svg - Mystery Book Spine
+  WHAT: Purple leather spine with "?" symbol, placeholder book
+  WHY:  Visual interest, hints at future content
+-->
 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="300" viewBox="0 0 48 300">
   <defs>
     <linearGradient id="spine-mystery" x1="0%" y1="0%" x2="100%" y2="0%">

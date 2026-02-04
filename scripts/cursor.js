@@ -1,6 +1,14 @@
 /**
- * Custom Cursor System
- * Smooth lerp following with context-aware states
+ * ═══════════════════════════════════════════════════════════
+ * cursor.js - Custom Cursor System
+ * ═══════════════════════════════════════════════════════════
+ *
+ * WHAT:         Custom animated cursor with context-aware states
+ * WHY:          Adds polish with smooth following and hover effects
+ * DEPENDENCIES: None (standalone class, instantiated by main.js)
+ * HOW:          Lerp interpolation, RAF loop, data-cursor attributes
+ *
+ * ═══════════════════════════════════════════════════════════
  */
 
 class CustomCursor {

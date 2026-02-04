@@ -1,3 +1,8 @@
+<!--
+  book-contact.svg - Contact Book Spine
+  WHAT: Forest green leather spine with gold "CONTACT" lettering
+  WHY:  Visual asset for Contact book on the bookshelf
+-->
 <svg xmlns="http://www.w3.org/2000/svg" width="52" height="260" viewBox="0 0 52 260">
   <defs>
     <linearGradient id="spine-contact" x1="0%" y1="0%" x2="100%" y2="0%">

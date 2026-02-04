@@ -1,3 +1,16 @@
+<!--
+  ═══════════════════════════════════════════════════════════
+  CLAUDE.md - AI Assistant Guidelines
+  ═══════════════════════════════════════════════════════════
+
+  WHAT:         Coding guidelines for Claude Code AI assistant
+  WHY:          Ensures consistent code style and BMAD integration
+  DEPENDENCIES: BMAD framework in _bmad/ folder
+  HOW:          Claude reads this automatically when working here
+
+  ═══════════════════════════════════════════════════════════
+-->
+
 # Project Guidelines
 
 ## BMAD Method Integration

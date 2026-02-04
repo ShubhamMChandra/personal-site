@@ -1,7 +1,17 @@
 /**
- * Main Entry Point
- * Initializes and coordinates all modules
+ * ═══════════════════════════════════════════════════════════
+ * main.js - Portfolio Entry Point
+ * ═══════════════════════════════════════════════════════════
+ *
+ * WHAT:         Initializes and coordinates all portfolio modules
+ * WHY:          Central orchestrator connecting cursor, bookshelf, book
+ * DEPENDENCIES: cursor.js, bookshelf.js, book.js (loaded before this)
+ * HOW:          Creates instances, wires callbacks, handles URL routing
+ *
+ * ═══════════════════════════════════════════════════════════
  */
+
+/* global CustomCursor, Book, Bookshelf */
 
 class Portfolio {
   constructor() {
@@ -53,12 +63,21 @@ class Portfolio {
           history.pushState(null, '', window.location.pathname)
         }
       })
+
+      // Connect book close callback to return to shelf
+      if (this.book) {
+        this.book.setOnCloseBook(() => {
+          if (this.bookshelf && this.bookshelf.getCurrentBook()) {
+            this.bookshelf.returnToShelf()
+          }
+        })
+      }
     }
   }
 
   handleUrlHash() {
     const hash = window.location.hash.slice(1)
-    if (hash && ['work', 'about', 'contact'].includes(hash)) {
+    if (hash && ['work', 'about', 'contact', 'references'].includes(hash)) {
       // Small delay to ensure everything is initialized
       setTimeout(() => {
         if (this.bookshelf) {
@@ -70,7 +89,7 @@ class Portfolio {
     // Handle back/forward navigation
     window.addEventListener('popstate', () => {
       const newHash = window.location.hash.slice(1)
-      if (newHash && ['work', 'about', 'contact'].includes(newHash)) {
+      if (newHash && ['work', 'about', 'contact', 'references'].includes(newHash)) {
         if (this.bookshelf) {
           this.bookshelf.selectBook(newHash)
         }
@@ -89,5 +108,5 @@ class Portfolio {
   }
 }
 
-// Initialize
-const portfolio = new Portfolio()
+// Initialize (exposed on window for debugging)
+window.portfolio = new Portfolio()

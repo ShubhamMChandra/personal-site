@@ -1,6 +1,14 @@
 /**
- * Book Module
- * Handles open book view, page navigation, and content rendering
+ * ═══════════════════════════════════════════════════════════
+ * book.js - Open Book View
+ * ═══════════════════════════════════════════════════════════
+ *
+ * WHAT:         Manages open book display, pages, and navigation
+ * WHY:          Renders book content with page-turn animations
+ * DEPENDENCIES: None (standalone class, instantiated by main.js)
+ * HOW:          Loads templates, renders spreads, animates page turns
+ *
+ * ═══════════════════════════════════════════════════════════
  */
 
 class Book {
@@ -13,6 +21,10 @@ class Book {
     this.currentPageEl = document.querySelector('.current-page')
     this.totalPagesEl = document.querySelector('.total-pages')
 
+    // Page elements for 3D turn animation
+    this.leftPageEl = document.querySelector('.page-left')
+    this.rightPageEl = document.querySelector('.page-right')
+
     // Page curl elements for click-to-turn
     this.leftPageCurl = document.querySelector('.page-left .page-curl')
     this.rightPageCurl = document.querySelector('.page-right .page-curl')
@@ -22,11 +34,18 @@ class Book {
     this.currentPage = 0
     this.isAnimating = false
 
+    // Callback for closing book (set by main.js)
+    this.onCloseBook = null
+
     this.init()
   }
 
   init() {
     this.bindEvents()
+  }
+
+  setOnCloseBook(callback) {
+    this.onCloseBook = callback
   }
 
   bindEvents() {
@@ -75,6 +94,29 @@ class Book {
         this.nextPage()
       }
     })
+
+    // Click outside book to close (click on dark backdrop)
+    if (this.bookView) {
+      this.bookView.addEventListener('click', (e) => {
+        // Only close if clicking the backdrop itself, not children
+        if (e.target === this.bookView && this.onCloseBook) {
+          this.onCloseBook()
+        }
+      })
+    }
+
+    // Table of Contents click handler (event delegation)
+    if (this.rightPage) {
+      this.rightPage.addEventListener('click', (e) => {
+        const tocEntry = e.target.closest('[data-goto-page]')
+        if (tocEntry) {
+          const pageNum = parseInt(tocEntry.dataset.gotoPage, 10)
+          if (!isNaN(pageNum)) {
+            this.goToPage(pageNum)
+          }
+        }
+      })
+    }
   }
 
   openBook(bookId) {
@@ -156,15 +198,53 @@ class Book {
       }
     }
 
+    // Add page furniture (page numbers and running header)
+    this.addPageFurniture(isMobile)
+
     this.updatePageIndicator()
     this.updateNavButtons()
+  }
+
+  addPageFurniture(isMobile) {
+    const leftPageNum = (this.currentPage * 2) + 1
+    const rightPageNum = leftPageNum + 1
+    const bookTitle = this.formatBookTitle(this.currentBook)
+
+    // Remove existing furniture
+    document.querySelectorAll('.page-number, .running-header').forEach(el => el.remove())
+
+    if (!isMobile) {
+      // Left page: page number bottom-left
+      const leftNum = document.createElement('span')
+      leftNum.className = 'page-number page-number-left'
+      leftNum.textContent = leftPageNum
+      this.leftPageEl.appendChild(leftNum)
+
+      // Right page: page number bottom-right, running header top-right
+      const rightNum = document.createElement('span')
+      rightNum.className = 'page-number page-number-right'
+      rightNum.textContent = rightPageNum
+      this.rightPageEl.appendChild(rightNum)
+
+      const header = document.createElement('span')
+      header.className = 'running-header'
+      header.textContent = bookTitle
+      this.rightPageEl.appendChild(header)
+    } else {
+      // Mobile: single page number
+      const pageNum = document.createElement('span')
+      pageNum.className = 'page-number page-number-right'
+      pageNum.textContent = this.currentPage + 1
+      this.rightPageEl.appendChild(pageNum)
+    }
   }
 
   formatBookTitle(bookId) {
     const titles = {
       work: 'Selected Work',
       about: 'About Me',
-      contact: 'Get in Touch'
+      contact: 'Get in Touch',
+      references: 'References'
     }
     return titles[bookId] || bookId
   }
@@ -229,10 +309,22 @@ class Book {
     const outClass = direction === 'next' ? 'is-turning-out' : 'is-turning-in'
     const inClass = direction === 'next' ? 'is-turning-in' : 'is-turning-out'
 
+    // Add 3D page lift animation
+    if (direction === 'next' && this.rightPageEl) {
+      this.rightPageEl.classList.add('is-turning-next')
+    } else if (direction === 'prev' && this.leftPageEl) {
+      this.leftPageEl.classList.add('is-turning-prev')
+    }
+
     this.rightPage.classList.add(outClass)
 
     setTimeout(() => {
       callback()
+
+      // Remove 3D lift classes
+      if (this.rightPageEl) this.rightPageEl.classList.remove('is-turning-next')
+      if (this.leftPageEl) this.leftPageEl.classList.remove('is-turning-prev')
+
       this.rightPage.classList.remove(outClass)
       this.rightPage.classList.add(inClass)
 
@@ -241,7 +333,7 @@ class Book {
           this.rightPage.classList.remove(inClass)
         })
       })
-    }, 200)
+    }, 300)
   }
 
   goToPage(pageNum) {

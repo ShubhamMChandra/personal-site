@@ -1,3 +1,16 @@
+<!--
+  ═══════════════════════════════════════════════════════════
+  .cursorrules - Cursor IDE AI Guidelines
+  ═══════════════════════════════════════════════════════════
+
+  WHAT:         Coding guidelines for Cursor IDE AI assistant
+  WHY:          Ensures consistent code style and BMAD integration
+  DEPENDENCIES: BMAD framework in _bmad/ folder
+  HOW:          Cursor reads this automatically when working here
+
+  ═══════════════════════════════════════════════════════════
+-->
+
 # BMAD Method Integration
 
 This project uses BMAD (Breakthrough Method for Agile AI-Driven Development) v6.0.0.

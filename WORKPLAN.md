@@ -1,3 +1,16 @@
+<!--
+  ═══════════════════════════════════════════════════════════
+  WORKPLAN.md - Project Design Document
+  ═══════════════════════════════════════════════════════════
+
+  WHAT:         Design spec and implementation plan for portfolio
+  WHY:          Documents the bookshelf concept, states, and phases
+  DEPENDENCIES: None (reference document)
+  HOW:          Read for context on design decisions and goals
+
+  ═══════════════════════════════════════════════════════════
+-->
+
 # Personal Portfolio Redesign: The Bookshelf
 
 ## The Concept

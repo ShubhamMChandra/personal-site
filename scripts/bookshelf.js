@@ -1,6 +1,14 @@
 /**
- * Bookshelf Module
- * Handles the bookshelf display and book selection
+ * ═══════════════════════════════════════════════════════════
+ * bookshelf.js - Bookshelf Scene
+ * ═══════════════════════════════════════════════════════════
+ *
+ * WHAT:         Controls bookshelf display and book selection
+ * WHY:          Main navigation hub, books pull out when clicked
+ * DEPENDENCIES: None (standalone class, instantiated by main.js)
+ * HOW:          Handles clicks, animates selection, manages collapsed nav
+ *
+ * ═══════════════════════════════════════════════════════════
  */
 
 class Bookshelf {
@@ -100,14 +108,17 @@ class Bookshelf {
       btn.classList.remove('is-active')
     })
 
-    // Show bookshelf, hide nav
+    // Hide nav
     this.collapsedNav.classList.remove('is-visible')
 
+    // Start closing the book
+    this.onReturnToShelf()
+
+    // Show shelf after brief delay
     setTimeout(() => {
       this.scene.classList.remove('is-hidden')
-      this.onReturnToShelf()
       this.isAnimating = false
-    }, 400)
+    }, 100)
   }
 
   getCurrentBook() {

@@ -1,3 +1,15 @@
+<!--
+  ═══════════════════════════════════════════════════════════
+  index.html - Portfolio Bookshelf
+  ═══════════════════════════════════════════════════════════
+
+  WHAT:         Main HTML structure for immersive bookshelf portfolio
+  WHY:          Single-page app housing all content and templates
+  DEPENDENCIES: styles.css, Google Fonts, scripts/*.js
+  HOW:          Templates for books, rendered dynamically by JavaScript
+
+  ═══════════════════════════════════════════════════════════
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -75,6 +87,11 @@
           <div class="book-edge"></div>
         </button>
 
+        <button class="book" data-book="references" aria-label="Open References book">
+          <img class="book-spine-img" src="assets/book-references.svg" alt="References" />
+          <div class="book-edge"></div>
+        </button>
+
         <!-- Mystery book - coming soon -->
         <button class="book book-mystery" data-book="mystery" aria-label="Coming soon" disabled>
           <img class="book-spine-img" src="assets/book-mystery.svg" alt="Coming soon" />
@@ -92,7 +109,7 @@
         <div class="shelf-front">
           <div class="nameplate">
             <span class="nameplate-name">Shubham Chandra</span>
-            <span class="nameplate-title">Strategy & Technology</span>
+            <span class="nameplate-title">Strategy · Operations · Technology</span>
           </div>
         </div>
         <span class="interaction-hint">Select a book to explore</span>
@@ -153,136 +170,180 @@
 
   <!-- Book Contents (data, rendered into pages) -->
   <template id="work-book">
-    <!-- Page 1: Hedge Fund -->
-    <article class="book-page" data-page-num="1">
-      <header class="project-header">
-        <span class="project-label">2022–Present</span>
-        <h2 class="project-title">Crossover Hedge Fund</h2>
-      </header>
-      <p class="project-description" style="font-size: 1.1rem; color: var(--page-text); margin-bottom: var(--space-md);">
-        Sole research consultant for a $55B+ fund's technology investments.
-      </p>
-      <p class="project-description">
-        Built conviction on AI/ML and Enterprise SaaS targets through deep primary
-        research—200+ expert interviews, 7 proprietary surveys, and rigorous
-        secondary analysis. Work directly informed deployment decisions across
-        30+ companies in the portfolio.
-      </p>
-      <div class="project-meta" style="margin-top: var(--space-lg);">
-        <div class="meta-item">
-          <span class="meta-label">Capital Deployed</span>
-          <span class="meta-value" style="font-size: 1.1rem; font-weight: 600;">$400M+</span>
+    <!-- Spread 0: Table of Contents -->
+    <article class="book-page book-spread toc-spread" data-page-num="0">
+      <div class="spread-left toc-header">
+        <span class="toc-label">Selected Work</span>
+        <h2 class="toc-title">Contents</h2>
+      </div>
+      <div class="spread-right">
+        <nav class="toc-list">
+          <button class="toc-entry" data-goto-page="1">
+            <span class="toc-entry-title">Independent Consulting</span>
+            <span class="toc-entry-meta">Hedge Fund Research · Interim Roles · Advisory</span>
+            <span class="toc-entry-period">2022–Present</span>
+            <span class="toc-entry-dots"></span>
+            <span class="toc-entry-page">i</span>
+          </button>
+          <button class="toc-entry" data-goto-page="2">
+            <span class="toc-entry-title">Garner Health</span>
+            <span class="toc-entry-meta">Head of Business Operations</span>
+            <span class="toc-entry-period">2021–2022</span>
+            <span class="toc-entry-dots"></span>
+            <span class="toc-entry-page">ii</span>
+          </button>
+          <button class="toc-entry" data-goto-page="3">
+            <span class="toc-entry-title">NJOY</span>
+            <span class="toc-entry-meta">Head of Strategy, Office of CEO</span>
+            <span class="toc-entry-period">2018–2021</span>
+            <span class="toc-entry-dots"></span>
+            <span class="toc-entry-page">iii</span>
+          </button>
+          <button class="toc-entry" data-goto-page="4">
+            <span class="toc-entry-title">L.E.K. Consulting</span>
+            <span class="toc-entry-meta">Associate</span>
+            <span class="toc-entry-period">2016–2018</span>
+            <span class="toc-entry-dots"></span>
+            <span class="toc-entry-page">iv</span>
+          </button>
+        </nav>
+      </div>
+    </article>
+
+    <!-- Spread 1: Independent Consulting -->
+    <article class="book-page book-spread" data-page-num="1">
+      <div class="spread-left chapter-divider">
+        <span class="chapter-period">2022–Present</span>
+        <h2 class="chapter-company">Independent Consulting</h2>
+        <span class="chapter-role">Founder & Managing Partner</span>
+        <div class="chapter-meta">
+          <span class="chapter-location">New York City</span>
+          <span class="chapter-backing">Hedge Funds · Growth Startups</span>
         </div>
-        <div class="meta-item">
-          <span class="meta-label">Targets Studied</span>
-          <span class="meta-value" style="font-size: 1.1rem; font-weight: 600;">30+</span>
+        <p class="chapter-summary">
+          Advising hedge funds on technology investments and growth-stage startups on GTM and operations.
+        </p>
+      </div>
+      <div class="spread-right">
+        <p class="role-tagline">Operator-turned-advisor. Research that moves capital.</p>
+        <div class="engagement-block">
+          <span class="engagement-label">Featured Client</span>
+          <h3 class="engagement-title">$55B+ Crossover Hedge Fund</h3>
+          <p class="engagement-role">Sole Research Consultant · AI/ML & Enterprise SaaS</p>
+          <p class="engagement-desc">
+            Led primary research (200+ expert interviews, 7 proprietary surveys) and secondary analysis across 30+ investment targets. Work directly informed $400M+ in capital deployment decisions.
+          </p>
+          <div class="engagement-metrics">
+            <span class="engagement-metric"><strong>$400M+</strong> deployed</span>
+            <span class="engagement-metric"><strong>30+</strong> targets</span>
+            <span class="engagement-metric"><strong>200+</strong> expert calls</span>
+          </div>
         </div>
-        <div class="meta-item">
-          <span class="meta-label">Expert Calls</span>
-          <span class="meta-value" style="font-size: 1.1rem; font-weight: 600;">200+</span>
+
+        <div class="engagement-block">
+          <span class="engagement-label">Interim Role</span>
+          <h3 class="engagement-title"><a href="https://www.a.team" target="_blank" rel="noopener">A.Team</a></h3>
+          <p class="engagement-role">Head of VC Partnerships & Growth</p>
+          <p class="engagement-desc">
+            Built VC referral channel with Tiger Global, Insight, Thrive, 8VC. Created company's #1 converting and highest-ACV lead source.
+          </p>
+        </div>
+
+        <div class="engagement-block">
+          <span class="engagement-label">Project</span>
+          <h3 class="engagement-title">Better.com</h3>
+          <p class="engagement-role">Analytics & Operations Lead</p>
+          <p class="engagement-desc">
+            Managed 6-person Palantir team building data-driven talent acquisition and performance management for the entire sales organization.
+          </p>
+        </div>
+
+        <div class="engagement-block engagement-others-block">
+          <span class="engagement-label">Additional Advisory</span>
+          <p class="engagement-desc">
+            Parsley Health (BizOps), Product Managers at Work (8K-subscriber newsletter). Early-stage advisory: Web3 payments, real-time gaming, enterprise AI.
+          </p>
         </div>
       </div>
     </article>
 
-    <!-- Page 2: A.Team -->
-    <article class="book-page" data-page-num="2">
-      <header class="project-header">
-        <span class="project-label">2023</span>
-        <h2 class="project-title">A.Team</h2>
-      </header>
-      <p class="project-description" style="font-size: 1.1rem; color: var(--page-text); margin-bottom: var(--space-md);">
-        Interim Head of Venture Capital Partnerships & Growth.
-      </p>
-      <p class="project-description">
-        Created and scaled a new lead generation channel by building relationships
-        with top-tier VCs—Tiger Global, Insight Partners, Thrive Capital, 8VC,
-        and others. Turned VC intros into the company's highest-converting and
-        highest-ACV customer acquisition channel.
-      </p>
-      <div class="project-meta" style="margin-top: var(--space-lg);">
-        <div class="meta-item">
-          <span class="meta-label">Channel Rank</span>
-          <span class="meta-value" style="font-size: 1.1rem; font-weight: 600;">#1 Conversion</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">ACV Rank</span>
-          <span class="meta-value" style="font-size: 1.1rem; font-weight: 600;">#1 Highest</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">Partners</span>
-          <span class="meta-value" style="font-size: 1.1rem; font-weight: 600;">Top-Tier VCs</span>
-        </div>
-      </div>
-    </article>
-
-    <!-- Spread 3: Garner Health -->
-    <article class="book-page book-spread" data-page-num="3">
+    <!-- Spread 2: Garner Health -->
+    <article class="book-page book-spread" data-page-num="2">
       <div class="spread-left chapter-divider">
         <span class="chapter-period">2021–2022</span>
-        <h2 class="chapter-company">Garner Health</h2>
+        <h2 class="chapter-company"><a href="https://www.getgarner.com" target="_blank" rel="noopener">Garner Health</a></h2>
         <span class="chapter-role">Head of Business Operations</span>
         <div class="chapter-meta">
           <span class="chapter-location">New York City</span>
-          <span class="chapter-backing">Sequoia · Thrive Capital</span>
+          <span class="chapter-backing"><a href="https://www.sequoiacap.com/companies/garner-health/" target="_blank" rel="noopener">Sequoia</a> · Thrive Capital</span>
         </div>
+        <p class="chapter-summary">
+          B2B2C digital health analytics startup. Built Marketing and Talent functions from zero.
+        </p>
       </div>
       <div class="spread-right">
-        <p class="role-tagline">Built the engine that scaled the company 5x.</p>
-        <div class="role-details">
-          <p>
-            Joined at 38 employees. Built Marketing and Talent from zero.
-            Designed 60+ touchpoints across email, social, and direct mail—
-            consistently beating industry benchmarks by 20-40%.
+        <p class="role-tagline">Joined at 38 employees. Left at 200+.</p>
+        <div class="role-section">
+          <h4 class="role-section-title">Marketing</h4>
+          <p class="role-section-desc">
+            Designed and A/B tested 60+ touchpoints across email, social, and direct mail. Increased member sign-ups 14% and product usage 30%—consistently 20–40% above industry benchmarks. Built and trained 7-person team.
           </p>
-          <p>
-            Rebuilt hiring to cut agency dependency from 80% to 25%, saving
-            $1.4M annually. Recruited and trained 12 people across two teams.
-            Left at 200+ employees.
+        </div>
+        <div class="role-section">
+          <h4 class="role-section-title">Talent</h4>
+          <p class="role-section-desc">
+            Recruited and trained 5-person team that scaled company 5x. Rebuilt outbound sourcing to increase self-sourced hires from 20% to 75%, saving $1.4M/year in agency fees. Designed executive interview calibration and standardized candidate debriefs.
           </p>
         </div>
         <div class="role-metrics">
           <div class="metric">
             <span class="metric-value">38 → 200+</span>
-            <span class="metric-label">Headcount</span>
+            <span class="metric-label">Employees</span>
           </div>
           <div class="metric">
             <span class="metric-value">+30%</span>
-            <span class="metric-label">Usage</span>
+            <span class="metric-label">Product Usage</span>
           </div>
           <div class="metric">
             <span class="metric-value">$1.4M</span>
-            <span class="metric-label">Saved/yr</span>
+            <span class="metric-label">Saved Annually</span>
           </div>
         </div>
       </div>
     </article>
 
-    <!-- Spread 4: NJOY -->
-    <article class="book-page book-spread" data-page-num="4">
+    <!-- Spread 3: NJOY -->
+    <article class="book-page book-spread" data-page-num="3">
       <div class="spread-left chapter-divider">
         <span class="chapter-period">2018–2021</span>
-        <h2 class="chapter-company">NJOY</h2>
+        <h2 class="chapter-company"><a href="https://www.njoy.com" target="_blank" rel="noopener">NJOY</a></h2>
         <span class="chapter-role">Head of Strategy, Office of CEO</span>
         <div class="chapter-meta">
           <span class="chapter-location">New York City</span>
-          <span class="chapter-backing">Acquired by Altria for $2.8B</span>
+          <span class="chapter-backing"><a href="https://www.reuters.com/markets/deals/altria-buy-startup-njoy-28-bln-latest-e-cigarette-push-after-juul-blow-2023-03-06/" target="_blank" rel="noopener">Acquired by Altria for $2.8B</a></span>
         </div>
+        <p class="chapter-summary">
+          Reported to COO. Led investor relations, international expansion, and cross-functional operations.
+        </p>
       </div>
       <div class="spread-right">
-        <p class="role-tagline">From Series B to $2.8 billion exit.</p>
-        <div class="role-details">
-          <p>
-            Owned investor relations across four funding rounds. Raised $200M+
-            from D.E. Shaw and L Catterton. Prepared board materials, coached
-            executives, managed diligence.
+        <p class="role-tagline">From early-stage to $2.8 billion exit.</p>
+        <div class="role-section">
+          <h4 class="role-section-title">Investor Relations</h4>
+          <p class="role-section-desc">
+            Led 4 funding rounds, raising $200M+ from D.E. Shaw and L Catterton. Set board agendas, prepared materials, coached executives. Analysis used in Congressional briefings and White House meetings.
           </p>
-          <p>
-            Built international go-to-market across 11 countries through
-            on-the-ground research and global surveys (n=2,700). Launched 17
-            retail partnerships. Scaled field operations to 75+ FTEs.
+        </div>
+        <div class="role-section">
+          <h4 class="role-section-title">International Expansion</h4>
+          <p class="role-section-desc">
+            Built GTM strategy across 11 countries via on-the-ground research and global surveys (n=2,700). Identified 30 retail partners, launched 17. Scaled field operations to 75+ FTEs.
           </p>
-          <p style="font-size: 0.85rem; color: var(--page-secondary); margin-top: var(--space-sm);">
-            Materials used in Congressional briefings and White House meetings.
+        </div>
+        <div class="role-section">
+          <h4 class="role-section-title">Strategic Research & Operations</h4>
+          <p class="role-section-desc">
+            Evaluated market adjacencies (CBD, cannabis) through expert interviews and consumer research to inform multi-year R&D roadmap. Redesigned internal recruiting—cut time-to-hire by 3 weeks, increased offer acceptance 20%.
           </p>
         </div>
         <div class="role-metrics">
@@ -302,28 +363,28 @@
       </div>
     </article>
 
-    <!-- Spread 5: L.E.K. Consulting -->
-    <article class="book-page book-spread" data-page-num="5">
+    <!-- Spread 4: L.E.K. Consulting -->
+    <article class="book-page book-spread" data-page-num="4">
       <div class="spread-left chapter-divider">
-        <span class="chapter-period">2016 & 2018</span>
-        <h2 class="chapter-company">L.E.K. Consulting</h2>
+        <span class="chapter-period">2016–2017, 2018</span>
+        <h2 class="chapter-company"><a href="https://www.lek.com" target="_blank" rel="noopener">L.E.K. Consulting</a></h2>
         <span class="chapter-role">Associate</span>
         <div class="chapter-meta">
           <span class="chapter-location">Chicago</span>
-          <span class="chapter-backing">Global Strategy Consultancy</span>
+          <span class="chapter-backing">Pre- and Post-MBA</span>
         </div>
+        <p class="chapter-summary">
+          Global strategy consultancy. Growth strategy and private equity due diligence.
+        </p>
       </div>
       <div class="spread-right">
-        <p class="role-tagline">Where the fundamentals were forged.</p>
+        <p class="role-tagline">Two years of structured problem-solving. The foundation for everything after.</p>
         <div class="role-details">
           <p>
-            Cut teeth on 14 engagements spanning growth strategy and private
-            equity due diligence. Built quantitative market models, ran expert
-            interview programs, designed and analyzed customer surveys.
+            14 engagements across growth strategy and PE due diligence—decomposing businesses into their moving parts for investors making eight- and nine-figure decisions.
           </p>
           <p>
-            Learned to decompose any business into its moving parts. Developed
-            the analytical rigor that became the foundation for everything after.
+            Workstreams: expert interview programs, customer survey design and analysis, quantitative market modeling.
           </p>
         </div>
         <div class="role-metrics">
@@ -333,7 +394,11 @@
           </div>
           <div class="metric">
             <span class="metric-value">Growth</span>
-            <span class="metric-label">& PE Focus</span>
+            <span class="metric-label">Strategy</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">PE</span>
+            <span class="metric-label">Due Diligence</span>
           </div>
         </div>
       </div>
@@ -341,108 +406,230 @@
   </template>
 
   <template id="about-book">
-    <!-- Page 1: Introduction -->
-    <article class="book-page" data-page-num="1">
-      <header class="about-header">
-        <h2>Hello, I'm Shubham</h2>
-      </header>
-      <p class="about-lead">
-        I build companies and study how they work. Strategy consultant
-        turned operator turned technologist.
-      </p>
-      <p>
-        I've spent the last decade at the intersection of startups and capital—
-        advising hedge funds on where to deploy hundreds of millions, scaling
-        teams from scrappy to significant, and helping founders navigate the
-        messy middle between idea and exit.
-      </p>
-      <p>
-        Now I'm adding engineering to the toolkit. Because the best way to
-        understand systems is to build them.
-      </p>
+    <!-- Spread 1: Introduction -->
+    <article class="book-page book-spread" data-page-num="1">
+      <div class="spread-left about-chapter">
+        <img src="assets/headshot.jpg" alt="Shubham Chandra" class="about-headshot" />
+        <span class="about-chapter-label">About</span>
+        <h2 class="about-chapter-title">Introduction</h2>
+        <p class="about-chapter-note">
+          Strategy, operations, and now engineering.
+        </p>
+      </div>
+      <div class="spread-right">
+        <header class="about-header">
+          <h2>Hello, I'm Shubham</h2>
+        </header>
+        <p class="about-lead">
+          I help companies scale—and investors decide where to put capital.
+        </p>
+        <p>
+          I've spent my career on both sides of the table: advising a $55B hedge fund
+          on where to deploy hundreds of millions, while also building inside high-growth
+          startups—scaling teams, designing go-to-market, and preparing companies for exits.
+        </p>
+        <p>
+          My background is strategy consulting. My operating experience spans
+          healthtech, consumer, and marketplaces. Now I'm adding software
+          engineering to the toolkit—because the best way to understand systems
+          is to build them.
+        </p>
+      </div>
     </article>
 
-    <!-- Page 2: Experience -->
-    <article class="book-page" data-page-num="2">
-      <header class="about-header">
-        <h2>Experience</h2>
-      </header>
-      <div class="experience-list">
-        <div class="experience-item">
-          <span class="exp-role">Founder & Managing Partner</span>
-          <span class="exp-company">Independent Consulting</span>
-          <span class="exp-period">2022–Present</span>
-        </div>
-        <div class="experience-item">
-          <span class="exp-role">Head of Business Operations</span>
-          <span class="exp-company">Garner Health</span>
-          <span class="exp-period">2021–2022</span>
-        </div>
-        <div class="experience-item">
-          <span class="exp-role">Head of Strategy, Office of CEO</span>
-          <span class="exp-company">NJOY (acq. $2.8B)</span>
-          <span class="exp-period">2018–2021</span>
-        </div>
-        <div class="experience-item">
-          <span class="exp-role">Associate</span>
-          <span class="exp-company">L.E.K. Consulting</span>
-          <span class="exp-period">2016–2018</span>
+    <!-- Spread 2: Personal -->
+    <article class="book-page book-spread" data-page-num="2">
+      <div class="spread-left about-chapter">
+        <span class="about-chapter-label">About</span>
+        <h2 class="about-chapter-title">Personal</h2>
+        <p class="about-chapter-note">
+          Texture, craft, and stories that reward attention.
+        </p>
+      </div>
+      <div class="spread-right">
+        <header class="about-header">
+          <h2>Beyond Work</h2>
+        </header>
+        <div class="personal-content">
+          <p>
+            I'm drawn to interesting textures, small restaurants that don't advertise themselves, and travel that doesn't come with a gift shop.
+          </p>
+          <p>
+            I like being in places that aren't trying to perform for you. Street level feels honest: you're walking, noticing, adjusting. In Kerala, that's a fabric market, not a landmark. Heat, noise, color, bargaining, getting a little turned around and not minding it. I like the feeling of earning your way into a place.
+          </p>
+          <p>
+            Back home, I pay attention to craft. Clothes are an easy example: weave, weight, hand feel, drape. I'm not interested in labels as a proxy for taste. I'm interested in the work. Cooking is the same impulse. Start with something solid, then tinker until it tastes like mine.
+          </p>
+          <p>
+            I read a lot of sci-fi, especially the kind that starts fun and ends up making you stare at the ceiling for ten minutes. Consciousness, time, huge structures, weird rules. I like stories that reward close attention.
+          </p>
+          <p>
+            I like direct people and sharp conversation. I can be meticulous about what I care about and pretty relaxed about everything else.
+          </p>
         </div>
       </div>
     </article>
 
-    <!-- Page 3: Education & Now -->
-    <article class="book-page" data-page-num="3">
-      <header class="about-header">
-        <h2>Currently</h2>
-      </header>
-      <div class="currently-section">
-        <div class="currently-item">
-          <span class="currently-label">Studying</span>
-          <span class="currently-value">M.S. Computer Science, UChicago</span>
+    <!-- Spread 3: Currently -->
+    <article class="book-page book-spread" data-page-num="3">
+      <div class="spread-left about-chapter">
+        <span class="about-chapter-label">About</span>
+        <h2 class="about-chapter-title">Now</h2>
+        <p class="about-chapter-note">
+          Chicago. MS CS. Open to opportunities.
+        </p>
+      </div>
+      <div class="spread-right">
+        <header class="about-header">
+          <h2>Currently</h2>
+        </header>
+        <div class="currently-section">
+          <div class="currently-item">
+            <span class="currently-label">Studying</span>
+            <span class="currently-value">M.S. Computer Science, <a href="https://cs.uchicago.edu" target="_blank" rel="noopener">UChicago</a> (Merit Scholar)</span>
+          </div>
+          <div class="currently-item">
+            <span class="currently-label">Advising</span>
+            <span class="currently-value">Hedge funds on tech investments; startups on ops & GTM</span>
+          </div>
+          <div class="currently-item">
+            <span class="currently-label">Building</span>
+            <span class="currently-value">Software at the intersection of AI and product</span>
+          </div>
+          <div class="currently-item">
+            <span class="currently-label">Based in</span>
+            <span class="currently-value">Chicago</span>
+          </div>
         </div>
-        <div class="currently-item">
-          <span class="currently-label">Advising</span>
-          <span class="currently-value">Growth-stage startups & hedge funds</span>
-        </div>
-        <div class="currently-item">
-          <span class="currently-label">Building</span>
-          <span class="currently-value">At the intersection of AI and product</span>
-        </div>
-        <div class="currently-item">
-          <span class="currently-label">Based in</span>
-          <span class="currently-value">New York City</span>
+        <p class="education-note">
+          B.A. Economics (Honors, Merit Scholar), UChicago '17
+        </p>
+        <div class="availability">
+          <span class="status-dot"></span>
+          <span>Open to opportunities</span>
         </div>
       </div>
-      <p style="margin-top: var(--space-md); font-size: 0.85rem; color: var(--page-secondary);">
-        B.A. Economics (Honors) from UChicago, 2017
-      </p>
-      <div class="availability">
-        <span class="status-dot"></span>
-        <span>Open to opportunities</span>
+    </article>
+
+    <!-- Spread 4: Technical -->
+    <article class="book-page book-spread" data-page-num="4">
+      <div class="spread-left about-chapter">
+        <span class="about-chapter-label">About</span>
+        <h2 class="about-chapter-title">Skills</h2>
+        <p class="about-chapter-note">
+          Building the engineering toolkit.
+        </p>
+      </div>
+      <div class="spread-right">
+        <header class="about-header">
+          <h2>Technical</h2>
+        </header>
+        <p class="about-lead">Currently building:</p>
+        <div class="technical-list">
+          <div class="technical-item">
+            <span class="technical-category">Languages</span>
+            <span class="technical-skills">Python, SQL, JavaScript</span>
+          </div>
+          <div class="technical-item">
+            <span class="technical-category">Systems</span>
+            <span class="technical-skills">Cloud infrastructure, databases, APIs</span>
+          </div>
+          <div class="technical-item">
+            <span class="technical-category">Methods</span>
+            <span class="technical-skills">Algorithms, data structures, UI/UX</span>
+          </div>
+        </div>
+        <p class="technical-note">
+          The goal: combine operator instincts with engineering capability.
+        </p>
       </div>
     </article>
   </template>
 
   <template id="contact-book">
-    <!-- Single Page: Contact -->
-    <article class="book-page contact-page" data-page-num="1">
-      <header class="contact-header">
-        <span class="contact-label">Let's connect</span>
-        <h2>Say hello.</h2>
-      </header>
-      <p class="contact-note">
-        Whether you're building something interesting, need a strategic thought
-        partner, or just want to talk startups and tech—I'd love to hear from you.
-      </p>
-      <a href="mailto:shubham.m.chandra@gmail.com" class="contact-email">shubham.m.chandra@gmail.com</a>
-      <div class="social-links">
-        <a href="https://linkedin.com/in/shubhamchandra/" class="social-link">LinkedIn</a>
+    <!-- Single Spread: Contact -->
+    <article class="book-page book-spread contact-spread" data-page-num="1">
+      <div class="spread-left contact-chapter">
+        <span class="contact-chapter-label">Contact</span>
+        <h2 class="contact-chapter-title">Let's Talk</h2>
+        <p class="contact-chapter-note">
+          Always happy to connect with interesting people.
+        </p>
       </div>
-      <footer class="book-footer">
-        <p>© 2026</p>
-      </footer>
+      <div class="spread-right">
+        <header class="contact-header">
+          <span class="contact-label">Get in touch</span>
+          <h2>Say hello.</h2>
+        </header>
+        <p class="contact-note">
+          I'm always happy to talk with founders, investors, and operators
+          working on hard problems. If you're building something ambitious—or
+          just want to trade notes on startups, tech, or markets—drop me a line.
+        </p>
+        <a href="mailto:shubham.m.chandra@gmail.com" class="contact-email">shubham.m.chandra@gmail.com</a>
+        <div class="social-links">
+          <a href="https://linkedin.com/in/shubhamchandra/" class="social-link">LinkedIn</a>
+        </div>
+        <footer class="book-footer">
+          <p>© 2026</p>
+        </footer>
+      </div>
     </article>
+  </template>
+
+  <template id="references-book">
+    <!-- Spread 1: Greg Doyle (NJOY) -->
+    <article class="book-page book-spread" data-page-num="1">
+      <div class="spread-left reference-attribution">
+        <span class="reference-label">Reference</span>
+        <h2 class="reference-author">Greg Doyle</h2>
+        <span class="reference-role">Former CFO, NJOY</span>
+        <p class="reference-context">
+          Executive leadership during 3-year tenure through $2.8B acquisition.
+        </p>
+      </div>
+      <div class="spread-right reference-quote-page">
+        <blockquote class="reference-quote">
+          <p class="quote-text">I had the opportunity to work with Shubham early in his career when he joined NJOY, which, like many young companies, was a fast-paced and often unstructured environment. Shubham's innate curiosity, tenacity and structured thinking allowed him to become a key contributor in our early strategy and capital raising initiatives. His friendly, open personality made him a great teammate, always willing to be helpful wherever he could across our organization. Shubham possesses a continuous improvement mindset which always saw him seeking feedback and new opportunities to extend his knowledge and skills. We have maintained our relationship since NJOY and I have enjoyed watching his professional development.</p>
+        </blockquote>
+      </div>
+    </article>
+
+    <!-- Spread 2: Geremy Bass (Personal) -->
+    <article class="book-page book-spread" data-page-num="2">
+      <div class="spread-left reference-attribution">
+        <span class="reference-label">Reference</span>
+        <h2 class="reference-author">Geremy Bass</h2>
+        <span class="reference-role">Colleague & Friend</span>
+        <p class="reference-context">
+          10+ years of friendship, mentorship, and collaboration. Former interim CPO of Zoho.
+        </p>
+      </div>
+      <div class="spread-right reference-quote-page">
+        <blockquote class="reference-quote">
+          <p class="quote-text">Shubham carries a wisdom rarely found in youth. I've learned from our friendship that intelligence, humility, grit, honesty, self-awareness, and curiosity develop independently from age. He found many of those qualities years before I did. In our more than 10 years of friendship, I have come to rely on Shubham to add a broad perspective on my ideas, to challenge and question my assumptions, and to accept me completely and listen to me without ego. He makes connections across disciplines, learns with incredible speed, and improves most things that enter his sphere. More importantly, he makes people around him better. Shubham is a good human.</p>
+        </blockquote>
+      </div>
+    </article>
+
+    <!-- Spread 3: Stephanie (Parsley Health) -->
+    <article class="book-page book-spread" data-page-num="3">
+      <div class="spread-left reference-attribution">
+        <span class="reference-label">Reference</span>
+        <h2 class="reference-author">Stephanie Fogle</h2>
+        <span class="reference-role">CHRO, Parsley Health</span>
+        <p class="reference-context">
+          Executive team colleague during interim Chief of Staff engagement.
+        </p>
+      </div>
+      <div class="spread-right reference-quote-page">
+        <blockquote class="reference-quote">
+          <p class="quote-text">Shubham was a great addition to the Executive Team at Parsley Health. He helped us drive cross-functional communication, he project managed imperative business initiatives, and he ensured the team was well informed on various projects. Most importantly, Shubham brought an incredible sense of quiet confidence to every meeting and every project.</p>
+        </blockquote>
+        <p class="references-note">Additional references available upon request.</p>
+      </div>
+    </article>
+
   </template>
 
   <script src="scripts/cursor.js"></script>

@@ -1,0 +1,17 @@
+{
+  "name": "personal-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Shubham Chandra's personal site",
+  "scripts": {
+    "lint": "eslint scripts/",
+    "lint:fix": "eslint scripts/ --fix"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@playwright/test": "^1.58.1",
+    "eslint": "^9.0.0",
+    "globals": "^15.0.0"
+  }
+}

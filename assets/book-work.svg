@@ -1,3 +1,8 @@
+<!--
+  book-work.svg - Work Book Spine
+  WHAT: Crimson red leather spine with gold "WORK" lettering
+  WHY:  Visual asset for Work book on the bookshelf
+-->
 <svg xmlns="http://www.w3.org/2000/svg" width="65" height="320" viewBox="0 0 65 320">
   <defs>
     <linearGradient id="spine-work" x1="0%" y1="0%" x2="100%" y2="0%">
