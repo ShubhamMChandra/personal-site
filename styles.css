@@ -2241,7 +2241,7 @@ body.has-custom-cursor * {
 
 .chapter-period {
   font-family: var(--font-serif);
-  font-size: 0.7rem;
+  font-size: 0.77rem;
   font-variant: small-caps;
   color: var(--page-secondary);
   letter-spacing: 0.12em;
@@ -2252,7 +2252,7 @@ body.has-custom-cursor * {
 
 .chapter-company {
   font-family: var(--font-serif);
-  font-size: 1.7rem;
+  font-size: 1.87rem;
   font-weight: 600;
   color: var(--page-text);
   line-height: 1.15;
@@ -2284,7 +2284,7 @@ body.has-custom-cursor * {
 
 .chapter-role {
   font-family: var(--font-serif);
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   font-style: italic;
   color: var(--page-secondary);
   margin-bottom: var(--space-md);
@@ -2302,7 +2302,7 @@ body.has-custom-cursor * {
 
 .chapter-location {
   font-family: var(--font-serif);
-  font-size: 0.75rem;
+  font-size: 0.83rem;
   font-variant: small-caps;
   color: var(--page-secondary);
   letter-spacing: 0.08em;
@@ -2310,13 +2310,13 @@ body.has-custom-cursor * {
 
 .chapter-backing {
   font-family: var(--font-serif);
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   color: var(--page-text);
 }
 
 .chapter-summary {
   font-family: var(--font-serif);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-style: italic;
   color: var(--page-secondary);
   line-height: 1.5;
@@ -2336,7 +2336,7 @@ body.has-custom-cursor * {
 
 .toc-label {
   font-family: var(--font-serif);
-  font-size: 0.65rem;
+  font-size: 0.72rem;
   font-variant: small-caps;
   letter-spacing: 0.2em;
   color: var(--page-tertiary);
@@ -2345,7 +2345,7 @@ body.has-custom-cursor * {
 
 .toc-title {
   font-family: var(--font-serif);
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 400;
   font-style: italic;
   color: var(--page-text);
@@ -2401,7 +2401,7 @@ body.has-custom-cursor * {
   grid-column: 1;
   grid-row: 1;
   font-family: var(--font-serif);
-  font-size: 1.1rem;
+  font-size: 1.21rem;
   font-weight: 500;
   color: var(--page-text);
   transition: color var(--duration-fast) ease;
@@ -2415,7 +2415,7 @@ body.has-custom-cursor * {
   grid-column: 1;
   grid-row: 2;
   font-family: var(--font-serif);
-  font-size: 0.75rem;
+  font-size: 0.83rem;
   font-style: italic;
   color: var(--page-tertiary);
 }
@@ -2424,7 +2424,7 @@ body.has-custom-cursor * {
   grid-column: 2;
   grid-row: 1;
   font-family: var(--font-serif);
-  font-size: 0.7rem;
+  font-size: 0.77rem;
   font-variant: small-caps;
   letter-spacing: 0.05em;
   color: var(--page-secondary);
@@ -2445,7 +2445,7 @@ body.has-custom-cursor * {
   grid-row: 1 / span 2;
   align-self: center;
   font-family: var(--font-serif);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-style: italic;
   color: var(--page-secondary);
   min-width: 24px;
@@ -2467,7 +2467,7 @@ body.has-custom-cursor * {
 .engagement-label {
   display: block;
   font-family: var(--font-serif);
-  font-size: 0.55rem;
+  font-size: 0.6rem;
   font-variant: small-caps;
   color: var(--page-tertiary);
   letter-spacing: 0.15em;
@@ -2476,7 +2476,7 @@ body.has-custom-cursor * {
 
 .engagement-title {
   font-family: var(--font-serif);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--page-text);
   margin-bottom: 2px;
@@ -2495,7 +2495,7 @@ body.has-custom-cursor * {
 
 .engagement-role {
   font-family: var(--font-serif);
-  font-size: 0.65rem;
+  font-size: 0.72rem;
   font-variant: small-caps;
   color: var(--page-secondary);
   letter-spacing: 0.05em;
@@ -2504,7 +2504,7 @@ body.has-custom-cursor * {
 
 .engagement-desc {
   font-family: var(--font-serif);
-  font-size: 0.75rem;
+  font-size: 0.83rem;
   color: var(--page-secondary);
   line-height: 1.5;
 }
@@ -2525,12 +2525,12 @@ body.has-custom-cursor * {
 
 .engagement-metric {
   font-family: var(--font-serif);
-  font-size: 0.65rem;
+  font-size: 0.72rem;
   color: var(--page-secondary);
 }
 
 .engagement-metric strong {
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   color: var(--page-text);
 }
 
@@ -2541,7 +2541,7 @@ body.has-custom-cursor * {
 
 .role-section-title {
   font-family: var(--font-serif);
-  font-size: 0.7rem;
+  font-size: 0.77rem;
   font-variant: small-caps;
   font-weight: 600;
   color: var(--page-text);
@@ -2551,7 +2551,7 @@ body.has-custom-cursor * {
 
 .role-section-desc {
   font-family: var(--font-serif);
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--page-secondary);
   line-height: 1.55;
 }
@@ -2567,7 +2567,7 @@ body.has-custom-cursor * {
 
 .role-tagline {
   font-family: var(--font-serif);
-  font-size: 1.15rem;
+  font-size: 1.27rem;
   font-weight: 500;
   font-style: italic;
   color: var(--page-text);
@@ -2581,7 +2581,7 @@ body.has-custom-cursor * {
 }
 
 .role-details p {
-  font-size: 0.92rem;
+  font-size: 1.01rem;
   color: var(--page-secondary);
   line-height: 1.55;
   margin-bottom: var(--space-xs);
@@ -2615,7 +2615,7 @@ body.has-custom-cursor * {
 .metric-value {
   display: block;
   font-family: var(--font-serif);
-  font-size: 1.1rem;
+  font-size: 1.21rem;
   font-weight: 600;
   font-variant-numeric: oldstyle-nums;
   color: var(--page-text);
@@ -2625,7 +2625,7 @@ body.has-custom-cursor * {
 .metric-label {
   display: block;
   font-family: var(--font-serif);
-  font-size: 0.5rem;
+  font-size: 0.55rem;
   font-variant: small-caps;
   color: var(--page-secondary);
   letter-spacing: 0.08em;
