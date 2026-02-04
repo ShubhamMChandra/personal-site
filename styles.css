@@ -3334,6 +3334,7 @@ body.has-custom-cursor * {
   }
 
   .open-book {
+    flex: none; /* Override base flex: 1 so explicit height is respected */
     flex-direction: column;
     width: calc(100% - 24px);
     max-width: 400px;
@@ -3341,7 +3342,7 @@ body.has-custom-cursor * {
     border-radius: 4px 8px 8px 4px;
     overflow: hidden;
     /* Fixed height so all pages are the same size */
-    height: calc(100vh - 180px);
+    height: calc(100dvh - 180px); /* dvh accounts for iOS Safari URL bar */
     max-height: 600px;
     min-height: 400px;
     display: flex;
