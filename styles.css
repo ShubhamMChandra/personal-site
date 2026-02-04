@@ -57,13 +57,12 @@
   --wood-highlight: #5c3a24;
   --wood-grain: rgba(74, 44, 26, 0.3);
 
-  /* Book Colors */
-  --book-work: #2d4a5e;
-  --book-work-light: #3d5a6e;
-  --book-about: #4a3d2e;
-  --book-about-light: #5a4d3e;
-  --book-contact: #3d4a3d;
-  --book-contact-light: #4d5a4d;
+  /* Book Cover Colors - match SVG spine colors */
+  --book-work: #a52a2a;
+  --book-about: #2a4d8c;
+  --book-contact: #3d7a57;
+  --book-references: #5c3d2a;
+  --book-mystery: #553d62;
 
   /* Page Colors - Harvard Press warmth */
   --page-bg: #f8f5ef;
@@ -1403,9 +1402,9 @@ body.has-custom-cursor * {
   perspective: 1800px;
 }
 
-/* Page Edge Effects - stacked pages look */
+/* Page Edge Effects - stacked pages with cover binding */
 .page-edge {
-  width: 16px;
+  width: 18px;
   height: 92%;
   flex-shrink: 0;
   position: relative;
@@ -1419,22 +1418,35 @@ body.has-custom-cursor * {
       to bottom,
       #f5f0e6 0px,
       #f5f0e6 1px,
-      #e0d8cc 1px,
-      #e0d8cc 2px,
+      #e8e0d4 1px,
+      #e8e0d4 2px,
       #f2ede3 2px,
       #f2ede3 3px
     ),
     /* Base gradient for depth */
     linear-gradient(
       90deg,
-      #b8b0a4 0%,
-      #d8d0c4 30%,
+      #c8c0b4 0%,
+      #dcd4c8 25%,
       #ebe4d8 100%
     );
   box-shadow:
     -4px 0 12px rgba(0, 0, 0, 0.3),
     -1px 0 3px rgba(0, 0, 0, 0.15),
-    inset 3px 0 6px rgba(255, 255, 255, 0.25);
+    inset 3px 0 6px rgba(255, 255, 255, 0.2);
+}
+
+/* Left cover binding strip */
+.page-edge-left::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 4px 0 0 4px;
+  background: var(--book-work); /* Default, overridden per book */
+  box-shadow: inset -1px 0 2px rgba(0, 0, 0, 0.3);
 }
 
 .page-edge-right {
@@ -1445,8 +1457,8 @@ body.has-custom-cursor * {
       to bottom,
       #f5f0e6 0px,
       #f5f0e6 1px,
-      #e0d8cc 1px,
-      #e0d8cc 2px,
+      #e8e0d4 1px,
+      #e8e0d4 2px,
       #f2ede3 2px,
       #f2ede3 3px
     ),
@@ -1454,13 +1466,52 @@ body.has-custom-cursor * {
     linear-gradient(
       90deg,
       #ebe4d8 0%,
-      #d8d0c4 70%,
-      #b8b0a4 100%
+      #dcd4c8 75%,
+      #c8c0b4 100%
     );
   box-shadow:
     4px 0 12px rgba(0, 0, 0, 0.3),
     1px 0 3px rgba(0, 0, 0, 0.15),
-    inset -3px 0 6px rgba(255, 255, 255, 0.25);
+    inset -3px 0 6px rgba(255, 255, 255, 0.2);
+}
+
+/* Right cover binding strip */
+.page-edge-right::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--book-work); /* Default, overridden per book */
+  box-shadow: inset 1px 0 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Book-specific cover colors */
+.book-view[data-active-book="work"] .page-edge-left::before,
+.book-view[data-active-book="work"] .page-edge-right::before {
+  background: var(--book-work);
+}
+
+.book-view[data-active-book="about"] .page-edge-left::before,
+.book-view[data-active-book="about"] .page-edge-right::before {
+  background: var(--book-about);
+}
+
+.book-view[data-active-book="contact"] .page-edge-left::before,
+.book-view[data-active-book="contact"] .page-edge-right::before {
+  background: var(--book-contact);
+}
+
+.book-view[data-active-book="references"] .page-edge-left::before,
+.book-view[data-active-book="references"] .page-edge-right::before {
+  background: var(--book-references);
+}
+
+.book-view[data-active-book="mystery"] .page-edge-left::before,
+.book-view[data-active-book="mystery"] .page-edge-right::before {
+  background: var(--book-mystery);
 }
 
 /* Open Book - mild V shape like holding a real book */

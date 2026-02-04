@@ -126,11 +126,13 @@ class Book {
     this.renderPage()
     this.bookView.classList.add('is-visible')
     this.bookView.setAttribute('aria-hidden', 'false')
+    this.bookView.dataset.activeBook = bookId
   }
 
   closeBook() {
     this.bookView.classList.remove('is-visible')
     this.bookView.setAttribute('aria-hidden', 'true')
+    delete this.bookView.dataset.activeBook
     this.currentBook = null
     this.pages = []
     this.currentPage = 0
