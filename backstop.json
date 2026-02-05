@@ -1,0 +1,112 @@
+{
+  "id": "bookshelf-portfolio",
+  "viewports": [
+    {
+      "label": "iPhone-SE",
+      "width": 320,
+      "height": 568
+    },
+    {
+      "label": "Galaxy-S24",
+      "width": 360,
+      "height": 780
+    },
+    {
+      "label": "iPhone-16",
+      "width": 393,
+      "height": 852
+    },
+    {
+      "label": "iPhone-16-Pro-Max",
+      "width": 440,
+      "height": 956
+    },
+    {
+      "label": "breakpoint-below",
+      "width": 900,
+      "height": 800
+    },
+    {
+      "label": "breakpoint-above",
+      "width": 901,
+      "height": 800
+    },
+    {
+      "label": "desktop",
+      "width": 1200,
+      "height": 800
+    }
+  ],
+  "onBeforeScript": "puppet/onBefore.js",
+  "onReadyScript": "puppet/onReady.js",
+  "scenarios": [
+    {
+      "label": "Bookshelf - Shelf View",
+      "url": "http://localhost:3847",
+      "delay": 1000,
+      "misMatchThreshold": 0.1,
+      "requireSameDimensions": true,
+      "selectors": ["document"]
+    },
+    {
+      "label": "Book - Work",
+      "url": "http://localhost:3847",
+      "onReadyScript": "puppet/onReadyOpenBook.js",
+      "bookId": "work",
+      "delay": 500,
+      "postInteractionWait": 0,
+      "misMatchThreshold": 0.1,
+      "requireSameDimensions": true,
+      "selectors": ["document"]
+    },
+    {
+      "label": "Book - About",
+      "url": "http://localhost:3847",
+      "onReadyScript": "puppet/onReadyOpenBook.js",
+      "bookId": "about",
+      "delay": 500,
+      "postInteractionWait": 0,
+      "misMatchThreshold": 0.1,
+      "requireSameDimensions": true,
+      "selectors": ["document"]
+    },
+    {
+      "label": "Book - Contact",
+      "url": "http://localhost:3847",
+      "onReadyScript": "puppet/onReadyOpenBook.js",
+      "bookId": "contact",
+      "delay": 500,
+      "postInteractionWait": 0,
+      "misMatchThreshold": 0.1,
+      "requireSameDimensions": true,
+      "selectors": ["document"]
+    },
+    {
+      "label": "Book - References",
+      "url": "http://localhost:3847",
+      "onReadyScript": "puppet/onReadyOpenBook.js",
+      "bookId": "references",
+      "delay": 500,
+      "postInteractionWait": 0,
+      "misMatchThreshold": 0.1,
+      "requireSameDimensions": true,
+      "selectors": ["document"]
+    }
+  ],
+  "paths": {
+    "bitmaps_reference": "backstop_data/bitmaps_reference",
+    "bitmaps_test": "backstop_data/bitmaps_test",
+    "engine_scripts": "backstop_data/engine_scripts",
+    "html_report": "backstop_data/html_report",
+    "ci_report": "backstop_data/ci_report"
+  },
+  "report": ["browser"],
+  "engine": "puppeteer",
+  "engineOptions": {
+    "args": ["--no-sandbox"]
+  },
+  "asyncCaptureLimit": 3,
+  "asyncCompareLimit": 50,
+  "debug": false,
+  "debugWindow": false
+}
