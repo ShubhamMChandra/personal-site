@@ -87,6 +87,7 @@
   
   /* Accent - UChicago maroon */
   --accent-maroon: #800000;
+  --accent-gold: #d4a855;
 
   /* Typography */
   --font-serif: 'Cormorant Garamond', Georgia, serif;
@@ -260,7 +261,7 @@ body.has-custom-cursor * {
   padding: 0 var(--space-sm) 0 var(--space-xs);
   background: transparent;
   border: 1px solid var(--text-tertiary);
-  border-radius: 4px;
+  border-radius: 2px;
   color: var(--text-secondary);
   display: flex;
   align-items: center;
@@ -269,7 +270,8 @@ body.has-custom-cursor * {
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  transition: all var(--duration-fast) var(--ease-out-expo);
+  transition: border-color var(--duration-fast) var(--ease-out-expo),
+              color var(--duration-fast) var(--ease-out-expo);
 }
 
 .nav-shelf-btn:hover {
@@ -1140,7 +1142,8 @@ body.has-custom-cursor * {
 .books .book:nth-child(1) { animation-delay: 0.1s; }
 .books .book:nth-child(2) { animation-delay: 0.2s; }
 .books .book:nth-child(3) { animation-delay: 0.3s; }
-.books .book:nth-child(4) {
+.books .book:nth-child(4) { animation-delay: 0.4s; }
+.books .book:nth-child(5) {
   animation: bookSlideInMystery 0.8s var(--ease-out-expo) both;
   animation-delay: 0.5s;
 }
@@ -1163,6 +1166,7 @@ body.has-custom-cursor * {
 .books .book:nth-child(2) { --book-rotate: 0.3deg; }
 .books .book:nth-child(3) { --book-rotate: -0.2deg; }
 .books .book:nth-child(4) { --book-rotate: 0.4deg; }
+.books .book:nth-child(5) { --book-rotate: 0.2deg; }
 
 /* After entrance animation, add subtle breathe */
 .books .book {
@@ -1176,7 +1180,7 @@ body.has-custom-cursor * {
   animation-play-state: paused, paused;
 }
 
-.books .book:nth-child(4) {
+.books .book:nth-child(5) {
   animation:
     bookSlideInMystery 0.8s var(--ease-out-expo) both,
     bookBreathe 4s ease-in-out 2s infinite;
@@ -1463,10 +1467,10 @@ body.has-custom-cursor * {
 .nameplate-title {
   display: block;
   font-family: var(--font-mono);
-  font-size: 0.55rem;
+  font-size: 0.65rem;
   color: #3d2212;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.15em;
   position: relative;
   z-index: 1;
 }
@@ -2007,12 +2011,15 @@ body.has-custom-cursor * {
   height: 44px;
   background: transparent;
   border: 1px solid var(--text-tertiary);
-  border-radius: 50%;
+  border-radius: 2px;
   color: var(--text);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all var(--duration-fast) var(--ease-out-expo);
+  transition: border-color var(--duration-fast) var(--ease-out-expo),
+              color var(--duration-fast) var(--ease-out-expo),
+              transform var(--duration-fast) var(--ease-out-expo),
+              opacity var(--duration-fast) var(--ease-out-expo);
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
@@ -2241,7 +2248,7 @@ body.has-custom-cursor * {
 
 .chapter-period {
   font-family: var(--font-serif);
-  font-size: 0.77rem;
+  font-size: 0.7rem;
   font-variant: small-caps;
   color: var(--page-secondary);
   letter-spacing: 0.12em;
@@ -2338,9 +2345,9 @@ body.has-custom-cursor * {
 
 .toc-label {
   font-family: var(--font-serif);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-variant: small-caps;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.12em;
   color: var(--page-tertiary);
   margin-bottom: var(--space-xs);
 }
@@ -2385,7 +2392,8 @@ body.has-custom-cursor * {
   background: transparent;
   cursor: pointer;
   text-align: left;
-  transition: all var(--duration-fast) ease;
+  transition: border-bottom-color var(--duration-fast) ease,
+              transform var(--duration-fast) ease;
   border-bottom: 1px solid transparent;
 }
 
@@ -2397,6 +2405,11 @@ body.has-custom-cursor * {
 .toc-entry:focus {
   outline: none;
   border-bottom-color: var(--accent-maroon);
+}
+
+.toc-entry:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .toc-entry-title {
@@ -2469,10 +2482,10 @@ body.has-custom-cursor * {
 .engagement-label {
   display: block;
   font-family: var(--font-serif);
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   font-variant: small-caps;
   color: var(--page-tertiary);
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em;
   margin-bottom: 4px;
 }
 
@@ -2594,10 +2607,10 @@ body.has-custom-cursor * {
   margin-bottom: 0;
 }
 
-.role-note {
+.role-details .role-note {
   font-style: italic;
-  font-size: 0.78rem !important;
-  color: var(--page-tertiary) !important;
+  font-size: 0.78rem;
+  color: var(--page-tertiary);
 }
 
 /* Role Metrics */
@@ -3042,12 +3055,18 @@ body.has-custom-cursor * {
   border-bottom: 1px solid var(--page-text);
   padding-bottom: 2px;
   margin-bottom: var(--space-lg);
-  transition: all var(--duration-fast) var(--ease-out-expo);
+  transition: color var(--duration-fast) var(--ease-out-expo),
+              border-color var(--duration-fast) var(--ease-out-expo);
 }
 
 .contact-email:hover {
   color: var(--accent-maroon);
   border-color: var(--accent-maroon);
+}
+
+.contact-email:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
 }
 
 .social-links {
@@ -3071,6 +3090,11 @@ body.has-custom-cursor * {
   color: var(--page-text);
   border-bottom-color: var(--accent-maroon);
   border-bottom-style: solid;
+}
+
+.social-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .book-footer {
@@ -3148,7 +3172,7 @@ body.has-custom-cursor * {
 }
 
 .quote-author {
-  font-family: var(--font-display);
+  font-family: var(--font-serif);
   font-size: 0.99rem;
   font-weight: 600;
   color: var(--page-text);
@@ -3171,11 +3195,11 @@ body.has-custom-cursor * {
   margin-top: var(--space-lg);
   padding-top: var(--space-md);
   border-top: 1px solid rgba(42, 37, 32, 0.08);
-  font-family: var(--font-mono);
+  font-family: var(--font-serif);
   font-size: 0.88rem;
+  font-style: italic;
   color: var(--page-tertiary);
   text-align: left;
-  font-style: italic;
 }
 
 /* Reference Attribution (left side) */
@@ -3189,7 +3213,7 @@ body.has-custom-cursor * {
 
 .reference-label {
   font-family: var(--font-serif);
-  font-size: 0.82rem;
+  font-size: 0.7rem;
   font-variant: small-caps;
   color: var(--page-secondary);
   letter-spacing: 0.12em;
