@@ -3090,7 +3090,7 @@ body.has-custom-cursor * {
 
 .references-intro {
   font-family: var(--font-serif);
-  font-size: 0.95rem;
+  font-size: 1.11rem;
   font-style: italic;
   color: var(--page-secondary);
   margin-bottom: var(--space-lg);
@@ -3111,7 +3111,7 @@ body.has-custom-cursor * {
 
 .quote-text {
   font-family: var(--font-serif);
-  font-size: 0.95rem;
+  font-size: 1.11rem;
   font-style: italic;
   line-height: 1.7;
   color: var(--page-text);
@@ -3121,14 +3121,14 @@ body.has-custom-cursor * {
 
 .quote-text::before {
   content: open-quote;
-  font-size: 1.5em;
+  font-size: 1.76em;
   color: var(--accent-gold);
   margin-right: 0.1em;
 }
 
 .quote-text::after {
   content: close-quote;
-  font-size: 1.5em;
+  font-size: 1.76em;
   color: var(--accent-gold);
   margin-left: 0.1em;
 }
@@ -3142,7 +3142,7 @@ body.has-custom-cursor * {
 
 .quote-author {
   font-family: var(--font-display);
-  font-size: 0.85rem;
+  font-size: 0.99rem;
   font-weight: 600;
   color: var(--page-text);
   letter-spacing: 0.02em;
@@ -3155,7 +3155,7 @@ body.has-custom-cursor * {
 
 .quote-role {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.76rem;
   color: var(--page-secondary);
   letter-spacing: 0.05em;
 }
@@ -3165,7 +3165,7 @@ body.has-custom-cursor * {
   padding-top: var(--space-md);
   border-top: 1px solid rgba(42, 37, 32, 0.08);
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.88rem;
   color: var(--page-tertiary);
   text-align: left;
   font-style: italic;
@@ -3182,7 +3182,7 @@ body.has-custom-cursor * {
 
 .reference-label {
   font-family: var(--font-serif);
-  font-size: 0.7rem;
+  font-size: 0.82rem;
   font-variant: small-caps;
   color: var(--page-secondary);
   letter-spacing: 0.12em;
@@ -3193,7 +3193,7 @@ body.has-custom-cursor * {
 
 .reference-author {
   font-family: var(--font-serif);
-  font-size: 1.5rem;
+  font-size: 1.76rem;
   font-weight: 600;
   color: var(--page-text);
   line-height: 1.2;
@@ -3216,7 +3216,7 @@ body.has-custom-cursor * {
 
 .reference-role {
   font-family: var(--font-serif);
-  font-size: 0.9rem;
+  font-size: 1.05rem;
   font-style: italic;
   color: var(--page-secondary);
   margin-bottom: var(--space-md);
@@ -3224,7 +3224,7 @@ body.has-custom-cursor * {
 
 .reference-context {
   font-family: var(--font-serif);
-  font-size: 0.85rem;
+  font-size: 0.99rem;
   color: var(--page-tertiary);
   line-height: 1.5;
   font-style: italic;
@@ -3246,14 +3246,14 @@ body.has-custom-cursor * {
 }
 
 .reference-quote-page .quote-text {
-  font-size: 1.05rem;
+  font-size: 1.23rem;
   line-height: 1.75;
   color: var(--page-text);
 }
 
 .reference-quote-page .quote-text::before,
 .reference-quote-page .quote-text::after {
-  font-size: 1.3em;
+  font-size: 1.52em;
 }
 
 /* ═══════════════════════════════════════════════════════════
