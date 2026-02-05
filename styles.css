@@ -1787,17 +1787,17 @@ body.has-custom-cursor * {
 .page-left {
   border-right: none;
   box-shadow:
-    inset -25px 0 35px -15px rgba(0, 0, 0, 0.15),
-    inset -4px 0 8px -2px rgba(0, 0, 0, 0.08);
-  transform: rotateY(4deg);
+    inset -30px 0 40px -12px rgba(0, 0, 0, 0.22),
+    inset -5px 0 10px -2px rgba(0, 0, 0, 0.12);
+  transform: rotateY(5deg);
   transform-origin: right center;
   background:
     /* Light falloff toward spine — opposing page casts shadow */
     linear-gradient(
       90deg,
       #f8f4ec 0%,
-      #f6f2ea 70%,
-      #f0ece4 100%
+      #f5f1e8 60%,
+      #ebe5da 100%
     ),
     linear-gradient(180deg, #f8f4ec 0%, #f4f0e6 100%);
 }
@@ -1806,16 +1806,16 @@ body.has-custom-cursor * {
 .page-right {
   border-left: none;
   box-shadow:
-    inset 25px 0 35px -15px rgba(0, 0, 0, 0.15),
-    inset 4px 0 8px -2px rgba(0, 0, 0, 0.08);
-  transform: rotateY(-4deg);
+    inset 30px 0 40px -12px rgba(0, 0, 0, 0.22),
+    inset 5px 0 10px -2px rgba(0, 0, 0, 0.12);
+  transform: rotateY(-5deg);
   transform-origin: left center;
   background:
     /* Light falloff toward spine — opposing page casts shadow */
     linear-gradient(
       90deg,
-      #f0ece4 0%,
-      #f6f2ea 30%,
+      #ebe5da 0%,
+      #f5f1e8 40%,
       #f8f4ec 100%
     ),
     linear-gradient(180deg, #f8f4ec 0%, #f4f0e6 100%);
@@ -3235,7 +3235,7 @@ body.has-custom-cursor * {
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  padding: var(--space-xl) 0 var(--space-lg);
+  padding: var(--space-xl) var(--space-md) var(--space-lg);
 }
 
 .reference-label {
@@ -3293,7 +3293,7 @@ body.has-custom-cursor * {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: var(--space-xl) 0 var(--space-md);
+  padding: var(--space-xl) var(--space-md) var(--space-md);
 }
 
 .reference-quote-page .reference-quote {
