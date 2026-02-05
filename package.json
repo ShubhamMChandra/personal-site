@@ -17,7 +17,6 @@
     "audit:responsive": "node scripts/audit/responsive.mjs",
     "audit:mobile-diagnosis": "node scripts/audit/mobile-diagnosis.mjs",
     "audit:all": "node scripts/audit/all.mjs",
-    "audit": "node audit.mjs",
     "backstop:reference": "node node_modules/backstopjs/cli/index.js reference --config=backstop.json",
     "backstop:test": "node node_modules/backstopjs/cli/index.js test --config=backstop.json",
     "backstop:approve": "node node_modules/backstopjs/cli/index.js approve --config=backstop.json",
