@@ -3321,30 +3321,31 @@ body.has-custom-cursor * {
   .book-view {
     display: flex;
     flex-direction: column;
+    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0)
+             env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
   }
 
   .book-container {
     flex-direction: column;
     flex: 1;
-    min-height: 0; /* Allow flex shrinking */
-    max-height: calc(100vh - 120px); /* Leave room for nav at bottom */
-    padding-top: 60px; /* Space for shelf button */
+    min-height: 0;
+    padding-top: 56px;   /* Fixed space for shelf button */
+    padding-bottom: 80px; /* Fixed space for page nav */
     display: flex;
+    align-items: center;
     justify-content: center;
   }
 
   .open-book {
-    flex: none; /* Override base flex: 1 so explicit height is respected */
+    flex: none;
     flex-direction: column;
     width: calc(100% - 24px);
     max-width: 400px;
     margin: 0 auto;
     border-radius: 4px 8px 8px 4px;
     overflow: hidden;
-    /* Fixed height so all pages are the same size */
-    height: calc(100dvh - 180px); /* dvh accounts for iOS Safari URL bar */
-    max-height: 600px;
-    min-height: 400px;
+    /* Deterministic height — clamp replaces min/max-height */
+    height: clamp(400px, 65vh, 580px);
     display: flex;
     /* Add book-like left edge (spine indicator) */
     border-left: 6px solid var(--book-work); /* Default, overridden per book */
@@ -3398,7 +3399,7 @@ body.has-custom-cursor * {
   /* Nav shelf button positioning */
   .nav-shelf-btn {
     position: fixed;
-    top: 16px;
+    top: calc(12px + env(safe-area-inset-top, 0));
     left: 16px;
     z-index: 100;
     background: rgba(10, 9, 8, 0.9);
@@ -3421,7 +3422,7 @@ body.has-custom-cursor * {
   /* Fixed page navigation at bottom of screen */
   .page-nav {
     position: fixed;
-    bottom: 20px;
+    bottom: 0;
     left: 0;
     right: 0;
     justify-content: center;
@@ -3430,6 +3431,7 @@ body.has-custom-cursor * {
     background: rgba(10, 9, 8, 0.9);
     backdrop-filter: blur(8px);
     padding: 12px 0;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0));
     border-radius: 0;
   }
 }
