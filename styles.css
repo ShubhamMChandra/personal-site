@@ -2263,23 +2263,25 @@ body.has-custom-cursor * {
 .chapter-company a {
   color: inherit;
   text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: border-color var(--duration-fast) ease;
+  border-bottom: 1px dotted var(--page-tertiary);
+  transition: border-color var(--duration-fast) ease, border-style var(--duration-fast) ease;
 }
 
 .chapter-company a:hover {
   border-bottom-color: var(--accent-maroon);
+  border-bottom-style: solid;
 }
 
 .chapter-backing a {
   color: inherit;
   text-decoration: none;
   border-bottom: 1px dotted var(--page-tertiary);
-  transition: border-color var(--duration-fast) ease;
+  transition: border-color var(--duration-fast) ease, border-style var(--duration-fast) ease;
 }
 
 .chapter-backing a:hover {
   border-bottom-color: var(--accent-maroon);
+  border-bottom-style: solid;
 }
 
 .chapter-role {
@@ -2485,12 +2487,13 @@ body.has-custom-cursor * {
 .engagement-title a {
   color: inherit;
   text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: border-color var(--duration-fast) ease;
+  border-bottom: 1px dotted var(--page-tertiary);
+  transition: border-color var(--duration-fast) ease, border-style var(--duration-fast) ease;
 }
 
 .engagement-title a:hover {
   border-bottom-color: var(--accent-maroon);
+  border-bottom-style: solid;
 }
 
 .engagement-role {
@@ -2894,11 +2897,12 @@ body.has-custom-cursor * {
   color: inherit;
   text-decoration: none;
   border-bottom: 1px dotted var(--page-tertiary);
-  transition: border-color var(--duration-fast) ease;
+  transition: border-color var(--duration-fast) ease, border-style var(--duration-fast) ease;
 }
 
 .currently-value a:hover {
   border-bottom-color: var(--accent-maroon);
+  border-bottom-style: solid;
 }
 
 .education-note {
@@ -3059,11 +3063,14 @@ body.has-custom-cursor * {
   color: var(--page-secondary);
   text-decoration: none;
   letter-spacing: 0.1em;
-  transition: color var(--duration-fast) var(--ease-out-expo);
+  border-bottom: 1px dotted var(--page-tertiary);
+  transition: color var(--duration-fast) var(--ease-out-expo), border-color var(--duration-fast) ease, border-style var(--duration-fast) ease;
 }
 
 .social-link:hover {
   color: var(--page-text);
+  border-bottom-color: var(--accent-maroon);
+  border-bottom-style: solid;
 }
 
 .book-footer {
