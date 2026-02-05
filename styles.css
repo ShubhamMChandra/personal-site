@@ -1903,16 +1903,23 @@ body.has-custom-cursor * {
 .page-left .page-curl {
   left: 0;
   background:
-    linear-gradient(
-      -45deg,
-      transparent 48%,
-      #e8e0d4 49%,
-      #ddd5c8 52%,
-      rgba(0, 0, 0, 0.08) 52%,
-      rgba(0, 0, 0, 0.03) 60%,
-      transparent 70%
+    /* Paper underside — exposed by curl */
+    radial-gradient(
+      circle at 0% 100%,
+      #d5cdc0 0%,
+      #e0d8cc 12%,
+      #ebe5db 22%,
+      transparent 23%
+    ),
+    /* Shadow cast by lifted paper edge */
+    radial-gradient(
+      circle at 0% 100%,
+      transparent 22%,
+      rgba(0, 0, 0, 0.08) 23%,
+      rgba(0, 0, 0, 0.03) 32%,
+      transparent 42%
     );
-  box-shadow: 2px -2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 3px -3px 8px rgba(0, 0, 0, 0.1);
 }
 
 .page-left .page-curl:hover {
@@ -1922,16 +1929,23 @@ body.has-custom-cursor * {
 .page-right .page-curl {
   right: 0;
   background:
-    linear-gradient(
-      45deg,
-      transparent 48%,
-      #e8e0d4 49%,
-      #ddd5c8 52%,
-      rgba(0, 0, 0, 0.08) 52%,
-      rgba(0, 0, 0, 0.03) 60%,
-      transparent 70%
+    /* Paper underside — exposed by curl */
+    radial-gradient(
+      circle at 100% 100%,
+      #d5cdc0 0%,
+      #e0d8cc 12%,
+      #ebe5db 22%,
+      transparent 23%
+    ),
+    /* Shadow cast by lifted paper edge */
+    radial-gradient(
+      circle at 100% 100%,
+      transparent 22%,
+      rgba(0, 0, 0, 0.08) 23%,
+      rgba(0, 0, 0, 0.03) 32%,
+      transparent 42%
     );
-  box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: -3px -3px 8px rgba(0, 0, 0, 0.1);
 }
 
 .page-right .page-curl:hover {
