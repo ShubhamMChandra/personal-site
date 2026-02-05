@@ -13,6 +13,15 @@
 
 /* global CustomCursor, Book, Bookshelf */
 
+// Mobile book height — bypasses viewport unit bugs on real iOS Safari
+// Computes once from window.innerHeight (always correct) and locks it
+function setMobileBookHeight () {
+  if (window.innerWidth > 900) return
+  var h = Math.min(580, Math.max(400, window.innerHeight * 0.65))
+  document.documentElement.style.setProperty('--mobile-book-height', h + 'px')
+}
+setMobileBookHeight()
+
 class Portfolio {
   constructor() {
     this.cursor = null

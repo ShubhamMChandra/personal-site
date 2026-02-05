@@ -3317,6 +3317,13 @@ body.has-custom-cursor * {
    ═══════════════════════════════════════════════════════════ */
 
 @media (max-width: 900px) {
+  /* Prevent Safari compositor edge artifact on the glow layer.
+     contain: strict creates a visible boundary when the 900px glow
+     element is clipped by overflow: hidden on the atmosphere. */
+  .bulb-glow {
+    contain: layout style;
+  }
+
   /* Mobile: constrain book view to fit viewport with fixed nav at bottom */
   .book-view {
     display: flex;
@@ -3344,9 +3351,12 @@ body.has-custom-cursor * {
     margin: 0 auto;
     border-radius: 4px 8px 8px 4px;
     overflow: hidden;
-    /* Deterministic height — svh = smallest viewport (Safari toolbar visible)
-       so the book never resizes when the URL bar hides/shows */
+    /* Tier 1: CSS fallback using svh (smallest viewport height) */
     height: clamp(400px, 65svh, 580px);
+    /* Tier 2: JS-computed height bypasses all viewport unit bugs on real Safari */
+    height: var(--mobile-book-height, clamp(400px, 65svh, 580px));
+    min-height: 0;     /* Kill base min-height: 500px — Safari flex quirk */
+    max-height: none;
     display: flex;
     /* Add book-like left edge (spine indicator) */
     border-left: 6px solid var(--book-work); /* Default, overridden per book */
@@ -3366,6 +3376,8 @@ body.has-custom-cursor * {
     padding: var(--space-md);
     transform: none; /* Remove desktop 3D rotation */
     border-radius: 0 4px 4px 0;
+    min-height: 0;    /* Safari flex containment — prevent content push */
+    overflow: hidden;
   }
 
   .page-left {
