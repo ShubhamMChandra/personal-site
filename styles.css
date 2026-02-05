@@ -1585,7 +1585,7 @@ body.has-custom-cursor * {
   width: 100%;
   height: calc(100vh - 140px);
   max-height: 800px;
-  perspective: 1800px;
+  perspective: 1200px;
 }
 
 /* Page Edge Effects - solid cover with page edges */
