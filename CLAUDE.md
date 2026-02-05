@@ -70,7 +70,54 @@ This is a **vanilla HTML/CSS/JS** project with no build step or frameworks.
 
 ### Testing
 - Use Playwright for visual QA and mobile testing
+- Audit scripts in `scripts/audit/` — run `npm run audit:mobile` and `npm run audit:all`
 - See `MOBILE-REPORT.md` for device test results
+
+### Git Commit Convention
+Use [Conventional Commits](https://www.conventionalcommits.org/) with this structure:
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+Co-Authored-By: ...
+```
+
+**Types:** `feat`, `fix`, `refactor`, `style`, `docs`, `test`, `chore`, `perf`
+**Scopes:** `mobile`, `desktop`, `shelf`, `book`, `cursor`, `nav`, `a11y`, `audit`, `build`
+
+**Rules:**
+- Subject line: imperative mood, lowercase, no period, under 72 chars
+- Body: explain **why** not just what. Include problem/solution when fixing bugs
+- Reference test results when relevant (e.g., "Tested: 0px horizontal overflow")
+- One logical change per commit — don't mix unrelated changes
+- Multi-paragraph body for non-trivial changes:
+  - Paragraph 1: Problem statement
+  - Paragraph 2: Solution summary
+  - Paragraph 3: Also/secondary changes (if any)
+  - Paragraph 4: Test results
+
+**Examples:**
+```
+fix(mobile): replace dvh units with clamp() for consistent iOS Safari sizing
+
+Problem: On real iPhone Safari, book pages rendered at inconsistent sizes.
+Root cause was dvh viewport units being unreliable across iOS Safari states.
+
+Solution: Use height: clamp(400px, 65vh, 580px) for deterministic book
+height. Add viewport-fit=cover and env(safe-area-inset-*) for notch handling.
+
+Tested: 0px horizontal overflow on Chrome and Safari emulation.
+```
+
+```
+feat(shelf): add hover glow effect to book spines
+```
+
+```
+refactor(book): extract page transition logic into shared helper
+```
 
 ---
 
