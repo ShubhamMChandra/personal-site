@@ -37,8 +37,8 @@
       "height": 800
     }
   ],
-  "onBeforeScript": "puppet/onBefore.js",
-  "onReadyScript": "puppet/onReady.js",
+  "onBeforeScript": "puppet/onBefore.cjs",
+  "onReadyScript": "puppet/onReady.cjs",
   "scenarios": [
     {
       "label": "Bookshelf - Shelf View",
@@ -51,7 +51,7 @@
     {
       "label": "Book - Work",
       "url": "http://localhost:3847",
-      "onReadyScript": "puppet/onReadyOpenBook.js",
+      "onReadyScript": "puppet/onReadyOpenBook.cjs",
       "bookId": "work",
       "delay": 500,
       "postInteractionWait": 0,
@@ -62,7 +62,7 @@
     {
       "label": "Book - About",
       "url": "http://localhost:3847",
-      "onReadyScript": "puppet/onReadyOpenBook.js",
+      "onReadyScript": "puppet/onReadyOpenBook.cjs",
       "bookId": "about",
       "delay": 500,
       "postInteractionWait": 0,
@@ -73,7 +73,7 @@
     {
       "label": "Book - Contact",
       "url": "http://localhost:3847",
-      "onReadyScript": "puppet/onReadyOpenBook.js",
+      "onReadyScript": "puppet/onReadyOpenBook.cjs",
       "bookId": "contact",
       "delay": 500,
       "postInteractionWait": 0,
@@ -84,7 +84,7 @@
     {
       "label": "Book - References",
       "url": "http://localhost:3847",
-      "onReadyScript": "puppet/onReadyOpenBook.js",
+      "onReadyScript": "puppet/onReadyOpenBook.cjs",
       "bookId": "references",
       "delay": 500,
       "postInteractionWait": 0,
