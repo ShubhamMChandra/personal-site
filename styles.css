@@ -3331,12 +3331,20 @@ body.has-custom-cursor * {
     contain: layout style;
   }
 
+  /* FIX: Prevent horizontal scroll on real mobile devices (iOS Safari
+     rubber-banding can expose overflow despite overflow-x:hidden on html/body) */
+  .bookshelf-scene {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
   /* Mobile: constrain book view to fit viewport with fixed nav at bottom */
   .book-view {
     display: flex;
     flex-direction: column;
     padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0)
              env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+    overflow-x: hidden;
   }
 
   .book-container {
@@ -3348,6 +3356,10 @@ body.has-custom-cursor * {
     display: flex;
     align-items: center;
     justify-content: center;
+    max-width: 100%;
+    overflow-x: hidden;
+    height: auto;        /* Override desktop calc(100vh - 140px) */
+    max-height: none;    /* Override desktop max-height: 800px */
   }
 
   .open-book {
@@ -3430,6 +3442,28 @@ body.has-custom-cursor * {
   .page-content,
   .spread-right {
     padding-top: 1rem;
+  }
+
+  /* FIX: Allow spread-right content to flow and trigger page scroll.
+     Desktop uses overflow:hidden + height:100% to clip within the fixed book,
+     but on mobile we need content to grow so .page-right can scroll it. */
+  .spread-left,
+  .spread-right {
+    height: auto;
+    overflow: visible;
+  }
+
+  .spread-right {
+    overflow: visible;
+    min-height: 0;
+  }
+
+  /* FIX: page-content must also allow content to grow on mobile
+     so that .page-right overflow-y:auto can produce a scrollbar. */
+  .page-content {
+    overflow: visible;
+    flex: none;       /* Don't constrain to parent flex height */
+    min-height: 0;
   }
 
   /* Ensure page numbers don't overlap with shelf button */
