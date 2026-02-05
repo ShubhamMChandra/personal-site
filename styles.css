@@ -3344,8 +3344,9 @@ body.has-custom-cursor * {
     margin: 0 auto;
     border-radius: 4px 8px 8px 4px;
     overflow: hidden;
-    /* Deterministic height — clamp replaces min/max-height */
-    height: clamp(400px, 65vh, 580px);
+    /* Deterministic height — svh = smallest viewport (Safari toolbar visible)
+       so the book never resizes when the URL bar hides/shows */
+    height: clamp(400px, 65svh, 580px);
     display: flex;
     /* Add book-like left edge (spine indicator) */
     border-left: 6px solid var(--book-work); /* Default, overridden per book */
