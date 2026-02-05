@@ -3338,14 +3338,14 @@ body.has-custom-cursor * {
 
 /* Turning to next page - right page lifts */
 .page-right.is-turning-next {
-  transform: rotateY(-25deg) translateZ(10px);
+  transform: rotateY(-15deg) translateZ(5px);
   box-shadow: inset 20px 0 30px -15px rgba(0, 0, 0, 0.2),
               -10px 0 30px rgba(0, 0, 0, 0.15);
 }
 
 /* Turning to prev page - left page lifts */
 .page-left.is-turning-prev {
-  transform: rotateY(25deg) translateZ(10px);
+  transform: rotateY(15deg) translateZ(5px);
   box-shadow: inset -20px 0 30px -15px rgba(0, 0, 0, 0.2),
               10px 0 30px rgba(0, 0, 0, 0.15);
 }
