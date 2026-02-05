@@ -1786,17 +1786,39 @@ body.has-custom-cursor * {
 /* Left page - tilts up slightly, shadow toward spine */
 .page-left {
   border-right: none;
-  box-shadow: inset -20px 0 30px -15px rgba(0, 0, 0, 0.1);
-  transform: rotateY(3deg);
+  box-shadow:
+    inset -25px 0 35px -15px rgba(0, 0, 0, 0.15),
+    inset -4px 0 8px -2px rgba(0, 0, 0, 0.08);
+  transform: rotateY(4deg);
   transform-origin: right center;
+  background:
+    /* Light falloff toward spine — opposing page casts shadow */
+    linear-gradient(
+      90deg,
+      #f8f4ec 0%,
+      #f6f2ea 70%,
+      #f0ece4 100%
+    ),
+    linear-gradient(180deg, #f8f4ec 0%, #f4f0e6 100%);
 }
 
 /* Right page - tilts up slightly, shadow toward spine */
 .page-right {
   border-left: none;
-  box-shadow: inset 20px 0 30px -15px rgba(0, 0, 0, 0.1);
-  transform: rotateY(-3deg);
+  box-shadow:
+    inset 25px 0 35px -15px rgba(0, 0, 0, 0.15),
+    inset 4px 0 8px -2px rgba(0, 0, 0, 0.08);
+  transform: rotateY(-4deg);
   transform-origin: left center;
+  background:
+    /* Light falloff toward spine — opposing page casts shadow */
+    linear-gradient(
+      90deg,
+      #f0ece4 0%,
+      #f6f2ea 30%,
+      #f8f4ec 100%
+    ),
+    linear-gradient(180deg, #f8f4ec 0%, #f4f0e6 100%);
 }
 
 /* Page Content Area */
@@ -3213,7 +3235,7 @@ body.has-custom-cursor * {
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  padding: var(--space-xl) var(--space-md) var(--space-lg);
+  padding: var(--space-xl) 0 var(--space-lg);
 }
 
 .reference-label {
@@ -3271,7 +3293,7 @@ body.has-custom-cursor * {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: var(--space-xl) var(--space-md) var(--space-md);
+  padding: var(--space-xl) 0 var(--space-md);
 }
 
 .reference-quote-page .reference-quote {
