@@ -161,7 +161,7 @@ body {
   border-left: 3px solid transparent;
   border-right: 10px solid transparent;
   border-top: 18px solid;
-  border-top-color: #d4a855;
+  border-top-color: var(--accent-gold);
   /* Rotate to angle like writing */
   transform: rotate(135deg);
   transform-origin: top left;
@@ -1079,6 +1079,32 @@ body.has-custom-cursor * {
 
 .book-mystery:hover .mystery-glow {
   opacity: 1;
+}
+
+/* Mystery tooltip — reveals on hover, personality not frustration */
+.mystery-tooltip {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  white-space: nowrap;
+  font-family: var(--font-serif);
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--text-secondary);
+  background: var(--bg-warm);
+  padding: 6px 14px;
+  border: 1px solid var(--text-tertiary);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-fast) var(--ease-out-expo),
+              transform var(--duration-fast) var(--ease-out-expo);
+  z-index: 20;
+}
+
+.book-mystery:hover .mystery-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 /* Book Hover Glow Effect */
@@ -2254,7 +2280,9 @@ body.has-custom-cursor * {
   padding: var(--space-xs) var(--space-sm);
   border: 1px solid var(--page-text);
   border-radius: 2px;
-  transition: all var(--duration-fast) var(--ease-out-expo);
+  transition: background var(--duration-fast) var(--ease-out-expo),
+              color var(--duration-fast) var(--ease-out-expo),
+              border-color var(--duration-fast) var(--ease-out-expo);
 }
 
 .project-link:hover {
@@ -2280,6 +2308,26 @@ body.has-custom-cursor * {
   justify-content: center;
   align-items: flex-start;
   padding: var(--space-lg) var(--space-md);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Large decorative chapter number — watermark behind content */
+.chapter-divider[data-chapter]::before {
+  content: attr(data-chapter);
+  position: absolute;
+  bottom: -0.08em;
+  right: -0.02em;
+  font-family: var(--font-serif);
+  font-size: 12rem;
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1;
+  color: var(--page-text);
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 0;
+  letter-spacing: -0.04em;
 }
 
 .chapter-period {
@@ -3036,13 +3084,33 @@ body.has-custom-cursor * {
 .personal-content {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 0;
 }
 
 .personal-content p {
   font-family: var(--font-serif);
   font-size: 0.85rem;
   line-height: 1.55;
+  color: var(--page-text);
+  margin-bottom: 0;
+  padding-bottom: var(--space-sm);
+}
+
+/* Decorative separator between personal paragraphs */
+.personal-content p + p {
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--page-rule);
+}
+
+/* Drop cap on first paragraph — literary flourish */
+.personal-content p:first-child::first-letter {
+  font-family: var(--font-serif);
+  font-size: 2.8em;
+  font-weight: 600;
+  float: left;
+  line-height: 0.85;
+  margin-right: 0.08em;
+  margin-top: 0.05em;
   color: var(--page-text);
 }
 
@@ -3475,6 +3543,27 @@ body.has-custom-cursor * {
     min-height: 0;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    position: relative;
+  }
+
+  /* Scroll-fade indicator — hints that more content exists below */
+  .page-right::after {
+    content: '';
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: block;
+    height: 48px;
+    background: linear-gradient(
+      to top,
+      var(--page-bg) 0%,
+      rgba(248, 245, 239, 0.85) 40%,
+      transparent 100%
+    );
+    pointer-events: none;
+    z-index: 5;
+    flex-shrink: 0;
   }
 
   .book-spine-center {
