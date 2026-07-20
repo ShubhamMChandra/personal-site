@@ -2968,6 +2968,15 @@ body {
   line-height: 1.75;
 }
 
+/* Rendered book pages inject spreads without the .book-page ancestor, so the
+   rule above misses bare prose paragraphs. Restore the gap between consecutive
+   classless paragraphs inside a spread (the Introduction and Colophon prose).
+   Classed lines (.about-lead, taglines) and nested prose (.personal-content)
+   are untouched. */
+.spread-right > p:not([class]) + p:not([class]) {
+  margin-top: var(--space-md);
+}
+
 /* Experience List */
 .experience-list {
   margin-bottom: var(--space-lg);
