@@ -209,7 +209,11 @@ class Book {
     if (leftContent && rightContent) {
       // Two-page spread layout
       if (isMobile) {
-        // Mobile: show right content only, or combine both
+        // Mobile single column: fold the left page in above the right so
+        // its headshot / chapter intro isn't dropped. A rule separates them.
+        const leftClone = leftContent.cloneNode(true)
+        leftClone.classList.add('mobile-left-inline')
+        this.rightPage.appendChild(leftClone)
         this.rightPage.appendChild(rightContent.cloneNode(true))
       } else {
         this.leftPage.appendChild(leftContent.cloneNode(true))

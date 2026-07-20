@@ -3401,6 +3401,28 @@ body {
     display: none;
   }
 
+  /* The left page, folded into the single mobile column above the right
+     content. Its chapter divider/headshot/heading get a rule below them. */
+  .mobile-left-inline {
+    display: block;
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--page-rule);
+    min-height: 0;
+    text-align: left;
+  }
+
+  /* The big decorative chapter numeral is a desktop full-page flourish;
+     inline on mobile it just crowds, so retire it there. */
+  .mobile-left-inline.chapter-divider::before {
+    display: none;
+  }
+
+  .mobile-left-inline .about-headshot {
+    width: 88px;
+    height: 106px;
+  }
+
   .page-right {
     transform: none; /* Remove 3D tilt */
     box-shadow: none;
