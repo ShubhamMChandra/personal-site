@@ -350,13 +350,17 @@ class Book {
     }
   }
 
-  // Dispatch a single one-step turn by the best available technique
+  // Dispatch a single one-step turn by the best available technique.
+  // Reduced motion still gets the leaf flip, just a flatter/quicker one
+  // (gentle=true) — the crossfade is only a last resort when the 3D leaf
+  // is unsupported.
   async turnTo(direction) {
-    if (this.reduceMotion) return this.crossfade(direction)
     if (window.innerWidth <= 900) return this.slideTo(direction)
-    if (!this.supportsLeaf || !this.turnLeaf) return this.instantTurn(direction)
+    if (!this.supportsLeaf || !this.turnLeaf) {
+      return this.reduceMotion ? this.crossfade(direction) : this.instantTurn(direction)
+    }
     try {
-      await this.leafTo(direction)
+      await this.leafTo(direction, this.reduceMotion)
     } catch (err) {
       // 3D flip failed (older engine) — fall back to an instant swap
       console.warn('Page-turn leaf failed, using instant swap', err)
@@ -387,7 +391,8 @@ class Book {
   }
 
   // ─── Desktop: real single-leaf 3D flip via the Web Animations API ──
-  async leafTo(direction) {
+  // gentle=true (reduced motion) flattens the arc and shortens it.
+  async leafTo(direction, gentle = false) {
     const from = this.currentPage
     const isNext = direction === 'next'
     const to = isNext ? from + 1 : from - 1
@@ -417,17 +422,25 @@ class Book {
     void leaf.offsetWidth // flush layout so the start transform applies
 
     const endDeg = isNext ? -180 : 180
+    const midDeg = endDeg / 2
+    // Full motion arcs the leaf toward the reader at mid-flight (translateZ
+    // lift) so it reads as paper peeling off the spine, not a flat pivot.
+    // Reduced motion keeps it flat and quick.
+    const lift = gentle ? 1 : 62
+    const dur = gentle ? Math.round(this.turnMs * 0.6) : this.turnMs
+    const shadePeak = gentle ? 0.4 : 0.6
     const anims = [
       leaf.animate(
         [
-          { transform: 'translateZ(1px) rotateY(0deg)' },
-          { transform: `translateZ(1px) rotateY(${endDeg}deg)` }
+          { transform: 'translateZ(1px) rotateY(0deg)', offset: 0 },
+          { transform: `translateZ(${lift}px) rotateY(${midDeg}deg)`, offset: 0.5 },
+          { transform: `translateZ(1px) rotateY(${endDeg}deg)`, offset: 1 }
         ],
-        { duration: this.turnMs, easing: this.turnEase, fill: 'forwards' }
+        { duration: dur, easing: this.turnEase, fill: 'forwards' }
       ),
       this.leafShade.animate(
-        [{ opacity: 0 }, { opacity: 0.55, offset: 0.45 }, { opacity: 0 }],
-        { duration: this.turnMs, easing: 'ease-in-out' }
+        [{ opacity: 0 }, { opacity: shadePeak, offset: 0.45 }, { opacity: 0 }],
+        { duration: dur, easing: 'ease-in-out' }
       )
     ]
     // The revealed half darkens early; the covered half darkens late.
@@ -436,13 +449,13 @@ class Book {
     if (liftShadow) {
       anims.push(liftShadow.animate(
         [{ opacity: 0 }, { opacity: 0.5, offset: 0.25 }, { opacity: 0, offset: 0.62 }],
-        { duration: this.turnMs, easing: 'ease-out' }
+        { duration: dur, easing: 'ease-out' }
       ))
     }
     if (landShadow) {
       anims.push(landShadow.animate(
         [{ opacity: 0, offset: 0.38 }, { opacity: 0.5, offset: 0.82 }, { opacity: 0 }],
-        { duration: this.turnMs, easing: 'ease-in' }
+        { duration: dur, easing: 'ease-in' }
       ))
     }
 
