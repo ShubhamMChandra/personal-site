@@ -226,7 +226,7 @@ body {
   justify-content: center;
   align-items: center;
   padding-bottom: 5vh;
-  padding-top: 10vh;
+  padding-top: 9vh;
   position: relative;
   overflow: hidden;
   transition: transform var(--duration-book) var(--ease-in-out),
@@ -286,10 +286,10 @@ body {
   z-index: 100;
 }
 
-/* Hanging cord */
+/* Hanging cord - drops the lamp to hang a believable distance above the books */
 .bulb-cord {
   width: 2px;
-  height: 40px;
+  height: 48px;
   background: linear-gradient(
     180deg,
     #1a1a18 0%,
@@ -543,6 +543,26 @@ body {
   z-index: 2;
 }
 
+/* Shared contact shadow pooled where the row meets the plank.
+   .books sits at z-index 2 (above the shelf surface), so this paints
+   onto the plank at the spine bases and reads as ambient occlusion. */
+.books::after {
+  content: '';
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  bottom: -5px;
+  height: 13px;
+  background: radial-gradient(
+    ellipse 60% 100% at 50% 100%,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.24) 46%,
+    transparent 74%
+  );
+  filter: blur(3px);
+  pointer-events: none;
+}
+
 /* Light overlay - radial falloff from bulb position (behind books) */
 .light-overlay {
   position: absolute;
@@ -646,41 +666,42 @@ body {
 .book-spine-img {
   height: auto;
   width: auto;
-  max-height: 320px;
+  max-height: 420px;
   display: block;
   border-radius: 2px 4px 4px 2px;
 }
 
-/* Position-aware shadows - angled based on light source position (centered above) */
+/* Position-aware shadows - tight contact (short y-offset) so the books
+   read as seated on the plank, not levitating. Angle tracks the centered light. */
 /* Work (far left) - shadow angles right */
-.book:nth-child(1) { 
+.book:nth-child(1) {
   transform: rotate(-0.5deg);
-  filter: drop-shadow(4px 8px 15px rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(3px 3px 8px rgba(0, 0, 0, 0.55));
 }
 /* About (center-left) - shadow slightly right */
-.book:nth-child(2) { 
+.book:nth-child(2) {
   transform: rotate(0.3deg);
-  filter: drop-shadow(2px 8px 15px rgba(0, 0, 0, 0.55));
+  filter: drop-shadow(2px 3px 8px rgba(0, 0, 0, 0.5));
 }
 /* Contact (center) - shadow straight down */
-.book:nth-child(3) { 
+.book:nth-child(3) {
   transform: rotate(-0.2deg);
-  filter: drop-shadow(0px 8px 14px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0px 3px 7px rgba(0, 0, 0, 0.5));
 }
 /* References (center-right) - shadow slightly left */
-.book:nth-child(4) { 
+.book:nth-child(4) {
   transform: rotate(0.4deg);
-  filter: drop-shadow(-2px 8px 15px rgba(0, 0, 0, 0.55));
+  filter: drop-shadow(-2px 3px 8px rgba(0, 0, 0, 0.5));
 }
-/* Mystery (far right) - shadow angles left */
-.book:nth-child(5) { 
+/* Colophon (far right) - shadow angles left */
+.book:nth-child(5) {
   transform: rotate(0.2deg);
-  filter: drop-shadow(-4px 8px 15px rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(-3px 3px 8px rgba(0, 0, 0, 0.55));
 }
 
 .book:hover {
   transform: translateY(-12px) rotate(0deg);
-  filter: drop-shadow(0px 12px 20px rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0px 14px 22px rgba(0, 0, 0, 0.55));
   z-index: 10;
 }
 
@@ -1055,7 +1076,7 @@ body {
 .shelf-surface {
   position: relative;
   width: 100%;
-  max-width: 800px;
+  max-width: 860px;
   margin: 0 auto;
 }
 
@@ -1085,35 +1106,34 @@ body {
   position: relative;
 }
 
-/* Wood grain texture on top */
+/* Wood grain texture on top - one non-repeating pass, no tiling seams */
 .shelf-top::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: 4px 4px 0 0;
   background:
-    /* Fine grain lines */
-    repeating-linear-gradient(
+    /* Irregular lengthwise grain - non-repeating so the plank never tiles */
+    linear-gradient(
       90deg,
-      transparent 0px,
-      transparent 25px,
-      rgba(90, 60, 30, 0.3) 25px,
-      rgba(90, 60, 30, 0.15) 27px,
-      transparent 28px,
-      transparent 45px,
-      rgba(80, 50, 25, 0.2) 45px,
-      rgba(80, 50, 25, 0.1) 46px,
-      transparent 47px,
-      transparent 80px
+      rgba(60, 38, 18, 0.14) 0%,
+      rgba(90, 60, 30, 0.04) 11%,
+      rgba(70, 45, 22, 0.18) 23%,
+      rgba(90, 60, 30, 0.05) 39%,
+      rgba(60, 38, 18, 0.20) 52%,
+      rgba(90, 60, 30, 0.04) 67%,
+      rgba(70, 45, 22, 0.16) 81%,
+      rgba(90, 60, 30, 0.05) 92%,
+      rgba(60, 38, 18, 0.13) 100%
     ),
-    /* Subtle knot pattern */
+    /* A couple of fixed knots */
     radial-gradient(
-      ellipse 8px 4px at 25% 50%,
+      ellipse 8px 4px at 22% 55%,
       rgba(60, 35, 15, 0.3) 0%,
       transparent 100%
     ),
     radial-gradient(
-      ellipse 6px 3px at 75% 60%,
+      ellipse 6px 3px at 68% 60%,
       rgba(60, 35, 15, 0.2) 0%,
       transparent 100%
     );
@@ -1172,24 +1192,24 @@ body {
   position: relative;
 }
 
-/* Vertical wood grain detail */
+/* Vertical wood grain detail - irregular, non-repeating (no seam) */
 .shelf-front::before {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    repeating-linear-gradient(
+    linear-gradient(
       90deg,
-      transparent 0px,
-      transparent 50px,
-      rgba(0, 0, 0, 0.08) 50px,
-      rgba(0, 0, 0, 0.04) 52px,
-      transparent 53px,
-      transparent 90px,
-      rgba(0, 0, 0, 0.06) 90px,
-      rgba(0, 0, 0, 0.03) 91px,
-      transparent 92px,
-      transparent 140px
+      rgba(0, 0, 0, 0.00) 0%,
+      rgba(0, 0, 0, 0.10) 9%,
+      rgba(0, 0, 0, 0.02) 15%,
+      rgba(0, 0, 0, 0.00) 29%,
+      rgba(0, 0, 0, 0.08) 43%,
+      rgba(0, 0, 0, 0.02) 51%,
+      rgba(0, 0, 0, 0.00) 66%,
+      rgba(0, 0, 0, 0.09) 80%,
+      rgba(0, 0, 0, 0.02) 88%,
+      rgba(0, 0, 0, 0.00) 100%
     );
 }
 
