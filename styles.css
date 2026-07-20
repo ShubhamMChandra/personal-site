@@ -78,7 +78,7 @@
 
   /* Page Colors - warm parchment */
   --page-bg: #f4efe1;
-  --page-text: #1a1714;
+  --page-text: #26201a;
   --page-secondary: #3d3832;
   --page-tertiary: #5a554c;
   --page-rule: rgba(26, 23, 20, 0.12);
@@ -1649,6 +1649,8 @@ body {
   padding: 1.25rem;
   flex: 1;
   min-height: 0; /* Safari flexbox fix */
+  letter-spacing: 0.004em;
+  text-rendering: optimizeLegibility;
 }
 
 /* Subtle scrollbar for page content overflow */
