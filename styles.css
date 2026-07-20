@@ -110,6 +110,8 @@
   --duration-medium: 0.4s;
   --duration-slow: 0.8s;
   --duration-book: 1.2s;
+  --duration-turn: 0.72s; /* single source of truth for the page-turn (JS reads this) */
+  --ease-page-turn: cubic-bezier(0.62, 0.04, 0.3, 0.98);
 }
 
 html {
@@ -1611,7 +1613,8 @@ body.has-custom-cursor * {
   width: 100%;
   height: calc(100vh - 140px);
   max-height: 800px;
-  perspective: 1200px;
+  perspective: 1800px;
+  perspective-origin: 50% 45%;
 }
 
 /* Page Edge Effects - solid cover with page edges */
@@ -1759,6 +1762,7 @@ body.has-custom-cursor * {
   position: relative;
   z-index: 1;
   transform-style: preserve-3d;
+  isolation: isolate; /* contain the 3D leaf's stacking context (Safari) */
 }
 
 /* Warm light hitting the top of the book */
@@ -1943,7 +1947,6 @@ body.has-custom-cursor * {
       rgba(0, 0, 0, 0.03) 32%,
       transparent 42%
     );
-  box-shadow: 3px -3px 8px rgba(0, 0, 0, 0.1);
 }
 
 .page-left .page-curl:hover {
@@ -1969,7 +1972,6 @@ body.has-custom-cursor * {
       rgba(0, 0, 0, 0.03) 32%,
       transparent 42%
     );
-  box-shadow: -3px -3px 8px rgba(0, 0, 0, 0.1);
 }
 
 .page-right .page-curl:hover {
@@ -2052,6 +2054,131 @@ body.has-custom-cursor * {
     rgba(255, 220, 180, 0.15) 0%,
     transparent 100%
   );
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PAGE-TURN LEAF (single-leaf 3D flip engine)
+   A reusable leaf flips about the spine; its faces carry the page
+   we turn from (front) and land on (back). Static pages stay flat
+   and crisp. All timing is driven from JS via the Web Animations
+   API reading --duration-turn / --ease-page-turn, so there is no
+   setTimeout-vs-CSS drift.
+   ═══════════════════════════════════════════════════════════ */
+
+/* Dynamic shadow overlays — one per static half, opacity driven by JS */
+.page-shadow {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc((100% - 24px) / 2);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 4;
+}
+
+.page-shadow-left {
+  left: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(20, 12, 4, 0.05) 55%,
+    rgba(20, 12, 4, 0.30) 100%
+  );
+}
+
+.page-shadow-right {
+  left: calc(50% + 12px);
+  background: linear-gradient(
+    270deg,
+    transparent 0%,
+    rgba(20, 12, 4, 0.05) 55%,
+    rgba(20, 12, 4, 0.30) 100%
+  );
+}
+
+/* The turning leaf */
+.turn-leaf {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc((100% - 24px) / 2);
+  transform-style: preserve-3d;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.turn-leaf[hidden] {
+  display: none;
+}
+
+.turn-leaf--next {
+  left: calc(50% + 12px);
+  transform-origin: left center;
+}
+
+.turn-leaf--prev {
+  left: 0;
+  transform-origin: right center;
+}
+
+/* Leaf faces — each is styled to read as one page half */
+.turn-leaf-face {
+  position: absolute;
+  inset: 0;
+  padding: 2.125rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: linear-gradient(180deg, #f8f4ec 0%, #f4f0e6 100%);
+}
+
+.turn-leaf-back {
+  transform: rotateY(180deg);
+}
+
+/* Gutter-side falloff + inset shadow to match the static pages */
+.turn-leaf-face.is-left {
+  background:
+    linear-gradient(90deg, #f8f4ec 0%, #f5f1e8 60%, #ebe5da 100%),
+    linear-gradient(180deg, #f8f4ec 0%, #f4f0e6 100%);
+  box-shadow:
+    inset -30px 0 40px -12px rgba(0, 0, 0, 0.22),
+    inset -5px 0 10px -2px rgba(0, 0, 0, 0.12);
+}
+
+.turn-leaf-face.is-right {
+  background:
+    linear-gradient(90deg, #ebe5da 0%, #f5f1e8 40%, #f8f4ec 100%),
+    linear-gradient(180deg, #f8f4ec 0%, #f4f0e6 100%);
+  box-shadow:
+    inset 30px 0 40px -12px rgba(0, 0, 0, 0.22),
+    inset 5px 0 10px -2px rgba(0, 0, 0, 0.12);
+}
+
+/* Specular sheen that sweeps the leaf near mid-flip (opacity driven by JS).
+   backface-visibility hides it once the leaf passes edge-on. */
+.turn-leaf-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: linear-gradient(
+    105deg,
+    rgba(255, 250, 240, 0.30) 0%,
+    rgba(255, 250, 240, 0) 38%,
+    rgba(20, 12, 4, 0) 60%,
+    rgba(20, 12, 4, 0.22) 100%
+  );
+}
+
+/* Hide the resting corner curls while a turn is in flight */
+.book-view.is-turning .page-curl {
+  opacity: 0;
   pointer-events: none;
 }
 
