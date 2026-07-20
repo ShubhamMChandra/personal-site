@@ -69,12 +69,12 @@
   --wood-highlight: #5c3a24;
   --wood-grain: rgba(74, 44, 26, 0.3);
 
-  /* Book Cover Colors - match SVG spine colors */
-  --book-work: #952626;
-  --book-about: #2a4d8c;
-  --book-contact: #34684a;
-  --book-references: #4a3060;
-  --book-mystery: #553d62;
+  /* Book Cover Colors - match the redrawn leather spine mid-tones */
+  --book-work: #5a1e22;
+  --book-about: #16323b;
+  --book-contact: #21402d;
+  --book-references: #34203f;
+  --book-mystery: #20232b;
 
   /* Page Colors - Harvard Press warmth */
   --page-bg: #f8f5ef;
@@ -1656,14 +1656,20 @@ body.has-custom-cursor * {
   bottom: 2px;
   width: 10px;
   background:
+    /* two soft warm leaf-line periods overlaid → irregular stacked paper */
     repeating-linear-gradient(
       to bottom,
-      #f8f4ec 0px,
-      #f8f4ec 1px,
-      #e8e0d4 1px,
-      #e8e0d4 2px
+      transparent 0px,
+      rgba(120, 95, 60, 0.11) 1.5px,
+      transparent 4px
     ),
-    linear-gradient(90deg, #d0c8bc 0%, #f0ebe0 100%);
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      rgba(90, 70, 45, 0.06) 2px,
+      transparent 6.5px
+    ),
+    linear-gradient(90deg, #cdc2ab 0%, #efe7d6 100%);
   box-shadow: inset 2px 0 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -1682,14 +1688,20 @@ body.has-custom-cursor * {
   bottom: 2px;
   width: 10px;
   background:
+    /* two soft warm leaf-line periods overlaid → irregular stacked paper */
     repeating-linear-gradient(
       to bottom,
-      #f8f4ec 0px,
-      #f8f4ec 1px,
-      #e8e0d4 1px,
-      #e8e0d4 2px
+      transparent 0px,
+      rgba(120, 95, 60, 0.11) 1.5px,
+      transparent 4px
     ),
-    linear-gradient(90deg, #f0ebe0 0%, #d0c8bc 100%);
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      rgba(90, 70, 45, 0.06) 2px,
+      transparent 6.5px
+    ),
+    linear-gradient(90deg, #efe7d6 0%, #cdc2ab 100%);
   box-shadow: inset -2px 0 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -2010,33 +2022,24 @@ body.has-custom-cursor * {
   pointer-events: none;
 }
 
-/* Center Spine - deep book binding */
+/* Center Spine - the gutter crease where the two pages dive into the
+   binding: a smooth shadow valley (darkest at the centre fold) over the
+   page colour, no stitching stripes */
 .book-spine-center {
   width: 24px;
   background:
-    /* Stitching line hint */
-    repeating-linear-gradient(
-      180deg,
-      transparent 0px,
-      transparent 8px,
-      rgba(120, 100, 80, 0.15) 8px,
-      rgba(120, 100, 80, 0.15) 10px
-    ),
-    /* Deep gutter shadow */
     linear-gradient(
       90deg,
-      #b8ad9d 0%,
-      #a89d8d 15%,
-      #8a7d6d 40%,
-      #7a6d5d 50%,
-      #8a7d6d 60%,
-      #a89d8d 85%,
-      #b8ad9d 100%
-    );
+      rgba(24, 15, 6, 0.06) 0%,
+      rgba(24, 15, 6, 0.20) 32%,
+      rgba(24, 15, 6, 0.34) 50%,
+      rgba(24, 15, 6, 0.20) 68%,
+      rgba(24, 15, 6, 0.06) 100%
+    ),
+    var(--page-bg);
   box-shadow:
-    inset 6px 0 12px rgba(0, 0, 0, 0.35),
-    inset -6px 0 12px rgba(0, 0, 0, 0.35),
-    inset 0 3px 6px rgba(0, 0, 0, 0.2);
+    inset 9px 0 16px -8px rgba(0, 0, 0, 0.4),
+    inset -9px 0 16px -8px rgba(0, 0, 0, 0.4);
   flex-shrink: 0;
   position: relative;
 }
