@@ -3411,7 +3411,10 @@ body {
     position: relative;
   }
 
-  /* Scroll-fade indicator — hints that more content exists below */
+  /* Scroll-fade indicator — hints that more content exists below.
+     opacity + mix-blend-mode are reset here because .page::after (the
+     paper-grain texture on the same pseudo slot) sets opacity:0.03 /
+     multiply, which would otherwise render this fade invisible. */
   .page-right::after {
     content: '';
     position: sticky;
@@ -3419,13 +3422,15 @@ body {
     left: 0;
     right: 0;
     display: block;
-    height: 48px;
+    height: 64px;
     background: linear-gradient(
       to top,
       var(--page-bg) 0%,
-      rgba(248, 245, 239, 0.85) 40%,
+      var(--page-bg) 32%,
       transparent 100%
     );
+    opacity: 1;
+    mix-blend-mode: normal;
     pointer-events: none;
     z-index: 5;
     flex-shrink: 0;
@@ -3439,12 +3444,10 @@ body {
     display: none;
   }
 
-  /* Better page curl positioning on mobile */
+  /* No page-curl affordance on mobile — the fixed prev/next bar is the
+     nav, and the curl ghosted over the last line of body text. */
   .page-curl {
-    width: 45px;
-    height: 45px;
-    bottom: 8px;
-    right: 8px;
+    display: none;
   }
 
   /* Nav shelf button positioning */
