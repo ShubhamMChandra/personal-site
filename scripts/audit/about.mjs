@@ -44,7 +44,7 @@ console.log(`✓ about-1.png (Intro/Bio)`)
 const pages = ['Technical Skills', 'Currently', 'Personal']
 for (let i = 0; i < pages.length; i++) {
   await page.keyboard.press('ArrowRight')
-  await page.waitForTimeout(500)
+  await page.waitForTimeout(1100)
   await page.screenshot({ path: `${OUTPUT}/about-${i + 2}.png` })
   console.log(`✓ about-${i + 2}.png (${pages[i]})`)
 }
