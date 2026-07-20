@@ -280,7 +280,8 @@ class Book {
       work: 'Selected Work',
       about: 'About Me',
       contact: 'Get in Touch',
-      references: 'References'
+      references: 'References',
+      colophon: 'Colophon'
     }
     return titles[bookId] || bookId
   }

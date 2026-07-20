@@ -78,7 +78,7 @@ class Portfolio {
 
   handleUrlHash() {
     const hash = window.location.hash.slice(1)
-    if (hash && ['work', 'about', 'contact', 'references'].includes(hash)) {
+    if (hash && ['work', 'about', 'contact', 'references', 'colophon'].includes(hash)) {
       // Small delay to ensure everything is initialized
       setTimeout(() => {
         if (this.bookshelf) {
@@ -90,7 +90,7 @@ class Portfolio {
     // Handle back/forward navigation
     window.addEventListener('popstate', () => {
       const newHash = window.location.hash.slice(1)
-      if (newHash && ['work', 'about', 'contact', 'references'].includes(newHash)) {
+      if (newHash && ['work', 'about', 'contact', 'references', 'colophon'].includes(newHash)) {
         if (this.bookshelf) {
           this.bookshelf.selectBook(newHash)
         }

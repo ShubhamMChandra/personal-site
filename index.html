@@ -90,12 +90,10 @@
           <div class="book-edge"></div>
         </button>
 
-        <!-- Mystery book - intentionally sealed -->
-        <button class="book book-mystery" data-book="mystery" aria-label="This story isn't written yet" disabled>
-          <img class="book-spine-img" src="assets/book-mystery.svg" alt="Coming soon" />
+        <!-- Colophon - back matter on how this site is made -->
+        <button class="book" data-book="colophon" aria-label="Open Colophon book">
+          <img class="book-spine-img" src="assets/book-colophon.svg" alt="Colophon" />
           <div class="book-edge"></div>
-          <div class="mystery-glow"></div>
-          <span class="mystery-tooltip">This story isn't written yet</span>
         </button>
       </div>
 
@@ -669,6 +667,89 @@
       </div>
     </article>
 
+  </template>
+
+  <template id="colophon-book">
+    <!-- Spread 1: Craft note -->
+    <article class="book-page book-spread" data-page-num="1">
+      <div class="spread-left about-chapter">
+        <span class="about-chapter-label">Colophon</span>
+        <h2 class="about-chapter-title">On This Volume</h2>
+        <p class="about-chapter-note">
+          A note on the making.
+        </p>
+      </div>
+      <div class="spread-right">
+        <header class="about-header">
+          <h2>The Craft</h2>
+        </header>
+        <p class="about-lead">
+          Sites, like books, are made objects.
+        </p>
+        <p>
+          This one is arranged as a small private library: five bound volumes
+          on a single shelf, each holding one subject. The conceit is
+          deliberately quiet — browsing, not performance. Everything a visitor
+          needs sits on the shelf itself; the books are for readers who like
+          to read.
+        </p>
+        <p>
+          The type is set in Cormorant Garamond, with Space Grotesk and Space
+          Mono for labels and figures. The palette keeps to a dark study —
+          oxblood, slate, bottle green, mulberry, pewter — leathers that
+          recede so the gilt can be scarce. Ornament is rationed on purpose.
+        </p>
+        <p>
+          In fine printing, a colophon records how a book was produced: its
+          typefaces, paper, and press. This page keeps that habit.
+        </p>
+      </div>
+    </article>
+
+    <!-- Spread 2: Technical -->
+    <article class="book-page book-spread" data-page-num="2">
+      <div class="spread-left about-chapter">
+        <span class="about-chapter-label">Colophon</span>
+        <h2 class="about-chapter-title">Construction</h2>
+        <p class="about-chapter-note">
+          For the technically curious.
+        </p>
+      </div>
+      <div class="spread-right">
+        <header class="about-header">
+          <h2>How It's Built</h2>
+        </header>
+        <p class="about-lead">
+          Vanilla, by choice.
+        </p>
+        <p>
+          No frameworks and no build step: HTML, CSS, and JavaScript served
+          exactly as written, from a single stylesheet and three small
+          scripts.
+        </p>
+        <div class="technical-list">
+          <div class="technical-item">
+            <span class="technical-category">Stack</span>
+            <span class="technical-skills">Vanilla HTML, CSS, JavaScript — no build step</span>
+          </div>
+          <div class="technical-item">
+            <span class="technical-category">Motion</span>
+            <span class="technical-skills">Web Animations API single-leaf page turn — one CSS token is the clock</span>
+          </div>
+          <div class="technical-item">
+            <span class="technical-category">System</span>
+            <span class="technical-skills">CSS custom properties for color, type, spacing, motion</span>
+          </div>
+          <div class="technical-item">
+            <span class="technical-category">Access</span>
+            <span class="technical-skills">Semantic HTML, keyboard navigation, reduced-motion paths</span>
+          </div>
+        </div>
+        <p class="technical-note">
+          Nothing is minified. The source is meant to be read.
+        </p>
+      </div>
+    </article>
   </template>
 
   <script src="scripts/bookshelf.js"></script>

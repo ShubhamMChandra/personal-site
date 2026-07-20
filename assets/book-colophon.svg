@@ -1,50 +1,50 @@
 <!--
-  book-mystery.svg - Mystery Book Spine
-  WHAT: Cold near-black tooled-leather spine, DEBOSSED bands, sunken tarnished-pewter "?"
-  WHY:  Sealed/cold placeholder volume, hints at future content
+  book-colophon.svg - Colophon Book Spine
+  WHAT: Cold near-black tooled-leather spine, DEBOSSED bands, sunken tarnished-pewter title
+  WHY:  Back-matter volume - the production note on how this site is made
 -->
 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="300" viewBox="0 0 48 300">
   <defs>
-    <linearGradient id="leatherV-mys" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="leatherV-col" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#282c35"/>
       <stop offset="45%" stop-color="#20232b"/>
       <stop offset="100%" stop-color="#14161c"/>
     </linearGradient>
-    <linearGradient id="leatherH-mys" x1="0" y1="0" x2="1" y2="0">
+    <linearGradient id="leatherH-col" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="#14161c"/>
       <stop offset="50%" stop-color="#282c35"/>
       <stop offset="100%" stop-color="#14161c"/>
     </linearGradient>
-    <linearGradient id="cyl-mys" x1="0" y1="0" x2="1" y2="0">
+    <linearGradient id="cyl-col" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="rgba(0,0,0,0.4)"/>
       <stop offset="18%" stop-color="rgba(0,0,0,0)"/>
       <stop offset="82%" stop-color="rgba(0,0,0,0)"/>
       <stop offset="100%" stop-color="rgba(0,0,0,0.34)"/>
     </linearGradient>
     <!-- Tarnished pewter (muted, no hot highlight) -->
-    <linearGradient id="foil-mys" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="foil-col" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#3a3d44"/>
       <stop offset="50%" stop-color="#9aa0a8"/>
       <stop offset="100%" stop-color="#3a3d44"/>
     </linearGradient>
-    <filter id="grain-mys" x="0" y="0" width="100%" height="100%">
+    <filter id="grain-col" x="0" y="0" width="100%" height="100%">
       <feTurbulence type="fractalNoise" baseFrequency="0.9 0.4" numOctaves="2" result="n"/>
       <feColorMatrix in="n" type="saturate" values="0" result="d"/>
       <feComponentTransfer in="d" result="a">
         <feFuncA type="linear" slope="0.06" intercept="0"/>
       </feComponentTransfer>
     </filter>
-    <radialGradient id="vig-mys" cx="50%" cy="8%" r="115%">
+    <radialGradient id="vig-col" cx="50%" cy="8%" r="115%">
       <stop offset="0%" stop-color="rgba(200,205,215,0.08)"/>
       <stop offset="40%" stop-color="rgba(0,0,0,0)"/>
       <stop offset="100%" stop-color="rgba(0,0,0,0.5)"/>
     </radialGradient>
   </defs>
 
-  <rect width="48" height="300" fill="url(#leatherV-mys)" rx="2"/>
-  <rect width="48" height="300" fill="url(#leatherH-mys)" rx="2" opacity="0.45"/>
-  <rect width="48" height="300" filter="url(#grain-mys)" opacity="0.5" rx="2"/>
-  <rect width="48" height="300" fill="url(#cyl-mys)" rx="2"/>
+  <rect width="48" height="300" fill="url(#leatherV-col)" rx="2"/>
+  <rect width="48" height="300" fill="url(#leatherH-col)" rx="2" opacity="0.45"/>
+  <rect width="48" height="300" filter="url(#grain-col)" opacity="0.5" rx="2"/>
+  <rect width="48" height="300" fill="url(#cyl-col)" rx="2"/>
 
   <!-- DEBOSSED band pairs: dark ABOVE, light BELOW (inverted emboss) -->
   <!-- top pair -->
@@ -70,15 +70,42 @@
     <rect x="4" y="264.5" width="40" height="1" fill="rgba(210,215,225,0.12)"/>
   </g>
 
-  <!-- title ? sunken (dark above-left shadow, faint light below-right, muted pewter fill) -->
-  <g font-family="Georgia, 'Times New Roman', serif" font-size="52" font-weight="bold" text-anchor="middle">
-    <text x="23.4" y="164.4" fill="#000" opacity="0.5">?</text>
-    <text x="24.5" y="165.5" fill="rgba(210,215,225,0.1)">?</text>
-    <text x="24" y="165" fill="url(#foil-mys)" opacity="0.7">?</text>
+  <!-- title COLOPHON, sunken: dark above-left shadow, faint light below-right, muted pewter fill -->
+  <g font-family="Georgia, 'Times New Roman', serif" font-size="13" font-weight="bold" text-anchor="middle" letter-spacing="0.5">
+    <g fill="#000" opacity="0.5">
+      <text x="23.4" y="83.4">C</text>
+      <text x="23.4" y="103.4">O</text>
+      <text x="23.4" y="123.4">L</text>
+      <text x="23.4" y="143.4">O</text>
+      <text x="23.4" y="163.4">P</text>
+      <text x="23.4" y="183.4">H</text>
+      <text x="23.4" y="203.4">O</text>
+      <text x="23.4" y="223.4">N</text>
+    </g>
+    <g fill="rgba(210,215,225,0.1)">
+      <text x="24.5" y="84.5">C</text>
+      <text x="24.5" y="104.5">O</text>
+      <text x="24.5" y="124.5">L</text>
+      <text x="24.5" y="144.5">O</text>
+      <text x="24.5" y="164.5">P</text>
+      <text x="24.5" y="184.5">H</text>
+      <text x="24.5" y="204.5">O</text>
+      <text x="24.5" y="224.5">N</text>
+    </g>
+    <g fill="url(#foil-col)" opacity="0.8">
+      <text x="24" y="84">C</text>
+      <text x="24" y="104">O</text>
+      <text x="24" y="124">L</text>
+      <text x="24" y="144">O</text>
+      <text x="24" y="164">P</text>
+      <text x="24" y="184">H</text>
+      <text x="24" y="204">O</text>
+      <text x="24" y="224">N</text>
+    </g>
   </g>
 
-  <!-- ornament: muted hollow ring -->
-  <circle cx="24" cy="212" r="7" fill="none" stroke="url(#foil-mys)" stroke-width="0.9" opacity="0.45"/>
+  <!-- ornament: muted hollow ring, below the title run -->
+  <circle cx="24" cy="238.5" r="5.5" fill="none" stroke="url(#foil-col)" stroke-width="0.9" opacity="0.45"/>
 
-  <rect width="48" height="300" fill="url(#vig-mys)" rx="2"/>
+  <rect width="48" height="300" fill="url(#vig-col)" rx="2"/>
 </svg>

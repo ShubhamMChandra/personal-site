@@ -74,7 +74,7 @@
   --book-about: #16323b;
   --book-contact: #21402d;
   --book-references: #34203f;
-  --book-mystery: #20232b;
+  --book-colophon: #20232b;
 
   /* Page Colors - Harvard Press warmth */
   --page-bg: #f8f5ef;
@@ -929,83 +929,6 @@ body {
   pointer-events: none;
 }
 
-/* Mystery Book (Coming Soon) */
-.book-mystery {
-  opacity: 0.6;
-  filter: saturate(0.3);
-  cursor: not-allowed !important;
-}
-
-.book-mystery .book-spine {
-  background: linear-gradient(
-    90deg,
-    #2a2a2a 0%,
-    #3a3a3a 50%,
-    #2a2a2a 100%
-  );
-  position: relative;
-  overflow: visible;
-}
-
-.book-mystery .spine-text {
-  color: var(--text-tertiary);
-  font-size: 1rem;
-  letter-spacing: 0.3em;
-}
-
-.book-mystery:hover {
-  opacity: 0.75;
-  transform: translateY(-5px) rotateY(-2deg);
-  filter: saturate(0.5);
-}
-
-.book-mystery:hover .spine-text {
-  color: var(--accent);
-}
-
-.mystery-glow {
-  position: absolute;
-  inset: -10px;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(78, 205, 196, 0.15) 0%,
-    transparent 70%
-  );
-  opacity: 0;
-  transition: opacity var(--duration-medium) var(--ease-out-expo);
-  pointer-events: none;
-}
-
-.book-mystery:hover .mystery-glow {
-  opacity: 1;
-}
-
-/* Mystery tooltip — reveals on hover, personality not frustration */
-.mystery-tooltip {
-  position: absolute;
-  bottom: calc(100% + 12px);
-  left: 50%;
-  transform: translateX(-50%) translateY(4px);
-  white-space: nowrap;
-  font-family: var(--font-serif);
-  font-size: 0.8rem;
-  font-style: italic;
-  color: var(--text-secondary);
-  background: var(--bg-warm);
-  padding: 6px 14px;
-  border: 1px solid var(--text-tertiary);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--duration-fast) var(--ease-out-expo),
-              transform var(--duration-fast) var(--ease-out-expo);
-  z-index: 20;
-}
-
-.book-mystery:hover .mystery-tooltip {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
 /* Book Hover Glow Effect */
 .book::before {
   content: '';
@@ -1027,14 +950,6 @@ body {
 
 .book:hover::before {
   opacity: 1;
-}
-
-.book-mystery::before {
-  background: radial-gradient(
-    ellipse 100% 100% at 50% 0%,
-    rgba(78, 205, 196, 0.2) 0%,
-    transparent 70%
-  );
 }
 
 /* Staggered Entrance Animation */
@@ -1745,9 +1660,9 @@ body {
   background: var(--book-references);
 }
 
-.book-view[data-active-book="mystery"] .page-edge-left::before,
-.book-view[data-active-book="mystery"] .page-edge-right::after {
-  background: var(--book-mystery);
+.book-view[data-active-book="colophon"] .page-edge-left::before,
+.book-view[data-active-book="colophon"] .page-edge-right::after {
+  background: var(--book-colophon);
 }
 
 /* Open Book - mild V shape like holding a real book */
