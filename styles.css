@@ -787,8 +787,10 @@ body {
   pointer-events: none;
 }
 
-/* Book Hover Glow Effect */
-.book::before {
+/* Book Hover Glow Effect — on ::after so it doesn't collide with the
+   lighting ::before (whose per-book nth-child backgrounds out-specify
+   and would otherwise hide this glow entirely). */
+.book::after {
   content: '';
   position: absolute;
   bottom: -20px;
@@ -806,7 +808,7 @@ body {
   pointer-events: none;
 }
 
-.book:hover::before {
+.book:hover::after {
   opacity: 1;
 }
 
