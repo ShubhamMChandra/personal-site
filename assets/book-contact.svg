@@ -1,62 +1,103 @@
 <!--
   book-contact.svg - Contact Book Spine
-  WHAT: Forest green leather spine with silver "CONTACT" lettering
+  WHAT: Aged forest-green tooled-leather spine, embossed bands, beveled warm-brass "CONTACT"
   WHY:  Visual asset for Contact book on the bookshelf
 -->
 <svg xmlns="http://www.w3.org/2000/svg" width="52" height="260" viewBox="0 0 52 260">
   <defs>
-    <linearGradient id="spine-contact" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#2a5a40"/>
-      <stop offset="50%" style="stop-color:#34684a"/>
-      <stop offset="100%" style="stop-color:#254a38"/>
+    <linearGradient id="leatherV-contact" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#21402d"/>
+      <stop offset="45%" stop-color="#1a3325"/>
+      <stop offset="100%" stop-color="#0f2419"/>
     </linearGradient>
-    <linearGradient id="copper" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#a8b0bc"/>
-      <stop offset="50%" style="stop-color:#e8ecf0"/>
-      <stop offset="100%" style="stop-color:#a8b0bc"/>
+    <linearGradient id="leatherH-contact" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0f2419"/>
+      <stop offset="50%" stop-color="#21402d"/>
+      <stop offset="100%" stop-color="#0f2419"/>
     </linearGradient>
-    <!-- Center-right book: light from top-center, slight bias to left -->
-    <radialGradient id="corner-light-contact" cx="40%" cy="0%" r="120%" fx="40%" fy="0%">
-      <stop offset="0%" style="stop-color:rgba(255,220,180,0.15)"/>
-      <stop offset="35%" style="stop-color:rgba(255,200,150,0.06)"/>
-      <stop offset="65%" style="stop-color:rgba(0,0,0,0)"/>
-      <stop offset="100%" style="stop-color:rgba(0,0,0,0.2)"/>
+    <linearGradient id="cyl-contact" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="rgba(0,0,0,0.35)"/>
+      <stop offset="18%" stop-color="rgba(0,0,0,0)"/>
+      <stop offset="82%" stop-color="rgba(0,0,0,0)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0.28)"/>
+    </linearGradient>
+    <!-- Warm brass foil -->
+    <linearGradient id="foil-contact" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6b531f"/>
+      <stop offset="30%" stop-color="#b8963e"/>
+      <stop offset="50%" stop-color="#e0c07a"/>
+      <stop offset="70%" stop-color="#c0a048"/>
+      <stop offset="100%" stop-color="#6b531f"/>
+    </linearGradient>
+    <filter id="grain-contact" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9 0.4" numOctaves="2" result="n"/>
+      <feColorMatrix in="n" type="saturate" values="0" result="d"/>
+      <feComponentTransfer in="d" result="a">
+        <feFuncA type="linear" slope="0.06" intercept="0"/>
+      </feComponentTransfer>
+    </filter>
+    <radialGradient id="vig-contact" cx="50%" cy="8%" r="115%">
+      <stop offset="0%" stop-color="rgba(255,225,190,0.14)"/>
+      <stop offset="45%" stop-color="rgba(0,0,0,0)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0.4)"/>
     </radialGradient>
   </defs>
 
-  <!-- Main spine -->
-  <rect width="52" height="260" fill="url(#spine-contact)" rx="2"/>
-  <rect width="52" height="260" fill="url(#corner-light-contact)" rx="2"/>
+  <rect width="52" height="260" fill="url(#leatherV-contact)" rx="2"/>
+  <rect width="52" height="260" fill="url(#leatherH-contact)" rx="2" opacity="0.45"/>
+  <rect width="52" height="260" filter="url(#grain-contact)" opacity="0.5" rx="2"/>
+  <rect width="52" height="260" fill="url(#cyl-contact)" rx="2"/>
 
-  <!-- Texture -->
-  <line x1="2" y1="0" x2="2" y2="260" stroke="#15291f" stroke-width="0.5" opacity="0.5"/>
-  <line x1="50" y1="0" x2="50" y2="260" stroke="#244535" stroke-width="0.5" opacity="0.3"/>
+  <!-- top band pair -->
+  <g>
+    <rect x="4" y="34" width="44" height="1" fill="rgba(0,0,0,0.5)"/>
+    <rect x="4" y="31" width="44" height="3.5" fill="#254a33"/>
+    <rect x="4" y="30.4" width="44" height="1" fill="rgba(255,240,220,0.18)"/>
+  </g>
+  <g>
+    <rect x="4" y="46" width="44" height="1" fill="rgba(0,0,0,0.5)"/>
+    <rect x="4" y="43" width="44" height="3.5" fill="#254a33"/>
+    <rect x="4" y="42.4" width="44" height="1" fill="rgba(255,240,220,0.18)"/>
+  </g>
+  <!-- bottom band pair -->
+  <g>
+    <rect x="4" y="216" width="44" height="1" fill="rgba(0,0,0,0.5)"/>
+    <rect x="4" y="213" width="44" height="3.5" fill="#254a33"/>
+    <rect x="4" y="212.4" width="44" height="1" fill="rgba(255,240,220,0.18)"/>
+  </g>
+  <g>
+    <rect x="4" y="228" width="44" height="1" fill="rgba(0,0,0,0.5)"/>
+    <rect x="4" y="225" width="44" height="3.5" fill="#254a33"/>
+    <rect x="4" y="224.4" width="44" height="1" fill="rgba(255,240,220,0.18)"/>
+  </g>
 
-  <!-- Top ornate band -->
-  <rect x="4" y="8" width="44" height="3" fill="url(#copper)" opacity="0.85"/>
-  <path d="M10 18 Q26 24 42 18" fill="none" stroke="url(#copper)" stroke-width="1" opacity="0.7"/>
+  <!-- title CONTACT -->
+  <g font-family="Georgia, 'Times New Roman', serif" font-size="13" font-weight="bold" text-anchor="middle" letter-spacing="0.5">
+    <g fill="#000" opacity="0.55">
+      <text x="26.6" y="82.6">C</text>
+      <text x="26.6" y="103.6">O</text>
+      <text x="26.6" y="124.6">N</text>
+      <text x="26.6" y="145.6">T</text>
+      <text x="26.6" y="166.6">A</text>
+      <text x="26.6" y="187.6">C</text>
+      <text x="26.6" y="208.6">T</text>
+    </g>
+    <g fill="url(#foil-contact)">
+      <text x="26" y="82">C</text>
+      <text x="26" y="103">O</text>
+      <text x="26" y="124">N</text>
+      <text x="26" y="145">T</text>
+      <text x="26" y="166">A</text>
+      <text x="26" y="187">C</text>
+      <text x="26" y="208">T</text>
+    </g>
+  </g>
 
-  <!-- Leaf ornament -->
-  <path d="M26 32 Q32 44 26 56 Q20 44 26 32" fill="url(#copper)" opacity="0.6"/>
-  <line x1="26" y1="32" x2="26" y2="56" stroke="url(#copper)" stroke-width="0.5" opacity="0.8"/>
+  <!-- ornament: single laurel leaf (one stroke), tilted, between top bands and title -->
+  <g transform="rotate(18 26 61)" stroke="url(#foil-contact)" opacity="0.55" fill="none">
+    <path d="M26 53 C30 57 30 65 26 69 C22 65 22 57 26 53 Z" stroke-width="0.9"/>
+    <line x1="26" y1="54.5" x2="26" y2="67.5" stroke-width="0.55" opacity="0.8"/>
+  </g>
 
-  <!-- Title -->
-  <text x="26" y="80" font-family="Georgia, serif" font-size="9" fill="#e8ecf0" text-anchor="middle" font-weight="bold">C</text>
-  <text x="26" y="94" font-family="Georgia, serif" font-size="9" fill="#e8ecf0" text-anchor="middle" font-weight="bold">O</text>
-  <text x="26" y="108" font-family="Georgia, serif" font-size="9" fill="#e8ecf0" text-anchor="middle" font-weight="bold">N</text>
-  <text x="26" y="122" font-family="Georgia, serif" font-size="9" fill="#e8ecf0" text-anchor="middle" font-weight="bold">T</text>
-  <text x="26" y="136" font-family="Georgia, serif" font-size="9" fill="#e8ecf0" text-anchor="middle" font-weight="bold">A</text>
-  <text x="26" y="150" font-family="Georgia, serif" font-size="9" fill="#e8ecf0" text-anchor="middle" font-weight="bold">C</text>
-  <text x="26" y="164" font-family="Georgia, serif" font-size="9" fill="#e8ecf0" text-anchor="middle" font-weight="bold">T</text>
-
-  <!-- Center wreath -->
-  <circle cx="26" cy="195" r="14" fill="none" stroke="url(#copper)" stroke-width="1" opacity="0.5"/>
-  <circle cx="26" cy="195" r="9" fill="none" stroke="url(#copper)" stroke-width="0.5" opacity="0.6"/>
-
-  <!-- Bottom leaf -->
-  <path d="M26 220 Q32 232 26 244 Q20 232 26 220" fill="url(#copper)" opacity="0.6"/>
-
-  <!-- Bottom band -->
-  <path d="M10 248 Q26 242 42 248" fill="none" stroke="url(#copper)" stroke-width="1" opacity="0.7"/>
-  <rect x="4" y="252" width="44" height="3" fill="url(#copper)" opacity="0.85"/>
+  <rect width="52" height="260" fill="url(#vig-contact)" rx="2"/>
 </svg>

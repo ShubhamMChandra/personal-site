@@ -1,52 +1,84 @@
 <!--
   book-mystery.svg - Mystery Book Spine
-  WHAT: Purple leather spine with "?" symbol, placeholder book
-  WHY:  Visual interest, hints at future content
+  WHAT: Cold near-black tooled-leather spine, DEBOSSED bands, sunken tarnished-pewter "?"
+  WHY:  Sealed/cold placeholder volume, hints at future content
 -->
 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="300" viewBox="0 0 48 300">
   <defs>
-    <linearGradient id="spine-mystery" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#453050"/>
-      <stop offset="50%" style="stop-color:#553d62"/>
-      <stop offset="100%" style="stop-color:#3d2845"/>
+    <linearGradient id="leatherV-mys" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#282c35"/>
+      <stop offset="45%" stop-color="#20232b"/>
+      <stop offset="100%" stop-color="#14161c"/>
     </linearGradient>
-    <linearGradient id="mysteryBronze" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#7a6545"/>
-      <stop offset="50%" style="stop-color:#b8a070"/>
-      <stop offset="100%" style="stop-color:#7a6545"/>
+    <linearGradient id="leatherH-mys" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#14161c"/>
+      <stop offset="50%" stop-color="#282c35"/>
+      <stop offset="100%" stop-color="#14161c"/>
     </linearGradient>
-    <!-- Right book: brightest at TOP-LEFT, darkest at BOTTOM-RIGHT -->
-    <radialGradient id="corner-light-mystery" cx="0%" cy="0%" r="150%" fx="0%" fy="0%">
-      <stop offset="0%" style="stop-color:rgba(255,220,180,0.15)"/>
-      <stop offset="40%" style="stop-color:rgba(255,200,150,0.05)"/>
-      <stop offset="70%" style="stop-color:rgba(0,0,0,0)"/>
-      <stop offset="100%" style="stop-color:rgba(0,0,0,0.35)"/>
+    <linearGradient id="cyl-mys" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="rgba(0,0,0,0.4)"/>
+      <stop offset="18%" stop-color="rgba(0,0,0,0)"/>
+      <stop offset="82%" stop-color="rgba(0,0,0,0)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0.34)"/>
+    </linearGradient>
+    <!-- Tarnished pewter (muted, no hot highlight) -->
+    <linearGradient id="foil-mys" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3a3d44"/>
+      <stop offset="50%" stop-color="#9aa0a8"/>
+      <stop offset="100%" stop-color="#3a3d44"/>
+    </linearGradient>
+    <filter id="grain-mys" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9 0.4" numOctaves="2" result="n"/>
+      <feColorMatrix in="n" type="saturate" values="0" result="d"/>
+      <feComponentTransfer in="d" result="a">
+        <feFuncA type="linear" slope="0.06" intercept="0"/>
+      </feComponentTransfer>
+    </filter>
+    <radialGradient id="vig-mys" cx="50%" cy="8%" r="115%">
+      <stop offset="0%" stop-color="rgba(200,205,215,0.08)"/>
+      <stop offset="40%" stop-color="rgba(0,0,0,0)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0.5)"/>
     </radialGradient>
   </defs>
 
-  <!-- Main spine -->
-  <rect width="48" height="300" fill="url(#spine-mystery)" rx="2"/>
-  <rect width="48" height="300" fill="url(#corner-light-mystery)" rx="2"/>
+  <rect width="48" height="300" fill="url(#leatherV-mys)" rx="2"/>
+  <rect width="48" height="300" fill="url(#leatherH-mys)" rx="2" opacity="0.45"/>
+  <rect width="48" height="300" filter="url(#grain-mys)" opacity="0.5" rx="2"/>
+  <rect width="48" height="300" fill="url(#cyl-mys)" rx="2"/>
 
-  <!-- Texture lines -->
-  <line x1="2" y1="0" x2="2" y2="300" stroke="#1f1525" stroke-width="0.5" opacity="0.5"/>
-  <line x1="46" y1="0" x2="46" y2="300" stroke="#352540" stroke-width="0.5" opacity="0.3"/>
+  <!-- DEBOSSED band pairs: dark ABOVE, light BELOW (inverted emboss) -->
+  <!-- top pair -->
+  <g>
+    <rect x="4" y="38" width="40" height="1" fill="rgba(0,0,0,0.55)"/>
+    <rect x="4" y="39" width="40" height="3.5" fill="#101216"/>
+    <rect x="4" y="42.5" width="40" height="1" fill="rgba(210,215,225,0.12)"/>
+  </g>
+  <g>
+    <rect x="4" y="50" width="40" height="1" fill="rgba(0,0,0,0.55)"/>
+    <rect x="4" y="51" width="40" height="3.5" fill="#101216"/>
+    <rect x="4" y="54.5" width="40" height="1" fill="rgba(210,215,225,0.12)"/>
+  </g>
+  <!-- bottom pair -->
+  <g>
+    <rect x="4" y="248" width="40" height="1" fill="rgba(0,0,0,0.55)"/>
+    <rect x="4" y="249" width="40" height="3.5" fill="#101216"/>
+    <rect x="4" y="252.5" width="40" height="1" fill="rgba(210,215,225,0.12)"/>
+  </g>
+  <g>
+    <rect x="4" y="260" width="40" height="1" fill="rgba(0,0,0,0.55)"/>
+    <rect x="4" y="261" width="40" height="3.5" fill="#101216"/>
+    <rect x="4" y="264.5" width="40" height="1" fill="rgba(210,215,225,0.12)"/>
+  </g>
 
-  <!-- Top band -->
-  <rect x="4" y="12" width="40" height="2.5" fill="url(#mysteryBronze)" opacity="0.7"/>
+  <!-- title ? sunken (dark above-left shadow, faint light below-right, muted pewter fill) -->
+  <g font-family="Georgia, 'Times New Roman', serif" font-size="52" font-weight="bold" text-anchor="middle">
+    <text x="23.4" y="164.4" fill="#000" opacity="0.5">?</text>
+    <text x="24.5" y="165.5" fill="rgba(210,215,225,0.1)">?</text>
+    <text x="24" y="165" fill="url(#foil-mys)" opacity="0.7">?</text>
+  </g>
 
-  <!-- Question mark -->
-  <text x="24" y="105" font-family="Georgia, serif" font-size="40" fill="#b8a070" text-anchor="middle" opacity="0.6">?</text>
+  <!-- ornament: muted hollow ring -->
+  <circle cx="24" cy="212" r="7" fill="none" stroke="url(#foil-mys)" stroke-width="0.9" opacity="0.45"/>
 
-  <!-- Ornament circle -->
-  <circle cx="24" cy="165" r="14" fill="none" stroke="url(#mysteryBronze)" stroke-width="1" opacity="0.5"/>
-  <circle cx="24" cy="165" r="6" fill="url(#mysteryBronze)" opacity="0.3"/>
-
-  <!-- Vertical line detail -->
-  <line x1="24" y1="195" x2="24" y2="265" stroke="url(#mysteryBronze)" stroke-width="0.75" opacity="0.5"/>
-  <circle cx="24" cy="195" r="2" fill="url(#mysteryBronze)" opacity="0.6"/>
-  <circle cx="24" cy="265" r="2" fill="url(#mysteryBronze)" opacity="0.6"/>
-
-  <!-- Bottom band -->
-  <rect x="4" y="282" width="40" height="2.5" fill="url(#mysteryBronze)" opacity="0.7"/>
+  <rect width="48" height="300" fill="url(#vig-mys)" rx="2"/>
 </svg>
