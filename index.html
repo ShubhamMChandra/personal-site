@@ -44,20 +44,6 @@
 <body>
   <h1 class="visually-hidden">Shubham Chandra - Portfolio</h1>
 
-  <!-- SVG Lighting Filter -->
-  <svg class="svg-filters" aria-hidden="true">
-    <defs>
-      <filter id="point-light" x="-50%" y="-50%" width="200%" height="200%">
-        <feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur"/>
-        <feSpecularLighting in="blur" surfaceScale="5" specularConstant="1" specularExponent="20" lighting-color="#ffb870" result="specular">
-          <fePointLight x="150" y="-100" z="200"/>
-        </feSpecularLighting>
-        <feComposite in="specular" in2="SourceAlpha" operator="in" result="specular"/>
-        <feComposite in="SourceGraphic" in2="specular" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
-      </filter>
-    </defs>
-  </svg>
-
   <!-- Collapsed Navigation (hidden initially, shown when book is open) -->
   <nav class="collapsed-nav" aria-label="Book navigation">
     <button class="nav-shelf-btn" data-action="return-to-shelf" aria-label="Return to bookshelf">

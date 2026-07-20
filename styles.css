@@ -546,14 +546,6 @@ body {
   pointer-events: none;
 }
 
-/* Hide SVG filters */
-.svg-filters {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-}
-
 /* Books Container - packed tight, aligned to bottom like real shelf */
 .books {
   display: flex;
