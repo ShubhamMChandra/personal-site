@@ -1503,6 +1503,104 @@ body.has-custom-cursor * {
   z-index: 1;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   SHELF UTILITY - Exec fast path (availability · CV · links)
+   Always visible; no book has to be opened to reach facts
+   ═══════════════════════════════════════════════════════════ */
+
+.shelf-utility {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  column-gap: 0.9em;
+  row-gap: 6px;
+  margin-top: 16px;
+  opacity: 0;
+  animation: shelfFadeIn 0.6s var(--ease-out-expo) 0.55s forwards;
+}
+
+/* Echoes the About book's availability idiom, tuned for the dark room */
+.shelf-availability {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-serif);
+  font-size: 0.8rem;
+  font-variant: small-caps;
+  letter-spacing: 0.09em;
+  color: var(--text-secondary);
+}
+
+.shelf-availability .status-dot {
+  background: var(--accent-gold);
+  box-shadow: 0 0 6px rgba(212, 168, 85, 0.5);
+}
+
+.shelf-utility-links {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 0.9em;
+  row-gap: 4px;
+}
+
+.shelf-utility-link {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-tertiary);
+  text-decoration: none;
+  padding: 4px 2px;
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.shelf-utility-link:hover {
+  color: var(--accent-gold);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+.shelf-utility-link:focus-visible {
+  outline: 1px solid var(--accent-gold);
+  outline-offset: 3px;
+  color: var(--accent-gold);
+}
+
+.shelf-utility-sep {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--text-tertiary);
+  opacity: 0.6;
+  user-select: none;
+}
+
+@media (max-width: 900px) {
+  .shelf-utility {
+    margin-top: 12px;
+  }
+
+  .shelf-utility-link {
+    font-size: 0.68rem;
+    padding: 8px 4px;
+  }
+}
+
+/* Stack availability above the links so no separator dangles at a wrap */
+@media (max-width: 600px) {
+  .shelf-utility {
+    flex-direction: column;
+    row-gap: 8px;
+  }
+
+  .shelf-utility > .shelf-utility-sep {
+    display: none;
+  }
+}
+
 /* Interaction hint for first-time visitors */
 .interaction-hint {
   display: block;
@@ -3889,5 +3987,10 @@ body.has-custom-cursor * {
   }
   .interaction-hint {
     animation: hintFadeIn 1s ease-out 1.5s forwards, hintGlow 6s ease-in-out 2.5s infinite !important;
+  }
+
+  /* Content-critical: the exec fast path appears immediately, no entrance delay */
+  .shelf-utility {
+    animation-delay: 0s !important;
   }
 }
