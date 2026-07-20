@@ -4,14 +4,14 @@
  * ═══════════════════════════════════════════════════════════
  *
  * WHAT:         Initializes and coordinates all portfolio modules
- * WHY:          Central orchestrator connecting cursor, bookshelf, book
- * DEPENDENCIES: cursor.js, bookshelf.js, book.js (loaded before this)
+ * WHY:          Central orchestrator connecting bookshelf and book
+ * DEPENDENCIES: bookshelf.js, book.js (loaded before this)
  * HOW:          Creates instances, wires callbacks, handles URL routing
  *
  * ═══════════════════════════════════════════════════════════
  */
 
-/* global CustomCursor, Book, Bookshelf */
+/* global Book, Bookshelf */
 
 // Mobile book height — bypasses viewport unit bugs on real iOS Safari
 // Computes once from window.innerHeight (always correct) and locks it
@@ -24,7 +24,6 @@ setMobileBookHeight()
 
 class Portfolio {
   constructor() {
-    this.cursor = null
     this.bookshelf = null
     this.book = null
 
@@ -36,16 +35,9 @@ class Portfolio {
   }
 
   init() {
-    this.initCursor()
     this.initBook()
     this.initBookshelf()
     this.handleUrlHash()
-  }
-
-  initCursor() {
-    if (window.CustomCursor) {
-      this.cursor = new CustomCursor()
-    }
   }
 
   initBook() {
@@ -108,12 +100,6 @@ class Portfolio {
         }
       }
     })
-  }
-
-  refresh() {
-    if (this.cursor) {
-      this.cursor.refresh()
-    }
   }
 }
 
