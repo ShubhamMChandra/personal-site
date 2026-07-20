@@ -486,16 +486,21 @@ class Book {
     ).finished
   }
 
-  // ─── Reduced motion: brief non-disorienting crossfade ──────────
+  // ─── Reduced motion: dissolve the page CONTENT on the stable cream
+  // pages. Never fade the whole book to opacity 0 — that reveals the dark
+  // backdrop and reads as a black flash. Only the ink crossfades. ──────
   async crossfade(direction) {
     const to = direction === 'next' ? this.currentPage + 1 : this.currentPage - 1
-    const target = this.openBookEl || this.bookView
-    const out = target.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 90, fill: 'forwards' })
-    await out.finished
+    const targets = [this.leftPage, this.rightPage].filter(Boolean)
+    await Promise.all(targets.map((t) =>
+      t.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 120, easing: 'ease-in', fill: 'forwards' }).finished
+    ))
     this.currentPage = to
     this.renderPage()
-    out.cancel()
-    await target.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 120 }).finished
+    targets.forEach((t) => t.getAnimations().forEach((a) => a.cancel()))
+    await Promise.all(targets.map((t) =>
+      t.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150, easing: 'ease-out' }).finished
+    ))
   }
 
   goToPage(pageNum) {
