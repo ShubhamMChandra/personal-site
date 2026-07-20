@@ -76,14 +76,20 @@
   --book-references: #34203f;
   --book-colophon: #20232b;
 
-  /* Page Colors - Harvard Press warmth */
-  --page-bg: #f8f5ef;
-  --page-cream: #f4f1e8;
+  /* Page Colors - warm parchment */
+  --page-bg: #f4efe1;
   --page-text: #1a1714;
   --page-secondary: #3d3832;
   --page-tertiary: #5a554c;
-  --page-spine: #e8e0d4;
   --page-rule: rgba(26, 23, 20, 0.12);
+
+  /* Parchment tones (top-lit → shadowed), shared top-light pool, gutter */
+  --paper-hi: #f4efe1;
+  --paper-mid: #efe8d6;
+  --paper-lo: #e9e0cd;
+  --paper-edge: #ddd2bc;
+  --paper-pool: radial-gradient(ellipse 78% 55% at 50% 0%, rgba(255, 252, 244, 0.45) 0%, transparent 60%);
+  --gutter-width: 18px;
   
   /* Accent - UChicago maroon */
   --accent-maroon: #800000;
@@ -1574,12 +1580,13 @@ body {
   display: flex;
   flex-direction: column;
   background:
-    /* Subtle warm tint variation - like aged paper */
+    /* Top-lit pool over a warm parchment gradient */
+    var(--paper-pool),
     linear-gradient(
       180deg,
-      #f8f4ec 0%,
-      #f6f2ea 50%,
-      #f4f0e6 100%
+      var(--paper-hi) 0%,
+      var(--paper-mid) 50%,
+      var(--paper-lo) 100%
     );
 }
 
@@ -1589,7 +1596,7 @@ body {
   position: absolute;
   inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.03;
+  opacity: 0.05;
   pointer-events: none;
   mix-blend-mode: multiply;
 }
@@ -1602,14 +1609,15 @@ body {
     inset -30px 0 40px -12px rgba(0, 0, 0, 0.22),
     inset -5px 0 10px -2px rgba(0, 0, 0, 0.12);
   background:
-    /* Light falloff toward spine — opposing page casts shadow */
+    /* Top-lit pool + light falloff toward the spine */
+    var(--paper-pool),
     linear-gradient(
       90deg,
-      #f8f4ec 0%,
-      #f5f1e8 60%,
-      #ebe5da 100%
+      var(--paper-hi) 0%,
+      var(--paper-mid) 60%,
+      var(--paper-edge) 100%
     ),
-    linear-gradient(180deg, #f8f4ec 0%, #f4f0e6 100%);
+    linear-gradient(180deg, var(--paper-hi) 0%, var(--paper-lo) 100%);
 }
 
 /* Right page - flat at rest (crisp text); depth comes from the inset gutter
@@ -1620,14 +1628,15 @@ body {
     inset 30px 0 40px -12px rgba(0, 0, 0, 0.22),
     inset 5px 0 10px -2px rgba(0, 0, 0, 0.12);
   background:
-    /* Light falloff toward spine — opposing page casts shadow */
+    /* Top-lit pool + light falloff toward the spine */
+    var(--paper-pool),
     linear-gradient(
       90deg,
-      #ebe5da 0%,
-      #f5f1e8 40%,
-      #f8f4ec 100%
+      var(--paper-edge) 0%,
+      var(--paper-mid) 40%,
+      var(--paper-hi) 100%
     ),
-    linear-gradient(180deg, #f8f4ec 0%, #f4f0e6 100%);
+    linear-gradient(180deg, var(--paper-hi) 0%, var(--paper-lo) 100%);
 }
 
 /* Page Content Area */
@@ -1795,7 +1804,7 @@ body {
    binding: a smooth shadow valley (darkest at the centre fold) over the
    page colour, no stitching stripes */
 .book-spine-center {
-  width: 24px;
+  width: var(--gutter-width);
   background:
     linear-gradient(
       90deg,
@@ -1843,7 +1852,7 @@ body {
   position: absolute;
   top: 0;
   bottom: 0;
-  width: calc((100% - 24px) / 2);
+  width: calc((100% - var(--gutter-width)) / 2);
   pointer-events: none;
   opacity: 0;
   z-index: 4;
@@ -1860,7 +1869,7 @@ body {
 }
 
 .page-shadow-right {
-  left: calc(50% + 12px);
+  left: calc(50% + var(--gutter-width) / 2);
   background: linear-gradient(
     270deg,
     transparent 0%,
@@ -1874,7 +1883,7 @@ body {
   position: absolute;
   top: 0;
   bottom: 0;
-  width: calc((100% - 24px) / 2);
+  width: calc((100% - var(--gutter-width)) / 2);
   transform-style: preserve-3d;
   pointer-events: none;
   z-index: 6;
@@ -1885,7 +1894,7 @@ body {
 }
 
 .turn-leaf--next {
-  left: calc(50% + 12px);
+  left: calc(50% + var(--gutter-width) / 2);
   transform-origin: left center;
 }
 
@@ -1904,7 +1913,7 @@ body {
   overflow: hidden;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  background: linear-gradient(180deg, #f8f4ec 0%, #f4f0e6 100%);
+  background: linear-gradient(180deg, var(--paper-hi) 0%, var(--paper-lo) 100%);
 }
 
 .turn-leaf-back {
@@ -1914,8 +1923,9 @@ body {
 /* Gutter-side falloff + inset shadow to match the static pages */
 .turn-leaf-face.is-left {
   background:
-    linear-gradient(90deg, #f8f4ec 0%, #f5f1e8 60%, #ebe5da 100%),
-    linear-gradient(180deg, #f8f4ec 0%, #f4f0e6 100%);
+    var(--paper-pool),
+    linear-gradient(90deg, var(--paper-hi) 0%, var(--paper-mid) 60%, var(--paper-edge) 100%),
+    linear-gradient(180deg, var(--paper-hi) 0%, var(--paper-lo) 100%);
   box-shadow:
     inset -30px 0 40px -12px rgba(0, 0, 0, 0.22),
     inset -5px 0 10px -2px rgba(0, 0, 0, 0.12);
@@ -1923,8 +1933,9 @@ body {
 
 .turn-leaf-face.is-right {
   background:
-    linear-gradient(90deg, #ebe5da 0%, #f5f1e8 40%, #f8f4ec 100%),
-    linear-gradient(180deg, #f8f4ec 0%, #f4f0e6 100%);
+    var(--paper-pool),
+    linear-gradient(90deg, var(--paper-edge) 0%, var(--paper-mid) 40%, var(--paper-hi) 100%),
+    linear-gradient(180deg, var(--paper-hi) 0%, var(--paper-lo) 100%);
   box-shadow:
     inset 30px 0 40px -12px rgba(0, 0, 0, 0.22),
     inset 5px 0 10px -2px rgba(0, 0, 0, 0.12);
@@ -3447,8 +3458,8 @@ body {
     height: 64px;
     background: linear-gradient(
       to top,
-      var(--page-bg) 0%,
-      var(--page-bg) 32%,
+      var(--paper-lo) 0%,
+      var(--paper-lo) 32%,
       transparent 100%
     );
     opacity: 1;
