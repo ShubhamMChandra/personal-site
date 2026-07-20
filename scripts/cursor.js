@@ -21,6 +21,14 @@ class CustomCursor {
     // Let CSS media queries handle hiding on touch devices
     // Don't bail out in JS - just let it run
 
+    // Anchor both elements to the viewport origin so translate3d() maps 1:1 to
+    // pointer coordinates (fixed elements with auto insets sit at their static
+    // in-flow position, which would otherwise offset the transform).
+    this.cursor.style.left = '0'
+    this.cursor.style.top = '0'
+    this.ring.style.left = '0'
+    this.ring.style.top = '0'
+
     this.mouse = { x: 0, y: 0 }
     this.cursorPos = { x: 0, y: 0 }
     this.ringPos = { x: 0, y: 0 }
@@ -29,6 +37,13 @@ class CustomCursor {
       cursor: 0.85,
       ring: 0.15
     }
+
+    // Honor OS-level reduced-motion: skip the smoothed lag and snap to the pointer
+    this.reduce = matchMedia('(prefers-reduced-motion: reduce)')
+    this.reduceMotion = this.reduce.matches
+    this.reduce.addEventListener('change', (e) => {
+      this.reduceMotion = e.matches
+    })
 
     this.state = 'default'
     this.isVisible = false
@@ -122,17 +137,25 @@ class CustomCursor {
   }
 
   animate() {
-    this.cursorPos.x += (this.mouse.x - this.cursorPos.x) * this.lerp.cursor
-    this.cursorPos.y += (this.mouse.y - this.cursorPos.y) * this.lerp.cursor
+    if (this.reduceMotion) {
+      // Reduced motion: snap directly to the pointer, no trailing lag
+      this.cursorPos.x = this.mouse.x
+      this.cursorPos.y = this.mouse.y
+      this.ringPos.x = this.mouse.x
+      this.ringPos.y = this.mouse.y
+    } else {
+      this.cursorPos.x += (this.mouse.x - this.cursorPos.x) * this.lerp.cursor
+      this.cursorPos.y += (this.mouse.y - this.cursorPos.y) * this.lerp.cursor
 
-    this.ringPos.x += (this.mouse.x - this.ringPos.x) * this.lerp.ring
-    this.ringPos.y += (this.mouse.y - this.ringPos.y) * this.lerp.ring
+      this.ringPos.x += (this.mouse.x - this.ringPos.x) * this.lerp.ring
+      this.ringPos.y += (this.mouse.y - this.ringPos.y) * this.lerp.ring
+    }
 
-    this.cursor.style.left = `${this.cursorPos.x}px`
-    this.cursor.style.top = `${this.cursorPos.y}px`
-
-    this.ring.style.left = `${this.ringPos.x}px`
-    this.ring.style.top = `${this.ringPos.y}px`
+    // Composite-only positioning via transform. The trailing translate() keeps
+    // the CSS centering offset (cursor -10%/-10%, ring -50%/-50%) intact so the
+    // nib tip stays under the pointer and the ring stays concentric.
+    this.cursor.style.transform = `translate3d(${this.cursorPos.x}px, ${this.cursorPos.y}px, 0) translate(-10%, -10%)`
+    this.ring.style.transform = `translate3d(${this.ringPos.x}px, ${this.ringPos.y}px, 0) translate(-50%, -50%)`
 
     this.rafId = requestAnimationFrame(() => this.animate())
   }
