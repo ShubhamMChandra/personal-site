@@ -47,8 +47,7 @@ Inspired by Skyrim's inventory UI. Tactile, warm, physical.
 ├── scripts/
 │   ├── main.js         # Entry point
 │   ├── bookshelf.js    # Shelf interactions
-│   ├── book.js         # Page navigation
-│   └── cursor.js       # Custom cursor
+│   └── book.js         # Page navigation
 ├── assets/
 │   ├── headshot.jpg
 │   └── book-*.svg      # Spine graphics
