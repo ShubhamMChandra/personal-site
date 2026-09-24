@@ -388,12 +388,16 @@ body {
   inset: 0;
   z-index: 2;
   background: var(--bg);
-  opacity: 0.85;
+  opacity: 0;
   pointer-events: none;
-  animation: sceneLight 520ms var(--ease-room) 80ms forwards;
+  /* backwards, not forwards: the .85 start holds through the delay, and
+     once the animation ends the layer falls back to its base opacity: 0.
+     A finished fill-forwards opacity animation stays composited forever. */
+  animation: sceneLight 520ms var(--ease-room) 80ms backwards;
 }
 
 @keyframes sceneLight {
+  from { opacity: 0.85; }
   to { opacity: 0; }
 }
 
