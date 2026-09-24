@@ -1892,6 +1892,7 @@ body {
 .toc-entry-title {
   flex: 1;
   display: flex;
+  align-items: baseline; /* the text and its leader share one baseline */
   font-family: var(--font-text);
   font-size: var(--t-xl);
   font-weight: 600;
@@ -1901,15 +1902,18 @@ body {
   transition: color var(--duration-fast) ease;
 }
 
-/* dotted leader from the title to the folio */
+/* Dot leader from the title to the folio: round dots, like a row of
+   full stops, seated on the title's baseline (an empty flex item's
+   baseline is its bottom edge, so the dots sit on the line of type) */
 .toc-entry-title::after {
   content: '';
   flex: 1;
   min-width: 1.5em;
-  border-bottom: 1px dotted rgba(26, 23, 20, 0.35); /* --page-rule's .14 vanishes as dots */
+  height: 4px;
   margin: 0 0.5em;
-  align-self: flex-end;
-  transform: translateY(-0.35em);
+  align-self: baseline;
+  background: radial-gradient(circle, rgba(26, 23, 20, 0.45) 1.1px, transparent 1.6px) left bottom / 8px 4px;
+  background-repeat: space no-repeat;
 }
 
 .toc-entry:hover .toc-entry-title {
