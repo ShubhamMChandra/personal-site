@@ -2681,6 +2681,10 @@ body {
   margin-bottom: 0;
 }
 
+.role-section + .role-section {
+  margin-top: var(--v-half);
+}
+
 .role-section-title {
   font-family: var(--font-sc);
   font-size: var(--t-sm);
