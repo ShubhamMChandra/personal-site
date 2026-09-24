@@ -2372,16 +2372,6 @@ body {
   margin-bottom: var(--v1);
 }
 
-.contact-header .contact-label {
-  font-family: var(--font-sc);
-  font-size: var(--t-xs);
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  display: block;
-  color: var(--page-secondary);
-  margin-bottom: var(--v-half);
-}
-
 .contact-header h2 {
   font-family: var(--font-display);
   font-size: var(--t-3xl);
