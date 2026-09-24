@@ -34,8 +34,8 @@ Inspired by Skyrim's inventory UI. Tactile, warm, physical.
 - **HTML/CSS/JS** — No frameworks, no build step
 - **CSS Custom Properties** — Theming and consistency
 - **CSS 3D Transforms** — Book animations, shelf perspective
-- **SVG** — Book spine graphics with gradients and lighting
-- **Google Fonts** — Cormorant Garamond, Space Grotesk, Space Mono
+- **Inline SVG** — Book spines lettered in gilt, over pre-rendered PNG texture tiles
+- **Google Fonts** — Alegreya, Alegreya SC, Cormorant Garamond
 
 ---
 
@@ -50,7 +50,7 @@ Inspired by Skyrim's inventory UI. Tactile, warm, physical.
 │   └── book.js         # Page navigation
 ├── assets/
 │   ├── headshot.jpg
-│   └── book-*.svg      # Spine graphics
+│   └── textures/       # Calf, cloth, grain and wear tiles (scripts/tools/make-textures.py)
 ├── WORKPLAN.md         # Design documentation
 ├── MOBILE-REPORT.md    # Mobile QA test results
 └── vercel.json         # Deployment config
@@ -104,23 +104,21 @@ Or connect the GitHub repo to Vercel for automatic deploys on push.
 | **About** | Navy blue | Personal intro, beyond work, currently, technical |
 | **Contact** | Forest green | Email and LinkedIn |
 | **References** | Deep purple | Testimonials from colleagues |
-| **Mystery** | Purple | Coming soon |
+| **Colophon** | Grey cloth | How this site is made |
 
 ---
 
 ## Features
 
-- 3D bookshelf with warm wood aesthetic
-- Brass nameplate with decorative corner screws
-- Book hover effects (tilt, glow)
-- Custom animated cursor
+- One walnut shelf of calf-bound volumes under a soft top light
+- Name, role and contact links set beside the shelf
+- Book hover and focus: a small tip, no glow
 - Page turn animations
 - Clickable page curls
 - Click outside to close
 - URL routing (`#work`, `#about`, etc.)
 - Keyboard navigation (arrow keys)
 - Responsive mobile layout (verified via Playwright QA)
-- Subtle interaction hint with pulse animation
 
 ---
 
