@@ -2612,7 +2612,7 @@ body {
   font-size: var(--t-md);
   line-height: 1.5;
   color: var(--page-text);
-  margin-bottom: var(--space-xs);
+  margin-bottom: var(--v1);
 }
 
 .role-details p:last-child {
@@ -2629,7 +2629,7 @@ body {
 .role-metrics {
   display: flex;
   gap: var(--space-xs);
-  padding: var(--space-xs) 0;
+  padding: var(--v-half) 0 0;
   border-top: 1px solid var(--page-rule);
   margin-top: auto;
   flex-shrink: 0;
@@ -2667,7 +2667,7 @@ body {
   border-radius: 0;
   object-fit: cover;
   object-position: center top;
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--v1);
   border: none;
   box-shadow: none;
   /* Subtle printed-on-paper feel */
@@ -2691,7 +2691,7 @@ body {
   font-weight: 500;
   line-height: 1.2;
   color: var(--page-text);
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--v-half);
 }
 
 .about-chapter-note {
@@ -2718,7 +2718,7 @@ body {
   line-height: 1.1;
   letter-spacing: -0.005em;
   color: var(--page-text);
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--v-half);
 }
 
 .contact-chapter-note {
@@ -3136,7 +3136,7 @@ body {
   font-style: italic;
   line-height: 1.45;
   color: var(--page-text);
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--v-half);
   quotes: '\201C' '\201D' '\2018' '\2019';
   text-indent: -0.45em;
 }
@@ -3209,7 +3209,7 @@ body {
   line-height: 1.1;
   letter-spacing: -0.005em;
   color: var(--page-text);
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--v-half);
 }
 
 .reference-role {
