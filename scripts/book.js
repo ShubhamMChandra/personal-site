@@ -288,6 +288,13 @@ class Book {
       // Folios sit at the foot, on the outer edge of each page
       place(this.leftPageEl, 'running-header running-header-left', bookTitle)
       place(this.leftPageEl, 'page-number page-number-left', leftPageNum)
+
+      // A blank recto (a one-page chapter) is printed without a head or folio
+      const recto = spread && spread.querySelector('.spread-right')
+      if (recto && !recto.children.length && !recto.textContent.trim()) {
+        this.markOverflow()
+        return
+      }
       place(this.rightPageEl, 'running-header running-header-right', chapterTitle)
       place(this.rightPageEl, 'page-number page-number-right', rightPageNum)
     } else {
