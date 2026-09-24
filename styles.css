@@ -2345,7 +2345,10 @@ body {
 
 /* Chapter Divider (Left Page) */
 .chapter-divider {
-  padding-top: calc(var(--m-top) + 14%);
+  /* Sink the head by the page's spare height, not a % (which resolves
+     against the width): ~50px on a 760px page, ~25px at 580, 0 below ~400,
+     so a short page never pushes the summary past its foot. */
+  padding-top: calc(var(--m-top) + clamp(0px, var(--page-h) * 0.14 - 56px, 92px));
   position: relative;
 }
 
