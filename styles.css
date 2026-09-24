@@ -3521,6 +3521,7 @@ body {
   }
 
   .mobile-left-inline .about-headshot {
+    display: block;
     width: 88px;
     height: 106px;
   }
