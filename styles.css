@@ -777,6 +777,12 @@ body {
   .book:active {
     transform: none;
   }
+
+  /* the ground shadow follows the tip, so no tip means no shadow */
+  .book:hover .book-shadow,
+  .book:focus-visible .book-shadow {
+    opacity: 0;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════
