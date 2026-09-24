@@ -1718,12 +1718,17 @@ body {
   font-variant-ligatures: common-ligatures;
   font-variant-numeric: oldstyle-nums;
   hyphens: auto;
+  hyphenate-limit-chars: 7 4 3;
+  -webkit-hyphenate-limit-before: 4; /* Safari */
+  -webkit-hyphenate-limit-after: 3;
+  -webkit-hyphenate-limit-lines: 2; /* Safari: no two hyphens in a row */
   text-wrap: pretty;
   text-rendering: optimizeLegibility;
 }
 
-/* Display lines never hyphenate: a broken word in a tagline, summary,
-   lead or quote reads as a typo. Body copy keeps hyphens: auto. */
+/* Display lines and short list values never hyphenate: a broken word in
+   a tagline, summary, lead, quote or two-line value reads as a typo.
+   Body copy keeps hyphens: auto. */
 .page h2,
 .turn-leaf-face h2,
 .role-tagline,
@@ -1733,7 +1738,10 @@ body {
 .reference-context,
 .contact-note,
 .quote-text,
-.toc-entry-meta {
+.toc-entry-meta,
+.currently-value,
+.technical-skills,
+.chapter-backing {
   hyphens: manual;
 }
 
