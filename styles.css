@@ -2344,15 +2344,6 @@ body {
   color: var(--page-secondary);
 }
 
-.technical-note {
-  font-family: var(--font-text);
-  font-size: var(--t-md);
-  line-height: 1.5;
-  font-style: italic;
-  margin-top: var(--v1);
-  color: var(--page-secondary);
-}
-
 /* Personal Page (About Book) */
 .personal-content {
   display: flex;
