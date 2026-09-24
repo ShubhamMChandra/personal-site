@@ -681,7 +681,7 @@ body {
   font: 400 14px/1.45 var(--font-sc);
   letter-spacing: 0.1em;
   text-transform: lowercase;
-  color: var(--text-tertiary);
+  color: var(--text-secondary); /* name, then role, then the links */
 }
 
 .shelf-title-part {
@@ -745,10 +745,10 @@ body {
   align-items: center;
   min-height: 44px;
   padding: 0 8px;
-  font: 500 15px/1 var(--font-sc);
+  font: 400 15px/1 var(--font-sc);
   letter-spacing: 0.1em;
   text-transform: lowercase;
-  color: var(--text-secondary);
+  color: var(--text-tertiary); /* the quietest line until hovered */
   text-decoration: none;
   transition: color var(--dur-hover-out) var(--ease-room);
 }
