@@ -151,8 +151,10 @@
    screen is (tile units) x (px per unit) x DPR device pixels, and that must
    be an integer, or Chrome resamples each repeat at a drifting sub-pixel
    phase and the lower part of every tile goes soft. With --spine-h = 25k
-   px the tiles are 8k, 12k, 2k, 4k and 3k CSS px: whole pixels at DPR 1
-   and 2 (and 1.5, 3). Rounding down, never up, keeps every layout budget.
+   px the tiles are 8k, 12k, 2k, 4k and 3k CSS px: whole pixels at DPR 1,
+   2 and 3. At DPR 1.5 only periods that are multiples of 80 units stay
+   whole; the 40 x 120-unit joint tile does not when k is odd. Rounding down,
+   never up, keeps every layout budget.
    If you resize the shelf, keep the snap; if you add a tile, give it a
    period in units that is a multiple of 40. Without round() support the
    fluid value is used and the tiles only lose a little crispness. */
@@ -796,7 +798,7 @@ body {
   cursor: default;
 }
 
-/* Warm ambient light from above - Edison bulb continuity */
+/* Warm ambient light from above, continuing the shelf's top light */
 .book-view::before {
   content: '';
   position: fixed;
