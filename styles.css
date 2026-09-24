@@ -3039,6 +3039,7 @@ body {
   font-size: var(--t-xl);
   font-weight: 500;
   display: inline-block;
+  align-self: flex-start; /* flex item of .spread-right: don't stretch the rule */
   color: var(--page-text);
   text-decoration: none;
   border-bottom: 1px solid var(--page-text);
