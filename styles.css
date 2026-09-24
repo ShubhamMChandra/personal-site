@@ -2309,6 +2309,41 @@ body {
   color: var(--page-text);
 }
 
+/* Projects row: name (a body link), one sentence, an optional detail line */
+.technical-project {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.technical-project + .technical-project {
+  margin-top: var(--v-half);
+}
+
+.technical-project-name {
+  align-self: flex-start;
+  font-family: var(--font-text);
+  font-size: var(--t-md);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--page-text);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--page-tertiary);
+  transition: border-color var(--duration-fast) ease, border-style var(--duration-fast) ease;
+}
+
+.technical-project-name:hover {
+  border-bottom-color: var(--accent-maroon);
+  border-bottom-style: solid;
+}
+
+.technical-project-detail {
+  font-family: var(--font-text);
+  font-size: var(--t-sm);
+  line-height: 1.4;
+  color: var(--page-secondary);
+}
+
 .technical-note {
   font-family: var(--font-text);
   font-size: var(--t-md);
@@ -2316,25 +2351,6 @@ body {
   font-style: italic;
   margin-top: var(--v1);
   color: var(--page-secondary);
-}
-
-.availability {
-  font-family: var(--font-sc);
-  font-size: var(--t-sm);
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  color: var(--page-text);
-  margin-top: var(--v-half);
-}
-
-.status-dot {
-  width: 5px;
-  height: 5px;
-  background: var(--accent-maroon);
-  border-radius: 50%;
 }
 
 /* Personal Page (About Book) */
