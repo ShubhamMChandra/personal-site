@@ -259,13 +259,22 @@ class Book {
     // Remove existing furniture
     document.querySelectorAll('.page-number, .running-header').forEach(el => el.remove())
 
+    const spread = this.pages[this.currentPage]
+
+    // The title-page / contents spread is display matter: like a printed
+    // book it carries no running heads and blind folios (the title page
+    // would otherwise read its own title three times across the spread)
+    if (!isMobile && spread && spread.classList.contains('toc-spread')) {
+      this.markOverflow()
+      return
+    }
+
     if (!isMobile) {
       // Verso running head: the book's title (the template's data-title).
       // Recto running head: the chapter, i.e. the first [data-running-head]
       // on this spread's left page; falls back to the book's title.
       const template = document.querySelector(`#${this.currentBook}-book`)
       const bookTitle = (template && template.dataset.title) || this.formatBookTitle(this.currentBook)
-      const spread = this.pages[this.currentPage]
       const headEl = spread && spread.querySelector('.spread-left [data-running-head]')
       const chapterTitle = headEl ? headEl.textContent.replace(/\s+/g, ' ').trim() : bookTitle
 
