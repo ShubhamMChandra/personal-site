@@ -633,6 +633,17 @@ body {
   color: var(--accent);
 }
 
+/* narrow column: one fact per line, so no line ends on a dangling dot */
+@container (max-width: 399px) {
+  .shelf-facts .fact {
+    display: block;
+  }
+
+  .shelf-facts .sep {
+    display: none;
+  }
+}
+
 .shelf-utility {
   display: flex;
   align-items: center;
