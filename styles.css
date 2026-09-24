@@ -143,15 +143,34 @@
   --duration-slow: 0.8s;
   --duration-book: 1.2s;
 
-  /* shelf layout — stacked (< 1100px); WP2 overrides at >= 1100px */
-  --spine-h: clamp(260px, min(100vh - 280px, 78vw), 470px);
-  --group-w: calc(var(--spine-h) * 0.775);
+  /* shelf layout: stacked below 1100px, two columns at >= 1100px.
+     --spine-h is the tallest volume (Work); the others are --vol-h of it. */
+  --spine-h-fluid: clamp(250px, min(100vh - 280px, 78vw), 475px);
+  --spine-h: var(--spine-h-fluid);
+  --group-w: calc(var(--spine-h) * 0.775); /* sum of --vol-w x --vol-h, plus the joints */
   --board-w: calc(var(--group-w) + 2 * clamp(28px, 4vw, 56px));
 }
 
 @media (min-width: 1100px) {
   :root {
-    --spine-h: clamp(300px, min(100vh - 240px, 42vw), 520px);
+    --spine-h-fluid: clamp(300px, min(100vh - 240px, 42vw), 525px);
+  }
+}
+
+/* TILE RULE: the spine height snaps DOWN to a multiple of 25px.
+   Every spine draws at --spine-h / 1000 CSS px per unit, and its texture
+   tiles repeat every 320, 480, 80, 160 and 120 units. A tile's size on
+   screen is (tile units) x (px per unit) x DPR device pixels, and that must
+   be an integer, or Chrome resamples each repeat at a drifting sub-pixel
+   phase and the lower part of every tile goes soft. With --spine-h = 25k
+   px the tiles are 8k, 12k, 2k, 4k and 3k CSS px: whole pixels at DPR 1
+   and 2 (and 1.5, 3). Rounding down, never up, keeps every layout budget.
+   If you resize the shelf, keep the snap; if you add a tile, give it a
+   period in units that is a multiple of 40. Without round() support the
+   fluid value is used and the tiles only lose a little crispness. */
+@supports (width: round(down, 101px, 25px)) {
+  :root {
+    --spine-h: round(down, var(--spine-h-fluid), 25px);
   }
 }
 
@@ -639,36 +658,99 @@ body {
   pointer-events: none;
 }
 
-/* Books Container - packed tight, aligned to bottom like real shelf */
+/* The shared spine paint (gradients, tiles, tool symbols) takes no space */
+.svg-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* ─── Spines ─────────────────────────────────────────────── */
+
 .books {
+  position: relative;
+  z-index: 2;
   display: flex;
   justify-content: center;
   align-items: flex-end;
   gap: 0;
-  padding: 0 20px;
-  margin-bottom: -2px;
-  position: relative;
-  z-index: 2;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  perspective: 1400px;
 }
 
-/* Shared contact shadow pooled where the row meets the plank.
-   .books sits at z-index 2 (above the shelf surface), so this paints
-   onto the plank at the spine bases and reads as ambient occlusion. */
+.books > li {
+  display: contents;
+}
+
+/* Contact shadow where the volumes stand on the board */
 .books::after {
   content: '';
   position: absolute;
-  left: 5%;
-  right: 5%;
+  left: 2%;
+  right: 2%;
   bottom: -5px;
-  height: 13px;
-  background: radial-gradient(
-    ellipse 60% 100% at 50% 100%,
-    rgba(0, 0, 0, 0.55) 0%,
-    rgba(0, 0, 0, 0.24) 46%,
-    transparent 74%
-  );
-  filter: blur(3px);
+  height: 9px;
+  z-index: -1;
   pointer-events: none;
+  background: radial-gradient(ellipse 54% 100% at 50% 40%, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.2) 50%, transparent 80%);
+}
+
+.book {
+  appearance: none;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  transform: none;
+  transform-origin: 50% 100%;
+  transition: transform var(--dur-hover-out) var(--ease-room);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.book:focus {
+  outline: none;
+}
+
+.book:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 6px; /* clears the tail cap */
+  border-radius: 2px;
+}
+
+/* Every spine draws at --spine-h / 1000 px per unit (viewBox H = 1000 x
+   --vol-h, W = H x --vol-w), so the box and the viewBox share one scale. */
+.spine {
+  display: block;
+  height: calc(var(--spine-h) * var(--vol-h));
+  width: calc(var(--spine-h) * var(--vol-h) * var(--vol-w));
+  overflow: visible;
+  box-shadow: 0 10px 18px -6px rgba(0, 0, 0, 0.55);
+}
+
+/* Lettered lengthwise in gilt: one <text> per title, sized in spine units */
+.spine-title {
+  font: 600 calc(1px * var(--title-u)) var(--font-display);
+  letter-spacing: 0.18em;
+  font-kerning: normal;
+}
+
+.book-shadow {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: -6px;
+  height: 18px;
+  z-index: -1;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.25) 45%, transparent 72%);
+  transition: opacity var(--dur-hover-out) var(--ease-room);
 }
 
 /* Light overlay - radial falloff from bulb position (behind books) */
@@ -692,216 +774,6 @@ body {
   mix-blend-mode: screen;
 }
 
-
-/* Individual Book */
-.book {
-  width: auto;
-  height: auto;
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform var(--duration-medium) var(--ease-out-back),
-              filter var(--duration-medium) var(--ease-out-expo);
-  border: none;
-  background: none;
-  padding: 0;
-  cursor: pointer;
-  pointer-events: auto;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Position-aware top lighting - varies based on distance from center light */
-.book::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 2px 4px 4px 2px;
-  pointer-events: none;
-  z-index: 1;
-  mix-blend-mode: soft-light;
-}
-
-/* Work (far left) - light catches right edge more */
-.book:nth-child(1)::before {
-  background: linear-gradient(
-    160deg,
-    rgba(255, 220, 180, 0.08) 0%,
-    rgba(255, 200, 150, 0.12) 20%,
-    transparent 50%
-  );
-}
-
-/* About (center-left) - light slightly from right */
-.book:nth-child(2)::before {
-  background: linear-gradient(
-    170deg,
-    rgba(255, 220, 180, 0.1) 0%,
-    rgba(255, 200, 150, 0.08) 20%,
-    transparent 45%
-  );
-}
-
-/* Contact (center) - light straight from above */
-.book:nth-child(3)::before {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 220, 180, 0.14) 0%,
-    rgba(255, 200, 150, 0.06) 15%,
-    transparent 40%
-  );
-}
-
-/* References (center-right) - light slightly from left */
-.book:nth-child(4)::before {
-  background: linear-gradient(
-    190deg,
-    rgba(255, 220, 180, 0.1) 0%,
-    rgba(255, 200, 150, 0.08) 20%,
-    transparent 45%
-  );
-}
-
-/* Mystery (far right) - light catches left edge more */
-.book:nth-child(5)::before {
-  background: linear-gradient(
-    200deg,
-    rgba(255, 220, 180, 0.08) 0%,
-    rgba(255, 200, 150, 0.12) 20%,
-    transparent 50%
-  );
-}
-
-.book-spine-img {
-  height: auto;
-  width: auto;
-  max-height: 420px;
-  display: block;
-  border-radius: 2px 4px 4px 2px;
-}
-
-/* Position-aware shadows - tight contact (short y-offset) so the books
-   read as seated on the plank, not levitating. Angle tracks the centered light. */
-/* Work (far left) - shadow angles right */
-.book:nth-child(1) {
-  transform: rotate(-0.5deg);
-  filter: drop-shadow(3px 3px 8px rgba(0, 0, 0, 0.55));
-}
-/* About (center-left) - shadow slightly right */
-.book:nth-child(2) {
-  transform: rotate(0.3deg);
-  filter: drop-shadow(2px 3px 8px rgba(0, 0, 0, 0.5));
-}
-/* Contact (center) - shadow straight down */
-.book:nth-child(3) {
-  transform: rotate(-0.2deg);
-  filter: drop-shadow(0px 3px 7px rgba(0, 0, 0, 0.5));
-}
-/* References (center-right) - shadow slightly left */
-.book:nth-child(4) {
-  transform: rotate(0.4deg);
-  filter: drop-shadow(-2px 3px 8px rgba(0, 0, 0, 0.5));
-}
-/* Colophon (far right) - shadow angles left */
-.book:nth-child(5) {
-  transform: rotate(0.2deg);
-  filter: drop-shadow(-3px 3px 8px rgba(0, 0, 0, 0.55));
-}
-
-.book:hover {
-  transform: translateY(-12px) rotate(0deg);
-  filter: drop-shadow(0px 14px 22px rgba(0, 0, 0, 0.55));
-  z-index: 10;
-}
-
-.book:focus {
-  outline: none;
-}
-
-.book:focus-visible {
-  transform: translateY(-12px) rotate(0deg);
-  outline: 2px solid var(--accent);
-  outline-offset: 4px;
-}
-
-.book:active {
-  transform: translateY(-6px) rotate(0deg);
-}
-
-/* Book Edge (page edges) - Aged paper look */
-.book-edge {
-  position: absolute;
-  right: -10px;
-  top: 3px;
-  bottom: 3px;
-  width: 10px;
-  background: linear-gradient(
-    90deg,
-    #c4baa8 0%,
-    #e8dcc8 20%,
-    #f0e6d6 50%,
-    #e8dcc8 80%,
-    #d4c8b4 100%
-  );
-  border-radius: 0 2px 2px 0;
-  transform: rotateY(-90deg);
-  transform-origin: left center;
-  box-shadow: inset 0 0 8px rgba(139, 109, 76, 0.2);
-}
-
-/* Page lines effect on edge - irregular aged pages */
-.book-edge::before {
-  content: '';
-  position: absolute;
-  inset: 4px 1px;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent 1px,
-    rgba(139, 109, 76, 0.15) 1px,
-    rgba(139, 109, 76, 0.15) 2px,
-    transparent 2px,
-    transparent 3px,
-    rgba(139, 109, 76, 0.1) 3px,
-    rgba(139, 109, 76, 0.1) 4px
-  );
-}
-
-/* Foxing/age spots on page edges */
-.book-edge::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 30% 20%, rgba(139, 109, 76, 0.15) 0%, transparent 30%),
-    radial-gradient(circle at 70% 60%, rgba(139, 109, 76, 0.1) 0%, transparent 25%),
-    radial-gradient(circle at 50% 85%, rgba(139, 109, 76, 0.12) 0%, transparent 20%);
-  pointer-events: none;
-}
-
-/* Book Hover Glow Effect — on ::after so it doesn't collide with the
-   lighting ::before (whose per-book nth-child backgrounds out-specify
-   and would otherwise hide this glow entirely). */
-.book::after {
-  content: '';
-  position: absolute;
-  bottom: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
-  height: 30px;
-  background: radial-gradient(
-    ellipse 100% 100% at 50% 0%,
-    rgba(255, 200, 150, 0.3) 0%,
-    transparent 70%
-  );
-  opacity: 0;
-  transition: opacity var(--duration-medium) var(--ease-out-expo);
-  pointer-events: none;
-}
-
-.book:hover::after {
-  opacity: 1;
-}
 
 /* Staggered Entrance Animation */
 @keyframes bookSlideIn {
@@ -3373,16 +3245,6 @@ body {
 @media (max-width: 600px) {
   .bookshelf {
     max-width: 100%;
-  }
-
-  /* Scale down image-based books for mobile */
-  .book-spine-img {
-    max-height: 180px;
-  }
-
-  .books {
-    gap: 0;
-    padding: 0 10px;
   }
 
   /* Simplify floor reflection */
