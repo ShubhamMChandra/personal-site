@@ -335,328 +335,11 @@ body {
 
 /* ═══════════════════════════════════════════════════════════
    BOOKSHELF SCENE
+   A page with one lit shelf on it: the stage (spines on a walnut
+   board under a top light) and, beside it at >= 1100px or under it
+   below that, the name, role, three facts and the fast-path links.
+   Nothing on the shelf loops; hover is the only motion at rest.
    ═══════════════════════════════════════════════════════════ */
-
-.bookshelf-scene {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 5vh;
-  padding-top: 9vh;
-  position: relative;
-  overflow: hidden;
-  transition: transform var(--duration-book) var(--ease-in-out),
-              opacity var(--duration-book) var(--ease-in-out);
-}
-
-.bookshelf-scene.is-hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Room vignette - deepens the corners so the lit shelf is the focal point.
-   z-index 1 keeps it above the background but below the books (z-index 2);
-   transparent through the center so it never touches the shelf. */
-.bookshelf-scene::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-  background: radial-gradient(
-    ellipse 78% 78% at 50% 42%,
-    transparent 55%,
-    rgba(0, 0, 0, 0.20) 82%,
-    rgba(0, 0, 0, 0.42) 100%
-  );
-}
-
-/* Atmospheric Space - Clean dark with Edison bulb */
-.atmosphere {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-/* Base layer - neutral dark, no brown */
-.atmosphere::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(
-      ellipse 80% 70% at 50% 35%,
-      #151413 0%,
-      #0e0d0c 40%,
-      #080807 70%,
-      #030303 100%
-    );
-}
-
-/* Subtle grain texture */
-.atmosphere::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.08;
-  mix-blend-mode: overlay;
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* Edison Bulb - Beautiful hanging light */
-.edison-bulb {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  z-index: 100;
-}
-
-/* Hanging cord - drops the lamp to hang a believable distance above the books */
-.bulb-cord {
-  width: 2px;
-  height: 48px;
-  background: linear-gradient(
-    180deg,
-    #1a1a18 0%,
-    #252420 50%,
-    #1a1a18 100%
-  );
-  border-radius: 1px;
-}
-
-/* Socket/base */
-.bulb-socket {
-  width: 18px;
-  height: 22px;
-  background: linear-gradient(
-    180deg,
-    #3d3530 0%,
-    #2a2520 30%,
-    #1f1a18 100%
-  );
-  border-radius: 3px 3px 4px 4px;
-  box-shadow:
-    inset 0 2px 3px rgba(255, 200, 150, 0.1),
-    0 2px 4px rgba(0, 0, 0, 0.5);
-  position: relative;
-}
-
-/* Socket ridges - subtle metallic texture */
-.bulb-socket::before {
-  content: '';
-  position: absolute;
-  top: 4px;
-  left: 3px;
-  right: 3px;
-  height: 12px;
-  background: repeating-linear-gradient(
-    180deg,
-    transparent 0px,
-    transparent 2px,
-    rgba(80, 70, 60, 0.3) 2px,
-    rgba(50, 40, 35, 0.4) 3px
-  );
-  border-radius: 2px;
-}
-
-/* Glass bulb */
-.bulb-glass {
-  width: 44px;
-  height: 70px;
-  background: radial-gradient(
-    ellipse 70% 60% at 50% 40%,
-    rgba(255, 220, 180, 0.08) 0%,
-    rgba(255, 200, 150, 0.04) 50%,
-    rgba(255, 180, 120, 0.02) 100%
-  );
-  border: 1px solid rgba(255, 200, 150, 0.1);
-  border-radius: 50% 50% 45% 45% / 40% 40% 60% 60%;
-  position: relative;
-  box-shadow:
-    inset 0 0 20px rgba(255, 180, 120, 0.1),
-    0 0 30px rgba(255, 160, 100, 0.15);
-  margin-top: -2px;
-}
-
-/* Glass highlight - thin rim light along curved edge */
-.bulb-glass::after {
-  content: '';
-  position: absolute;
-  top: 8px;
-  left: 4px;
-  width: 12px;
-  height: 35px;
-  background: transparent;
-  border-left: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 50% 0 0 50% / 50% 0 0 50%;
-  transform: rotate(-10deg);
-  pointer-events: none;
-  filter: blur(0.5px);
-}
-
-/* Filament container */
-.filament {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 20px;
-  height: 35px;
-}
-
-/* Filament stem - connects socket to coil */
-.filament-stem {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 2px;
-  height: 12px;
-  background: linear-gradient(
-    180deg,
-    rgba(80, 60, 40, 0.8) 0%,
-    rgba(255, 200, 120, 0.6) 100%
-  );
-}
-
-/* Filament coil - the glowing part, hangs below stem */
-.filament-coil {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 14px;
-  height: 22px;
-  background:
-    /* Coil shape using gradients */
-    radial-gradient(ellipse 100% 30% at 50% 15%, rgba(255, 200, 130, 0.9) 0%, transparent 70%),
-    radial-gradient(ellipse 100% 30% at 50% 40%, rgba(255, 180, 100, 0.7) 0%, transparent 70%),
-    radial-gradient(ellipse 100% 30% at 50% 65%, rgba(255, 200, 130, 0.9) 0%, transparent 70%),
-    radial-gradient(ellipse 100% 30% at 50% 90%, rgba(255, 180, 100, 0.7) 0%, transparent 70%);
-  filter: blur(0.5px);
-  box-shadow: 0 0 8px rgba(255, 180, 100, 0.6);
-  animation: filamentGlow 4s ease-in-out infinite;
-}
-
-@keyframes filamentGlow {
-  0%, 100% { 
-    opacity: 1;
-    box-shadow: 0 0 8px rgba(255, 180, 100, 0.6);
-  }
-  50% { 
-    opacity: 0.75;
-    box-shadow: 0 0 12px rgba(255, 200, 120, 0.9);
-  }
-}
-
-/* The soft glow emanating from bulb - radiates in all directions */
-.bulb-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 900px;
-  height: 900px;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(255, 190, 120, 0.25) 0%,
-    rgba(255, 170, 100, 0.15) 10%,
-    rgba(255, 150, 80, 0.08) 25%,
-    rgba(255, 140, 70, 0.03) 45%,
-    transparent 70%
-  );
-  pointer-events: none;
-  contain: strict;
-  animation: haloBreathe 4s ease-in-out 0.15s infinite;
-}
-
-/* Halo breathing - synced with filament but slightly delayed for light-travel effect */
-@keyframes haloBreathe {
-  0%, 100% { 
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  50% { 
-    opacity: 0.8;
-    transform: translate(-50%, -50%) scale(1.02);
-  }
-}
-
-/* Floating dust in light */
-.bookshelf-scene::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(1.5px 1.5px at 25% 30%, rgba(255,240,200,0.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 45% 20%, rgba(255,235,180,0.4) 0%, transparent 100%),
-    radial-gradient(2px 2px at 60% 35%, rgba(255,240,200,0.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 75% 25%, rgba(255,230,170,0.35) 0%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 35% 45%, rgba(255,240,200,0.4) 0%, transparent 100%);
-  animation: dustFloat 20s ease-in-out infinite;
-  opacity: 0.32;
-}
-
-@keyframes dustFloat {
-  0%, 100% { transform: translateY(0) translateX(0); }
-  50% { transform: translateY(-8px) translateX(4px); }
-}
-
-/* ═══════════════════════════════════════════════════════════
-   THE BOOKSHELF
-   ═══════════════════════════════════════════════════════════ */
-
-.bookshelf {
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  perspective: 1200px;
-  position: relative;
-}
-
-
-/* Floor reflection - grounds everything */
-.floor-reflection {
-  width: 100%;
-  max-width: 1000px;
-  height: 120px;
-  margin: 0 auto;
-  margin-top: -10px;
-  background:
-    /* Reflection of shelf - very subtle */
-    linear-gradient(
-      180deg,
-      rgba(30, 20, 15, 0.6) 0%,
-      rgba(20, 15, 10, 0.3) 30%,
-      transparent 100%
-    );
-  mask-image: linear-gradient(
-    180deg,
-    rgba(0,0,0,0.3) 0%,
-    transparent 80%
-  );
-  -webkit-mask-image: linear-gradient(
-    180deg,
-    rgba(0,0,0,0.3) 0%,
-    transparent 80%
-  );
-  filter: blur(2px);
-  transform: scaleY(-0.3) translateY(-100%);
-  transform-origin: top center;
-  opacity: 0.4;
-  pointer-events: none;
-}
 
 /* The shared spine paint (gradients, tiles, tool symbols) takes no space */
 .svg-defs {
@@ -664,6 +347,66 @@ body {
   width: 0;
   height: 0;
   overflow: hidden;
+}
+
+.bookshelf-scene {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 34px;
+  padding: 24px 16px;
+  overflow: hidden;
+  background: radial-gradient(ellipse 90% 70% at 50% 40%, var(--wall) 0%, var(--wall-edge) 100%);
+  transition: opacity var(--duration-book) var(--ease-in-out); /* the hide fade; WP5 replaces it */
+}
+
+.bookshelf-scene.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Wall grain: the speck tile at .5 (tile alpha .06, so .03 on screen) */
+.bookshelf-scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url(assets/textures/grain-128.png) 0 0 / 128px 128px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.shelf-stage {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* The only evidence of the light: a warm pool from above the frame. The
+   box starts well above the stage so its top edge is never seen. */
+.shelf-stage::before {
+  content: '';
+  position: absolute;
+  top: -320px;
+  left: -90%;
+  right: -90%;
+  height: calc(var(--spine-h) + 460px);
+  pointer-events: none;
+  background: radial-gradient(
+    34% calc((var(--spine-h) + 130px) * 0.95) at 50% 250px,
+    rgba(255, 196, 130, 0.20) 0%,
+    rgba(255, 186, 120, 0.125) 24%,
+    rgba(255, 180, 110, 0.065) 48%,
+    rgba(255, 180, 110, 0.025) 70%,
+    rgba(255, 180, 110, 0.007) 86%,
+    transparent 100%
+  );
 }
 
 /* ─── Spines ─────────────────────────────────────────────── */
@@ -753,25 +496,70 @@ body {
   transition: opacity var(--dur-hover-out) var(--ease-room);
 }
 
-/* Light overlay - radial falloff from bulb position (behind books) */
-.light-overlay {
+/* ─── The board ──────────────────────────────────────────── */
+
+/* Walnut, read from two tones, a 1px lit edge and the shadow below it */
+.shelf-board {
+  position: relative;
+  width: var(--board-w);
+  max-width: 100%;
+  height: 28px;
+  border-radius: 0 0 2px 2px;
+  background: linear-gradient(180deg, var(--wood-top) 0 6px, var(--wood-face) 6px 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 214, 170, 0.22), 0 8px 18px -4px rgba(0, 0, 0, 0.55);
+}
+
+.shelf-board::before {
+  content: '';
   position: absolute;
-  top: -400px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 800px;
-  height: 800px;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(255, 184, 112, 0.22) 0%,
-    rgba(255, 170, 100, 0.16) 18%,
-    rgba(255, 155, 85, 0.09) 36%,
-    rgba(255, 140, 70, 0.035) 54%,
-    transparent 72%
-  );
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+/* The board's shadow on the wall */
+.shelf-board::after {
+  content: '';
+  position: absolute;
+  left: -8%;
+  right: -8%;
+  top: 100%;
+  height: 56px;
+  z-index: -1;
   pointer-events: none;
-  z-index: 1;
-  mix-blend-mode: screen;
+  background: radial-gradient(ellipse 56% 100% at 50% 0%, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.22) 45%, transparent 100%);
+}
+
+/* ─── Name, role, facts, links ───────────────────────────── */
+
+.shelf-text {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: min(100%, 36rem);
+  text-align: center;
+}
+
+.shelf-name {
+  margin: 0;
+  font: 500 30px/1.12 var(--font-display);
+  letter-spacing: 0.02em;
+  color: #ecdfc8;
+}
+
+/* Small caps throughout (the text is lowercased so capitals and
+   acronyms set as small caps too, not as full caps among them) */
+.shelf-title {
+  margin: 0;
+  font: 400 14px/1.45 var(--font-sc);
+  letter-spacing: 0.1em;
+  text-transform: lowercase;
+  color: var(--text-tertiary);
 }
 
 
@@ -859,282 +647,6 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.shelf-surface {
-  opacity: 0;
-  animation: shelfFadeIn 0.6s var(--ease-out-expo) forwards;
-}
-
-.nameplate {
-  opacity: 0;
-  animation: shelfFadeIn 0.6s var(--ease-out-expo) 0.4s forwards;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   SHELF SURFACE - Rich mahogany with depth
-   ═══════════════════════════════════════════════════════════ */
-
-.shelf-surface {
-  position: relative;
-  width: 100%;
-  max-width: 860px;
-  margin: 0 auto;
-}
-
-/* Shelf Top - polished wood surface catching the light */
-.shelf-top {
-  height: 24px;
-  background:
-    /* Subtle light reflection from lamp */
-    radial-gradient(
-      ellipse 40% 100% at 50% 0%,
-      rgba(255, 200, 150, 0.15) 0%,
-      transparent 70%
-    ),
-    /* Rich wood gradient */
-    linear-gradient(
-      180deg,
-      #6b4423 0%,
-      #5c3a1e 30%,
-      #4a2c16 70%,
-      #3d2212 100%
-    );
-  border-radius: 4px 4px 0 0;
-  box-shadow:
-    0 -3px 15px rgba(255, 200, 150, 0.08),
-    inset 0 2px 3px rgba(255, 255, 255, 0.15),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.2);
-  position: relative;
-}
-
-/* Wood grain texture on top - one non-repeating pass, no tiling seams */
-.shelf-top::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 4px 4px 0 0;
-  background:
-    /* Irregular lengthwise grain - non-repeating so the plank never tiles */
-    linear-gradient(
-      90deg,
-      rgba(60, 38, 18, 0.14) 0%,
-      rgba(90, 60, 30, 0.04) 11%,
-      rgba(70, 45, 22, 0.18) 23%,
-      rgba(90, 60, 30, 0.05) 39%,
-      rgba(60, 38, 18, 0.20) 52%,
-      rgba(90, 60, 30, 0.04) 67%,
-      rgba(70, 45, 22, 0.16) 81%,
-      rgba(90, 60, 30, 0.05) 92%,
-      rgba(60, 38, 18, 0.13) 100%
-    ),
-    /* A couple of fixed knots */
-    radial-gradient(
-      ellipse 8px 4px at 22% 55%,
-      rgba(60, 35, 15, 0.3) 0%,
-      transparent 100%
-    ),
-    radial-gradient(
-      ellipse 6px 3px at 68% 60%,
-      rgba(60, 35, 15, 0.2) 0%,
-      transparent 100%
-    );
-}
-
-/* Glossy reflection strip on shelf edge */
-.shelf-top::after {
-  content: '';
-  position: absolute;
-  top: 2px;
-  left: 10%;
-  right: 10%;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 240, 220, 0.2) 20%,
-    rgba(255, 245, 230, 0.35) 50%,
-    rgba(255, 240, 220, 0.2) 80%,
-    transparent 100%
-  );
-  border-radius: 1px;
-}
-
-/* Shelf Front - deep shadow, vertical wood grain */
-.shelf-front {
-  height: 90px;
-  background:
-    /* Vertical grain pattern */
-    repeating-linear-gradient(
-      180deg,
-      transparent 0px,
-      transparent 8px,
-      rgba(0, 0, 0, 0.05) 8px,
-      rgba(0, 0, 0, 0.05) 10px,
-      transparent 10px,
-      transparent 20px
-    ),
-    /* Base gradient */
-    linear-gradient(
-      180deg,
-      #4a2c16 0%,
-      #3d2212 20%,
-      #2d1810 60%,
-      #1a0f0a 100%
-    );
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow:
-    /* Top shadow from shelf overhang */
-    inset 0 8px 16px rgba(0, 0, 0, 0.5),
-    /* Depth shadow below */
-    0 15px 40px rgba(0, 0, 0, 0.6),
-    0 5px 15px rgba(0, 0, 0, 0.4);
-  position: relative;
-}
-
-/* Vertical wood grain detail - irregular, non-repeating (no seam) */
-.shelf-front::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.00) 0%,
-      rgba(0, 0, 0, 0.10) 9%,
-      rgba(0, 0, 0, 0.02) 15%,
-      rgba(0, 0, 0, 0.00) 29%,
-      rgba(0, 0, 0, 0.08) 43%,
-      rgba(0, 0, 0, 0.02) 51%,
-      rgba(0, 0, 0, 0.00) 66%,
-      rgba(0, 0, 0, 0.09) 80%,
-      rgba(0, 0, 0, 0.02) 88%,
-      rgba(0, 0, 0, 0.00) 100%
-    );
-}
-
-/* Subtle edge highlight */
-.shelf-front::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(120, 80, 50, 0.4) 20%,
-    rgba(140, 100, 60, 0.5) 50%,
-    rgba(120, 80, 50, 0.4) 80%,
-    transparent 100%
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════
-   NAMEPLATE
-   ═══════════════════════════════════════════════════════════ */
-
-.nameplate {
-  background: linear-gradient(
-    180deg,
-    #d4b896 0%,
-    #c4a574 20%,
-    #a08050 60%,
-    #8a6a40 100%
-  );
-  padding: 14px 40px;
-  border-radius: 3px;
-  text-align: center;
-  box-shadow:
-    inset 0 2px 4px rgba(255, 255, 255, 0.25),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.2),
-    0 4px 12px rgba(0, 0, 0, 0.4),
-    0 1px 3px rgba(0, 0, 0, 0.3);
-  position: relative;
-}
-
-/* Engraved border effect */
-.nameplate::before {
-  content: '';
-  position: absolute;
-  inset: 3px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-top-color: rgba(255, 255, 255, 0.15);
-  border-radius: 2px;
-}
-
-/* Subtle shine across nameplate */
-.nameplate::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, transparent 100%);
-  border-radius: 3px 3px 0 0;
-  pointer-events: none;
-}
-
-/* Decorative screws on nameplate corners */
-.nameplate-screw {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 35% 35%, #d4b070 0%, #a08040 40%, #705020 100%);
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.4),
-    inset 0 -1px 1px rgba(0, 0, 0, 0.3),
-    0 1px 2px rgba(0, 0, 0, 0.3);
-  z-index: 2;
-}
-
-/* Screw slot */
-.nameplate-screw::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 5px;
-  height: 1px;
-  background: rgba(0, 0, 0, 0.4);
-  transform: translate(-50%, -50%);
-  border-radius: 0.5px;
-}
-
-/* Position each screw */
-.nameplate-screw-tl { top: 6px; left: 6px; }
-.nameplate-screw-tr { top: 6px; right: 6px; }
-.nameplate-screw-bl { bottom: 6px; left: 6px; }
-.nameplate-screw-br { bottom: 6px; right: 6px; }
-
-.nameplate-name {
-  display: block;
-  font-family: var(--font-serif);
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #1a0f0a;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
-  letter-spacing: 0.1em;
-  margin-bottom: 4px;
-  position: relative;
-  z-index: 1;
-}
-
-.nameplate-title {
-  display: block;
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  color: #3d2212;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  position: relative;
-  z-index: 1;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1235,56 +747,36 @@ body {
   }
 }
 
-/* Interaction hint for first-time visitors */
-.interaction-hint {
-  display: block;
-  text-align: center;
-  margin-top: var(--space-md);
-  font-family: var(--font-serif);
-  font-size: 1.4rem;
-  font-style: italic;
-  color: rgba(255, 220, 180, 0.6);
-  letter-spacing: 0.05em;
-  opacity: 0;
-  animation: hintFadeIn 1.2s ease-out 1.5s forwards, hintGlow 6s ease-in-out 2.7s infinite;
-}
+/* ─── Phones and tablets ─────────────────────────────────── */
 
-@keyframes hintFadeIn {
-  from {
-    opacity: 0;
+@media (max-width: 900px) {
+  .bookshelf-scene {
+    gap: 24px;
+    padding: 20px 12px;
+    max-width: 100%;
+    overflow-x: hidden;
   }
-  to {
-    opacity: 1;
-  }
-}
 
-/* Calm pulse: 100% → 75% → glow peak → 100% */
-@keyframes hintGlow {
-  0%, 100% {
-    opacity: 1;
-    text-shadow: none;
+  /* 8px between spines, so each tap target is clear of its neighbour */
+  .book {
+    padding: 0 4px;
   }
-  40% {
-    opacity: 0.75;
-    text-shadow: none;
+
+  .shelf-board {
+    width: min(calc(var(--group-w) + 40px + 2 * 20px), 100%);
+    height: 22px;
+    background: linear-gradient(180deg, var(--wood-top) 0 5px, var(--wood-face) 5px 100%);
   }
-  55% {
-    opacity: 1;
-    text-shadow: 0 0 8px rgba(255, 220, 180, 0.4);
+
+  .shelf-name {
+    font-size: 26px;
   }
-  70% {
-    opacity: 1;
-    text-shadow: none;
+
+  .shelf-title {
+    font-size: 13px;
   }
 }
 
-/* Hint on mobile - keep readable */
-@media (max-width: 600px) {
-  .interaction-hint {
-    font-size: 1.1rem;
-    margin-top: var(--space-sm);
-  }
-}
 
 /* ═══════════════════════════════════════════════════════════
    BOOK VIEW (Open Book State)
@@ -2973,20 +2465,6 @@ body {
    ═══════════════════════════════════════════════════════════ */
 
 @media (max-width: 900px) {
-  /* Prevent Safari compositor edge artifact on the glow layer.
-     contain: strict creates a visible boundary when the 900px glow
-     element is clipped by overflow: hidden on the atmosphere. */
-  .bulb-glow {
-    contain: layout style;
-  }
-
-  /* FIX: Prevent horizontal scroll on real mobile devices (iOS Safari
-     rubber-banding can expose overflow despite overflow-x:hidden on html/body) */
-  .bookshelf-scene {
-    max-width: 100%;
-    overflow-x: hidden;
-  }
-
   /* Mobile: constrain book view to fit viewport with fixed nav at bottom */
   .book-view {
     display: flex;
@@ -3243,36 +2721,6 @@ body {
 }
 
 @media (max-width: 600px) {
-  .bookshelf {
-    max-width: 100%;
-  }
-
-  /* Simplify floor reflection */
-  .floor-reflection {
-    height: 60px;
-    opacity: 0.2;
-  }
-
-  .shelf-top {
-    height: 16px;
-  }
-
-  .shelf-front {
-    height: 60px;
-  }
-
-  .nameplate {
-    padding: 8px 16px;
-  }
-
-  .nameplate-name {
-    font-size: 0.85rem;
-  }
-
-  .nameplate-title {
-    font-size: 0.55rem;
-  }
-
   .collapsed-nav {
     padding: 0 var(--space-md);
   }
@@ -3297,21 +2745,6 @@ body {
   }
 }
 
-/* Very small screens (iPhone SE) */
-@media (max-width: 375px) {
-  .nameplate-title {
-    display: none;
-  }
-  
-  .nameplate {
-    padding: 6px 12px;
-  }
-  
-  .nameplate-name {
-    font-size: 0.8rem;
-  }
-}
-
 /* ═══════════════════════════════════════════════════════════
    REDUCED MOTION
    ═══════════════════════════════════════════════════════════ */
@@ -3323,24 +2756,6 @@ body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-
-  /* Exception: filament and halo glow are subtle and non-disorienting */
-  .filament-coil {
-    animation-name: filamentGlow !important;
-    animation-duration: 4s !important;
-    animation-timing-function: ease-in-out !important;
-    animation-iteration-count: infinite !important;
-  }
-  .bulb-glow {
-    animation-name: haloBreathe !important;
-    animation-duration: 4s !important;
-    animation-delay: 0.15s !important;
-    animation-timing-function: ease-in-out !important;
-    animation-iteration-count: infinite !important;
-  }
-  .interaction-hint {
-    animation: hintFadeIn 1s ease-out 1.5s forwards, hintGlow 6s ease-in-out 2.5s infinite !important;
   }
 
   /* Content-critical: the exec fast path appears immediately, no entrance delay */
