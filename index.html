@@ -204,7 +204,7 @@
   </div>
 
   <!-- Book Contents (data, rendered into pages) -->
-  <template id="work-book">
+  <template id="work-book" data-title="Selected Work">
     <!-- Spread 0: Table of Contents -->
     <article class="book-page book-spread toc-spread" data-page-num="0">
       <div class="spread-left toc-header">
@@ -249,7 +249,7 @@
     <article class="book-page book-spread" data-page-num="1">
       <div class="spread-left chapter-divider" data-chapter="I">
         <span class="chapter-period">2022–Present</span>
-        <h2 class="chapter-company">Independent Consulting</h2>
+        <h2 class="chapter-company" data-running-head>Independent Consulting</h2>
         <span class="chapter-role">Consultant</span>
         <div class="chapter-meta">
           <span class="chapter-location">New York City</span>
@@ -306,7 +306,7 @@
     <article class="book-page book-spread" data-page-num="2">
       <div class="spread-left chapter-divider" data-chapter="II">
         <span class="chapter-period">2021–2022</span>
-        <h2 class="chapter-company"><a href="https://www.getgarner.com" target="_blank" rel="noopener noreferrer">Garner Health</a></h2>
+        <h2 class="chapter-company" data-running-head><a href="https://www.getgarner.com" target="_blank" rel="noopener noreferrer">Garner Health</a></h2>
         <span class="chapter-role">Head of Business Operations</span>
         <div class="chapter-meta">
           <span class="chapter-location">New York City</span>
@@ -351,7 +351,7 @@
     <article class="book-page book-spread" data-page-num="3">
       <div class="spread-left chapter-divider" data-chapter="III">
         <span class="chapter-period">2018–2021</span>
-        <h2 class="chapter-company"><a href="https://www.njoy.com" target="_blank" rel="noopener noreferrer">NJOY</a></h2>
+        <h2 class="chapter-company" data-running-head><a href="https://www.njoy.com" target="_blank" rel="noopener noreferrer">NJOY</a></h2>
         <span class="chapter-role">Head of Strategy, Office of CEO</span>
         <div class="chapter-meta">
           <span class="chapter-location">New York City</span>
@@ -402,7 +402,7 @@
     <article class="book-page book-spread" data-page-num="4">
       <div class="spread-left chapter-divider" data-chapter="IV">
         <span class="chapter-period">2016–2017, 2018</span>
-        <h2 class="chapter-company"><a href="https://www.lek.com" target="_blank" rel="noopener noreferrer">L.E.K. Consulting</a></h2>
+        <h2 class="chapter-company" data-running-head><a href="https://www.lek.com" target="_blank" rel="noopener noreferrer">L.E.K. Consulting</a></h2>
         <span class="chapter-role">Associate</span>
         <div class="chapter-meta">
           <span class="chapter-location">Chicago</span>
@@ -440,13 +440,13 @@
     </article>
   </template>
 
-  <template id="about-book">
+  <template id="about-book" data-title="About Me">
     <!-- Spread 1: Introduction -->
     <article class="book-page book-spread" data-page-num="1">
       <div class="spread-left about-chapter">
         <img src="assets/headshot.jpg" alt="Shubham Chandra" class="about-headshot" />
         <span class="about-chapter-label">About</span>
-        <h2 class="about-chapter-title">Introduction</h2>
+        <h2 class="about-chapter-title" data-running-head>Introduction</h2>
         <p class="about-chapter-note">
           The short version.
         </p>
@@ -476,7 +476,7 @@
     <article class="book-page book-spread" data-page-num="2">
       <div class="spread-left about-chapter">
         <span class="about-chapter-label">About</span>
-        <h2 class="about-chapter-title">Personal</h2>
+        <h2 class="about-chapter-title" data-running-head>Personal</h2>
         <p class="about-chapter-note">
           Off the clock.
         </p>
@@ -506,7 +506,7 @@
     <article class="book-page book-spread" data-page-num="3">
       <div class="spread-left about-chapter">
         <span class="about-chapter-label">About</span>
-        <h2 class="about-chapter-title">Now</h2>
+        <h2 class="about-chapter-title" data-running-head>Now</h2>
         <p class="about-chapter-note">
           Where things stand.
         </p>
@@ -547,7 +547,7 @@
     <article class="book-page book-spread" data-page-num="4">
       <div class="spread-left about-chapter">
         <span class="about-chapter-label">About</span>
-        <h2 class="about-chapter-title">Technical</h2>
+        <h2 class="about-chapter-title" data-running-head>Technical</h2>
         <p class="about-chapter-note">
           The engineering side.
         </p>
@@ -587,11 +587,11 @@
     </article>
   </template>
 
-  <template id="contact-book">
+  <template id="contact-book" data-title="Get in Touch">
     <!-- Single Spread: Contact -->
     <article class="book-page book-spread contact-spread" data-page-num="1">
       <div class="spread-left contact-chapter">
-        <h2 class="contact-chapter-title">Contact</h2>
+        <h2 class="contact-chapter-title" data-running-head>Contact</h2>
         <p class="contact-chapter-note">
           Email works best.
         </p>
@@ -619,12 +619,12 @@
     </article>
   </template>
 
-  <template id="references-book">
+  <template id="references-book" data-title="References">
     <!-- Spread 1: Greg Doyle (NJOY) -->
     <article class="book-page book-spread" data-page-num="1">
       <div class="spread-left reference-attribution">
         <span class="reference-label">Reference</span>
-        <h2 class="reference-author">Greg Doyle</h2>
+        <h2 class="reference-author" data-running-head>Greg Doyle</h2>
         <span class="reference-role">Former CFO, NJOY</span>
         <p class="reference-context">
           Executive leadership during 3-year tenure through $2.8B acquisition.
@@ -641,7 +641,7 @@
     <article class="book-page book-spread" data-page-num="2">
       <div class="spread-left reference-attribution">
         <span class="reference-label">Reference</span>
-        <h2 class="reference-author">Geremy Bass</h2>
+        <h2 class="reference-author" data-running-head>Geremy Bass</h2>
         <span class="reference-role">Colleague & Friend</span>
         <p class="reference-context">
           10+ years of friendship, mentorship, and collaboration. Former interim CPO of Zoho.
@@ -658,7 +658,7 @@
     <article class="book-page book-spread" data-page-num="3">
       <div class="spread-left reference-attribution">
         <span class="reference-label">Reference</span>
-        <h2 class="reference-author">Stephanie Fogle</h2>
+        <h2 class="reference-author" data-running-head>Stephanie Fogle</h2>
         <span class="reference-role">CHRO, Parsley Health</span>
         <p class="reference-context">
           Executive team colleague during interim Chief of Staff engagement.
@@ -674,12 +674,12 @@
 
   </template>
 
-  <template id="colophon-book">
+  <template id="colophon-book" data-title="Colophon">
     <!-- Spread 1: Craft note -->
     <article class="book-page book-spread" data-page-num="1">
       <div class="spread-left about-chapter">
         <span class="about-chapter-label">Colophon</span>
-        <h2 class="about-chapter-title">On This Volume</h2>
+        <h2 class="about-chapter-title" data-running-head>On This Volume</h2>
         <p class="about-chapter-note">
           A note on the making.
         </p>
@@ -715,7 +715,7 @@
     <article class="book-page book-spread" data-page-num="2">
       <div class="spread-left about-chapter">
         <span class="about-chapter-label">Colophon</span>
-        <h2 class="about-chapter-title">Construction</h2>
+        <h2 class="about-chapter-title" data-running-head>Construction</h2>
         <p class="about-chapter-note">
           For the technically curious.
         </p>

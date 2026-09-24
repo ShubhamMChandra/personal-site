@@ -1875,36 +1875,52 @@ body {
   transform: scale(1.1) rotate(3deg);
 }
 
-/* Page Numbers - Harvard Press style */
+/* Folios - bottom, outer corner of the text block, oldstyle figures */
 .page-number {
+  position: absolute;
+  bottom: calc(var(--m-bot) / 2 - 0.5em);
   font-family: var(--font-text);
   font-size: var(--t-sm);
   font-variant-numeric: oldstyle-nums;
-  position: absolute;
-  top: var(--space-md);
+  line-height: 1;
   color: var(--page-secondary);
   pointer-events: none;
 }
 
 .page-number-left {
-  left: var(--space-lg);
+  left: var(--m-out);
 }
 
 .page-number-right {
-  right: var(--space-lg);
+  right: var(--m-out);
 }
 
-/* Running Header - scholarly small caps */
+/* Running heads - verso: the book's title; recto: the chapter (the
+   left page's [data-running-head]). Centred over the text block in the
+   head margin. */
 .running-header {
+  position: absolute;
+  top: calc(var(--m-top) / 2);
+  transform: translateY(-50%);
+  text-align: center;
+  white-space: nowrap;
   font-family: var(--font-sc);
   font-size: var(--t-xs);
   font-weight: 500;
+  line-height: 1;
   letter-spacing: 0.14em;
   color: var(--page-secondary);
-  position: absolute;
-  top: var(--space-lg);
-  right: var(--space-xl);
   pointer-events: none;
+}
+
+.running-header-left {
+  left: var(--m-out);
+  right: var(--m-in);
+}
+
+.running-header-right {
+  left: var(--m-in);
+  right: var(--m-out);
 }
 
 /* Center Spine - the gutter crease where the two pages dive into the

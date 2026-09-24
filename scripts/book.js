@@ -248,28 +248,32 @@ class Book {
   addPageFurniture(isMobile) {
     const leftPageNum = (this.currentPage * 2) + 1
     const rightPageNum = leftPageNum + 1
-    const bookTitle = this.formatBookTitle(this.currentBook)
 
     // Remove existing furniture
     document.querySelectorAll('.page-number, .running-header').forEach(el => el.remove())
 
     if (!isMobile) {
-      // Left page: page number bottom-left
-      const leftNum = document.createElement('span')
-      leftNum.className = 'page-number page-number-left'
-      leftNum.textContent = leftPageNum
-      this.leftPageEl.appendChild(leftNum)
+      // Verso running head: the book's title (the template's data-title).
+      // Recto running head: the chapter, i.e. the first [data-running-head]
+      // on this spread's left page; falls back to the book's title.
+      const template = document.querySelector(`#${this.currentBook}-book`)
+      const bookTitle = (template && template.dataset.title) || this.formatBookTitle(this.currentBook)
+      const spread = this.pages[this.currentPage]
+      const headEl = spread && spread.querySelector('.spread-left [data-running-head]')
+      const chapterTitle = headEl ? headEl.textContent.replace(/\s+/g, ' ').trim() : bookTitle
 
-      // Right page: page number bottom-right, running header top-right
-      const rightNum = document.createElement('span')
-      rightNum.className = 'page-number page-number-right'
-      rightNum.textContent = rightPageNum
-      this.rightPageEl.appendChild(rightNum)
+      const place = (pageEl, className, text) => {
+        const el = document.createElement('span')
+        el.className = className
+        el.textContent = text
+        pageEl.appendChild(el)
+      }
 
-      const header = document.createElement('span')
-      header.className = 'running-header'
-      header.textContent = bookTitle
-      this.rightPageEl.appendChild(header)
+      // Folios sit at the foot, on the outer edge of each page
+      place(this.leftPageEl, 'running-header running-header-left', bookTitle)
+      place(this.leftPageEl, 'page-number page-number-left', leftPageNum)
+      place(this.rightPageEl, 'running-header running-header-right', chapterTitle)
+      place(this.rightPageEl, 'page-number page-number-right', rightPageNum)
     } else {
       // Mobile: single page number
       const pageNum = document.createElement('span')
