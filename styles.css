@@ -3348,7 +3348,7 @@ body {
 }
 
 .reference-quote-page .reference-quote {
-  padding: 0;
+  padding: 0 0 0 0.45em; /* room inside the scroll box for the hung open quote */
   border-left: none;
   background: none;
   margin-bottom: 0;
