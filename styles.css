@@ -3447,7 +3447,6 @@ body {
   .book-view[data-active-book="references"] .open-book { border-left-color: var(--book-references); }
 
   .page {
-    padding: var(--space-md);
     transform: none; /* Remove desktop 3D rotation */
     border-radius: 0 4px 4px 0;
     min-height: 0;    /* Safari flex containment — prevent content push */
@@ -3462,17 +3461,59 @@ body {
      content. Its chapter divider/headshot/heading get a rule below them. */
   .mobile-left-inline {
     display: block;
-    margin-bottom: var(--space-md);
-    padding-bottom: var(--space-md);
+    margin-bottom: var(--v1);
+    padding-bottom: var(--v1);
     border-bottom: 1px solid var(--page-rule);
     min-height: 0;
     text-align: left;
   }
 
-  /* The big decorative chapter numeral is a desktop full-page flourish;
-     inline on mobile it just crowds, so retire it there. */
+  /* Compact chapter opening: no chapter drop; the numeral sits inline
+     before the company; location and backing share one line. */
+  .mobile-left-inline.chapter-divider {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: baseline;
+    padding-top: 0;
+  }
+
+  .mobile-left-inline.chapter-divider > * {
+    flex: 0 0 100%;
+  }
+
+  .mobile-left-inline .chapter-period {
+    order: -1;
+    margin-bottom: 0.25em;
+  }
+
   .mobile-left-inline.chapter-divider::before {
-    display: none;
+    display: inline-block;
+    flex: none;
+    font-size: 40px;
+    margin: 0 0.3em 0 0;
+    vertical-align: -0.05em;
+  }
+
+  .mobile-left-inline.chapter-divider > .chapter-company {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .mobile-left-inline .chapter-meta {
+    display: block;
+    padding-top: 8px;
+    margin-top: 8px;
+  }
+
+  .mobile-left-inline .chapter-location::after {
+    content: '\00B7';
+    margin-left: 0.45em;
+    letter-spacing: 0;
+  }
+
+  .mobile-left-inline .chapter-summary {
+    font-size: var(--t-md);
+    margin-top: 8px;
   }
 
   .mobile-left-inline .about-headshot {
@@ -3539,10 +3580,22 @@ body {
     backdrop-filter: blur(8px);
   }
 
-  /* Reduced top padding - shelf button is fixed, not overlapping book */
-  .page-content,
-  .spread-right {
-    padding-top: 1rem;
+  /* The sheet: fixed page sizes (no height-keyed scale on a phone) and
+     the spec's sheet padding */
+  .book-container {
+    --t-xs: 13px;
+    --t-sm: 14.5px;
+    --t-md: 16.5px;
+    --t-lg: 19px;
+    --t-xl: 22px;
+    --t-2xl: 30px;
+    --t-3xl: 38px;
+    --t-num: 64px;
+  }
+
+  .page-right,
+  .turn-leaf-face.page-right {
+    padding: 22px 20px 28px;
   }
 
   /* FIX: Allow spread-right content to flow and trigger page scroll.
@@ -3569,9 +3622,11 @@ body {
 
   /* Ensure page numbers don't overlap with shelf button */
   .page-number {
-    top: auto;
-    bottom: 16px;
-    font-size: 0.7rem;
+    bottom: 8px;
+  }
+
+  .page-number-right {
+    right: 20px;
   }
 
   /* Fixed page navigation at bottom of screen */
@@ -3640,10 +3695,6 @@ body {
     gap: var(--space-sm);
   }
 
-  .page-content {
-    padding: var(--space-sm);
-  }
-
   .project-meta {
     grid-template-columns: 1fr;
     gap: var(--space-xs);
@@ -3682,13 +3733,9 @@ body {
     min-width: 80px;
   }
 
-  .contact-header h2 {
-    font-size: 2rem;
-  }
-
   .contact-email {
-    font-size: 1rem;
-    padding: var(--space-sm);
+    padding: var(--space-sm) 0;
+    overflow-wrap: anywhere;
   }
 }
 
