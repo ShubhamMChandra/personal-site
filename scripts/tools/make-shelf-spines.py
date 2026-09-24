@@ -55,7 +55,7 @@ BOOKS = [
          label='Colophon: how this site is made'),
 ]
 GILT = ('#7a5a28', '#c9a24f', '#f1dc9a')    # dark, mid, highlight
-PEWTER = ('#6b7078', '#a9aeb6', '#d7dbe0')  # the cloth Colophon
+PEWTER = ('#5a5f66', '#8e939b', '#b9bec5')  # the cloth Colophon, kept the quietest volume
 # Per-emblem placement, in symbol units (the <symbol> viewBox is 20 wide):
 # dx moves the ink centre onto the spine axis (the laurel path sits 1.01
 # right of its symbol centre); scale enlarges about the emblem centre.
