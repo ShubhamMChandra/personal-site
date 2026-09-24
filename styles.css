@@ -2408,7 +2408,7 @@ body {
   font-style: italic;
   line-height: 1.35;
   color: var(--page-secondary);
-  margin-bottom: var(--space-md);
+  margin-bottom: 0;
 }
 
 .chapter-meta {
@@ -2443,7 +2443,7 @@ body {
   font-style: italic;
   line-height: 1.4;
   color: var(--page-secondary);
-  margin-top: var(--space-md);
+  margin-top: var(--v1);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -2638,6 +2638,7 @@ body {
   font-size: var(--t-md);
   line-height: 1.5;
   color: var(--page-text);
+  margin-bottom: 0;
 }
 
 .engagement-others-block .engagement-desc {
@@ -2669,7 +2670,7 @@ body {
 
 /* Role sections for multi-part roles */
 .role-section {
-  margin-bottom: var(--space-sm);
+  margin-bottom: 0;
 }
 
 .role-section-title {
@@ -2702,7 +2703,7 @@ body {
   font-style: italic;
   line-height: 1.35;
   color: var(--page-text);
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--v1);
 }
 
 .role-details {
@@ -2834,9 +2835,9 @@ body {
 
 /* About Pages */
 .about-header {
-  margin-bottom: var(--space-lg);
-  padding-bottom: var(--space-md);
-  border-bottom: 1px solid rgba(42, 37, 32, 0.1);
+  margin-bottom: var(--v1);
+  padding-bottom: var(--v-half);
+  border-bottom: 1px solid var(--page-rule);
   position: relative;
 }
 
@@ -2856,7 +2857,7 @@ body {
   font-style: italic;
   line-height: 1.4;
   color: var(--page-text);
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--v1);
 }
 
 /* Running-text paragraphs. :where() keeps this at zero specificity so
@@ -2865,6 +2866,10 @@ body {
   font-size: var(--t-md);
   line-height: 1.5;
   margin: 0 0 var(--v1);
+}
+
+:where(.page-content p:last-child) {
+  margin-bottom: 0;
 }
 
 /* Experience List */
@@ -2943,13 +2948,13 @@ body {
 
 /* Currently Section */
 .currently-section {
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--v1);
 }
 
 .currently-item {
   display: flex;
   gap: var(--space-md);
-  padding: var(--space-sm) 0;
+  padding: var(--v-half) 0;
   border-bottom: 1px solid var(--page-rule);
 }
 
@@ -2990,7 +2995,7 @@ body {
   font-family: var(--font-text);
   font-size: var(--t-md);
   line-height: 1.5;
-  margin-top: var(--space-md);
+  margin-top: var(--v1);
   color: var(--page-secondary);
 }
 
@@ -2998,15 +3003,15 @@ body {
 .technical-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
-  margin-top: var(--space-sm);
+  gap: var(--v-half);
+  margin-top: var(--v-half);
 }
 
 .technical-item {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding-bottom: var(--space-sm);
+  padding-bottom: var(--v-half);
   border-bottom: 1px solid var(--page-rule);
 }
 
@@ -3034,7 +3039,7 @@ body {
   font-size: var(--t-md);
   line-height: 1.5;
   font-style: italic;
-  margin-top: var(--space-md);
+  margin-top: var(--v1);
   color: var(--page-secondary);
 }
 
@@ -3047,7 +3052,7 @@ body {
   align-items: center;
   gap: var(--space-xs);
   color: var(--page-text);
-  margin-top: var(--space-md);
+  margin-top: var(--v-half);
 }
 
 .status-dot {
@@ -3075,14 +3080,6 @@ body {
   font-size: var(--t-md);
   line-height: 1.5;
   color: var(--page-text);
-  margin-bottom: 0;
-  padding-bottom: var(--space-sm);
-}
-
-/* Decorative separator between personal paragraphs */
-.personal-content p + p {
-  padding-top: var(--space-sm);
-  border-top: 1px solid var(--page-rule);
 }
 
 /* Drop cap on first paragraph — literary flourish */
@@ -3107,7 +3104,7 @@ body {
 }
 
 .contact-header {
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--v1);
 }
 
 .contact-header .contact-label {
@@ -3137,7 +3134,7 @@ body {
   font-style: normal;
   line-height: 1.5;
   color: var(--page-secondary);
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--v1);
   max-width: 38ch;
 }
 
@@ -3150,7 +3147,7 @@ body {
   text-decoration: none;
   border-bottom: 1px solid var(--page-text);
   padding-bottom: 2px;
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--v1);
   transition: color var(--duration-fast) var(--ease-out-expo),
               border-color var(--duration-fast) var(--ease-out-expo);
 }
@@ -3167,8 +3164,8 @@ body {
 
 .social-links {
   display: flex;
-  gap: var(--space-lg);
-  margin-bottom: var(--space-xl);
+  gap: var(--v1);
+  margin-bottom: var(--v1);
 }
 
 .social-link {
@@ -3195,8 +3192,8 @@ body {
 
 .book-footer {
   margin-top: auto;
-  padding-top: var(--space-md);
-  border-top: 1px solid rgba(42, 37, 32, 0.08);
+  padding-top: var(--v-half);
+  border-top: 1px solid var(--page-rule);
 }
 
 .book-footer p {
@@ -3293,9 +3290,9 @@ body {
   line-height: 1.5;
   font-style: italic;
   color: var(--page-secondary);
-  margin-top: var(--space-lg);
-  padding-top: var(--space-md);
-  border-top: 1px solid rgba(42, 37, 32, 0.08);
+  margin-top: var(--v1);
+  padding-top: var(--v-half);
+  border-top: 1px solid var(--page-rule);
   text-align: left;
 }
 
@@ -3324,7 +3321,7 @@ body {
   font-weight: 500;
   font-style: italic;
   color: var(--page-secondary);
-  margin-bottom: var(--space-md);
+  margin-bottom: 0;
 }
 
 .reference-context {
@@ -3346,7 +3343,7 @@ body {
   padding: 0;
   border-left: none;
   background: none;
-  margin-bottom: var(--space-md);
+  margin-bottom: 0;
 }
 
 .reference-quote-page .quote-text {
