@@ -2643,7 +2643,7 @@ body {
   }
 
   /* Compact chapter opening: no chapter drop; the numeral sits inline
-     before the company; location and backing share one line. */
+     before the company; location and backing stay on separate lines. */
   .mobile-left-inline.chapter-divider {
     display: flex;
     flex-flow: row wrap;
@@ -2678,15 +2678,8 @@ body {
   }
 
   .mobile-left-inline .chapter-meta {
-    display: block;
     padding-top: 8px;
     margin-top: 8px;
-  }
-
-  .mobile-left-inline .chapter-location::after {
-    content: '\00B7';
-    margin-left: 0.45em;
-    letter-spacing: 0;
   }
 
   .mobile-left-inline .chapter-summary {
