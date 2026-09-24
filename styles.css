@@ -2728,6 +2728,19 @@ body {
     flex-shrink: 0;
   }
 
+  /* No fade on a sheet that fits: a sticky fade on a short page sits in
+     flow under the copy and paints as a grey band. At the end of a long
+     sheet the fade only goes transparent, because removing it would
+     shorten the scroll and jump the copy. (book.js markOverflow sets the
+     classes.) */
+  .page-right:not(.is-overflowing)::after {
+    display: none;
+  }
+
+  .page-right.is-at-end::after {
+    opacity: 0;
+  }
+
   .book-spine-center {
     display: none;
   }

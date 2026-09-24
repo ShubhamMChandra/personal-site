@@ -74,8 +74,10 @@ class Book {
 
   bindEvents() {
     // Overflow state of each page: re-read when the reader scrolls a page
-    // or the window resizes (the page height, and so the fit, changes)
-    ;[this.leftPage, this.rightPage].forEach((el) => {
+    // or the window resizes (the page height, and so the fit, changes).
+    // On phones the sheet itself (.page-right) is the scroller, so it is
+    // tracked too.
+    ;[this.leftPage, this.rightPage, this.rightPageEl].forEach((el) => {
       if (el) el.addEventListener('scroll', () => this.markScrollEnd(el), { passive: true })
     })
     window.addEventListener('resize', () => this.markOverflow(), { passive: true })
@@ -310,9 +312,10 @@ class Book {
 
   // A page that cannot hold its copy scrolls. Mark it so CSS can fade the
   // cut line into the foot margin (until the reader reaches the end)
-  // instead of slicing it at the scroll edge.
+  // instead of slicing it at the scroll edge. The phone sheet (.page-right)
+  // is marked too, so its scroll fade shows only while there is more below.
   markOverflow() {
-    ;[this.leftPage, this.rightPage].forEach((el) => {
+    ;[this.leftPage, this.rightPage, this.rightPageEl].forEach((el) => {
       if (!el) return
       el.classList.toggle('is-overflowing', el.scrollHeight > el.clientHeight + 1)
       this.markScrollEnd(el)
