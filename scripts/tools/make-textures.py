@@ -37,6 +37,15 @@ Tiles (all periodic, so they can be used in a <pattern> or a CSS background):
                          concentrated in the outer ~30 % at each corner
   wear-joint-48x256.png  rubbing strip for the joints: fades over 48 px in x,
                          periodic in y (mirror it for the right joint)
+
+Shadow sprites (black, alpha only, not tiles; exempt from rule 3):
+  shadow-soft-96.png     blurred rounded square, 9-sliced at 40 px by CSS
+                         border-image so the penumbra keeps one width on any
+                         box: each spine's cast shadow on the wall, and the
+                         tipped book's shadow on the board
+  contact-256x48.png     contact shadow where a spine meets the board: dark
+                         along the top edge, fading down the board's top face,
+                         soft at both ends; stretched to each spine's width
 """
 import os
 import numpy as np
@@ -190,12 +199,38 @@ def wear_joint(rng, w=48, h=256):
     return la, np.zeros_like(la)
 
 
+def shadow_soft(n=96, pad=26, sigma=8.5):
+    """Blurred rounded square, alpha 0..1, for a 40 px 9-slice."""
+    a = np.zeros((n, n), dtype=np.float32)
+    a[pad:n - pad, pad:n - pad] = 1.0
+    a = gaussian_filter(a, sigma=sigma)
+    return np.clip(a / a.max(), 0, 1)
+
+
+def contact_strip(w=256, h=48):
+    """Steep vertical fade from the top edge, soft ends in x."""
+    y = np.linspace(0, 1, h)[:, None]
+    x = np.linspace(-1, 1, w)[None, :]
+    fall = np.exp(-(y * 3.2) ** 2)
+    ends = np.clip(1 - np.abs(x) ** 6, 0, 1)
+    return np.clip(fall * ends, 0, 1)
+
+
+def save_shadow(name, a):
+    """Black RGBA with the alpha channel only (no palette: the ramp must stay smooth)."""
+    alpha = Image.fromarray((a * 255).astype(np.uint8), 'L')
+    black = Image.new('L', alpha.size, 0)
+    Image.merge('RGBA', (black, black, black, alpha)).save(os.path.join(OUT, name), optimize=True)
+
+
 def main():
     save_two_tone('calf-mottle-256.png', *calf(np.random.default_rng(SEED + 2)))
     save_two_tone('cloth-weave-128.png', *cloth(np.random.default_rng(SEED + 3)))
     save_two_tone('grain-128.png', *grain(np.random.default_rng(SEED)))
     save_two_tone('wear-cap-256x48.png', *wear_cap(np.random.default_rng(SEED + 4)), light_rgb=WEAR)
     save_two_tone('wear-joint-48x256.png', *wear_joint(np.random.default_rng(SEED + 5)), light_rgb=WEAR)
+    save_shadow('shadow-soft-96.png', shadow_soft())
+    save_shadow('contact-256x48.png', contact_strip())
 
 
 if __name__ == '__main__':
