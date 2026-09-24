@@ -3412,7 +3412,7 @@ body {
   .page-right::after {
     content: '';
     position: sticky;
-    bottom: 0;
+    bottom: -40px; /* sticky insets by the container's padding-bottom; cancel it so the fade sits on the sheet's foot */
     left: 0;
     right: 0;
     display: block;
@@ -3468,7 +3468,7 @@ body {
   }
 
   .page-right {
-    padding: 22px 20px 28px;
+    padding: 22px 20px 40px; /* 40px foot keeps the last line clear of the folio */
   }
 
   /* FIX: Allow spread-right content to flow and trigger page scroll.
@@ -3496,6 +3496,7 @@ body {
   /* Ensure page numbers don't overlap with shelf button */
   .page-number {
     bottom: 8px;
+    z-index: 6; /* above the scroll fade, which is opaque at the foot */
   }
 
   .page-number-right {
