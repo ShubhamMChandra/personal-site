@@ -1652,7 +1652,6 @@ body {
 /* Pages */
 .page {
   flex: 1;
-  padding: 2.125rem;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -1668,9 +1667,41 @@ body {
     );
 }
 
+/* Book margins, shared by the static pages and the turning leaf's faces
+   so a turn never shows a padding jump (WP4 keeps these selectors).
+   Tschichold-lite: narrow inner, wide outer, deeper foot than head.
+   The margins are fractions of the spread (the .page containing block).
+   They are written in cqw against .open-book so the leaf faces, whose
+   containing block is only half the spread, resolve to the same pixels,
+   and so the running heads and folios (top/left resolve against the
+   page, not the spread) line up with the text block. */
+.open-book {
+  container-type: inline-size;
+}
+
+.page,
+.turn-leaf-face {
+  --m-in: 6.5cqw;
+  --m-out: 11cqw;
+  --m-top: 6cqw;
+  --m-bot: 9.5cqw;
+}
+
+.page-left,
+.turn-leaf-face.is-left {
+  padding: var(--m-top) var(--m-in) var(--m-bot) var(--m-out);
+}
+
+.page-right,
+.turn-leaf-face.is-right {
+  padding: var(--m-top) var(--m-out) var(--m-bot) var(--m-in);
+}
+
 /* Book-grade text rendering on the parchment: kerning, ligatures,
-   hyphenation, balanced rag and oldstyle figures (Alegreya default) */
-.page {
+   hyphenation, balanced rag and oldstyle figures (Alegreya default).
+   The leaf faces match so a turn never rewraps a line. */
+.page,
+.turn-leaf-face {
   -webkit-font-smoothing: auto;
   font-kerning: normal;
   font-variant-ligatures: common-ligatures;
@@ -1735,12 +1766,12 @@ body {
   font-size: var(--t-md);
   line-height: 1.5;
   color: var(--page-text);
-  max-width: 440px;
-  margin: 0 auto;
-  padding: 1.25rem;
+  max-width: 34em;
   flex: 1;
   min-height: 0; /* Safari flexbox fix */
-  text-rendering: optimizeLegibility;
+  overflow-y: auto; /* a page that cannot hold its copy scrolls; it never clips */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(38, 32, 26, 0.25) transparent;
 }
 
 /* Subtle scrollbar for page content overflow */
@@ -1983,7 +2014,6 @@ body {
 .turn-leaf-face {
   position: absolute;
   inset: 0;
-  padding: 2.125rem;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -2116,17 +2146,6 @@ body {
   padding-bottom: var(--space-md);
   border-bottom: 1px solid rgba(42, 37, 32, 0.1);
   position: relative;
-}
-
-/* Elegant accent line */
-.project-header::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 60px;
-  height: 2px;
-  background: linear-gradient(90deg, var(--page-text) 0%, transparent 100%);
 }
 
 .project-label {
@@ -2283,15 +2302,24 @@ body {
   min-height: 0; /* Safari flexbox fix */
 }
 
-/* Chapter Divider (Left Page) */
-.chapter-divider {
+/* Versos start at the head margin. Only Work versos drop the chapter
+   head about a third of the way down (the classic chapter opening). */
+.toc-header,
+.chapter-divider,
+.about-chapter,
+.contact-chapter,
+.reference-attribution {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: flex-start;
-  padding: var(--space-lg) var(--space-md);
+  height: 100%;
+}
+
+/* Chapter Divider (Left Page) */
+.chapter-divider {
+  padding-top: calc(var(--m-top) + 14%);
   position: relative;
-  overflow: hidden;
 }
 
 /* Chapter numeral — real ink at the head of the verso */
@@ -2317,9 +2345,7 @@ body {
   font-weight: 500;
   letter-spacing: 0.12em;
   color: var(--page-secondary);
-  margin-bottom: var(--space-sm);
-  padding-bottom: var(--space-xs);
-  border-bottom: 1px solid var(--page-rule);
+  margin-bottom: var(--v-half);
 }
 
 .chapter-company {
@@ -2367,12 +2393,13 @@ body {
 }
 
 .chapter-meta {
+  align-self: stretch;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding-top: var(--space-md);
+  gap: 2px;
   border-top: 1px solid var(--page-rule);
-  margin-top: var(--space-lg);
+  padding-top: var(--v-half);
+  margin-top: var(--v1);
 }
 
 .chapter-location {
@@ -2404,13 +2431,6 @@ body {
    TABLE OF CONTENTS - Classic Book ToC
    ═══════════════════════════════════════════════════════════ */
 
-.toc-header {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding-right: var(--space-lg);
-}
-
 .toc-label {
   font-family: var(--font-sc);
   font-size: var(--t-xs);
@@ -2428,19 +2448,7 @@ body {
   line-height: 1;
   letter-spacing: -0.01em;
   color: var(--page-text);
-  position: relative;
-  padding-bottom: var(--space-md);
-}
-
-/* Subtle decorative rule below ToC title */
-.toc-title::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 40px;
-  height: 1px;
-  background: linear-gradient(90deg, var(--accent-maroon), transparent);
+  margin-bottom: var(--v1);
 }
 
 .toc-list {
@@ -2543,13 +2551,10 @@ body {
 /* ═══════════════════════════════════════════════════════════ */
 
 /* Engagement blocks - textbook style */
-.engagement-block {
-  padding: var(--space-sm) 0;
-  border-bottom: 1px solid var(--page-rule);
-}
-
-.engagement-block:last-child {
-  border-bottom: none;
+.engagement-block + .engagement-block {
+  border-top: 1px solid var(--page-rule);
+  padding-top: var(--v-half);
+  margin-top: var(--v-half);
 }
 
 .engagement-label {
@@ -2608,10 +2613,9 @@ body {
 /* Engagement metrics - inline */
 .engagement-metrics {
   display: flex;
-  gap: var(--space-sm);
-  margin-top: var(--space-xs);
-  padding-top: var(--space-xs);
-  border-top: 1px dashed var(--page-rule);
+  flex-wrap: wrap;
+  gap: 0 1.2em;
+  margin-top: var(--v-half);
 }
 
 .engagement-metric {
@@ -2651,11 +2655,9 @@ body {
 
 /* Role Details (Right Page) */
 .spread-right {
-  padding: 0.85rem 0;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  overflow: hidden;
 }
 
 .role-tagline {
@@ -2726,15 +2728,6 @@ body {
   margin-top: 1px;
 }
 
-/* About Chapter (left side) */
-.about-chapter {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  padding: var(--space-lg) var(--space-md);
-}
-
 /* Author portrait — printed on the page, not uploaded to a profile */
 .about-headshot {
   width: 110px;
@@ -2757,9 +2750,7 @@ body {
   font-weight: 500;
   letter-spacing: 0.12em;
   color: var(--page-secondary);
-  margin-bottom: var(--space-sm);
-  padding-bottom: var(--space-xs);
-  border-bottom: 1px solid var(--page-rule);
+  margin-bottom: var(--v-half);
 }
 
 .about-chapter-title {
@@ -2769,19 +2760,6 @@ body {
   line-height: 1.2;
   color: var(--page-text);
   margin-bottom: var(--space-sm);
-  position: relative;
-  padding-bottom: var(--space-sm);
-}
-
-/* Subtle decorative rule below chapter title */
-.about-chapter-title::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 30px;
-  height: 1px;
-  background: linear-gradient(90deg, var(--accent-maroon), transparent);
 }
 
 .about-chapter-note {
@@ -2792,24 +2770,13 @@ body {
   color: var(--page-secondary);
 }
 
-/* Contact Chapter (left side) */
-.contact-chapter {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  padding: var(--space-lg) var(--space-md);
-}
-
 .contact-chapter-label {
   font-family: var(--font-sc);
   font-size: var(--t-xs);
   font-weight: 500;
   letter-spacing: 0.12em;
   color: var(--page-secondary);
-  margin-bottom: var(--space-sm);
-  padding-bottom: var(--space-xs);
-  border-bottom: 1px solid var(--page-rule);
+  margin-bottom: var(--v-half);
 }
 
 .contact-chapter-title {
@@ -2820,19 +2787,6 @@ body {
   letter-spacing: -0.005em;
   color: var(--page-text);
   margin-bottom: var(--space-sm);
-  position: relative;
-  padding-bottom: var(--space-sm);
-}
-
-/* Subtle decorative rule below contact chapter title */
-.contact-chapter-title::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 30px;
-  height: 1px;
-  background: linear-gradient(90deg, var(--accent-maroon), transparent);
 }
 
 .contact-chapter-note {
@@ -2849,16 +2803,6 @@ body {
   padding-bottom: var(--space-md);
   border-bottom: 1px solid rgba(42, 37, 32, 0.1);
   position: relative;
-}
-
-.about-header::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 50px;
-  height: 2px;
-  background: linear-gradient(90deg, var(--page-text) 0%, transparent 100%);
 }
 
 .about-header h2 {
@@ -3138,9 +3082,7 @@ body {
   letter-spacing: 0.1em;
   display: block;
   color: var(--page-secondary);
-  margin-bottom: var(--space-sm);
-  padding-bottom: var(--space-xs);
-  border-bottom: 1px solid var(--page-rule);
+  margin-bottom: var(--v-half);
 }
 
 .contact-header h2 {
@@ -3322,24 +3264,13 @@ body {
   text-align: left;
 }
 
-/* Reference Attribution (left side) */
-.reference-attribution {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  padding: var(--space-xl) var(--space-md) var(--space-lg);
-}
-
 .reference-label {
   font-family: var(--font-sc);
   font-size: var(--t-xs);
   font-weight: 500;
   letter-spacing: 0.12em;
   color: var(--page-secondary);
-  margin-bottom: var(--space-sm);
-  padding-bottom: var(--space-xs);
-  border-bottom: 1px solid var(--page-rule);
+  margin-bottom: var(--v-half);
 }
 
 .reference-author {
@@ -3350,19 +3281,6 @@ body {
   letter-spacing: -0.005em;
   color: var(--page-text);
   margin-bottom: var(--space-sm);
-  position: relative;
-  padding-bottom: var(--space-sm);
-}
-
-/* Subtle decorative rule below reference author name */
-.reference-author::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 30px;
-  height: 1px;
-  background: linear-gradient(90deg, var(--accent-maroon), transparent);
 }
 
 .reference-role {
@@ -3387,7 +3305,6 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: var(--space-xl) var(--space-md) var(--space-md);
 }
 
 .reference-quote-page .reference-quote {
