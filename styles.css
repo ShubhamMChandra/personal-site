@@ -2586,12 +2586,11 @@ body {
 .toc-entry-meta {
   display: block;
   font-family: var(--font-text);
-  font-size: var(--t-md);
+  font-size: var(--t-sm);
   font-style: normal;
   line-height: 1.4;
   color: var(--page-secondary);
   margin-top: 0.1em;
-  padding-right: 1.5em; /* nothing stacks under the folio */
 }
 
 .toc-entry-meta em {
