@@ -2147,6 +2147,15 @@ body {
   margin-bottom: var(--v-half);
 }
 
+/* On a spread the verso's running head already names the book, so the
+   eyebrow label would say it twice. Phones have no running head: keep it. */
+@media (min-width: 901px) {
+  .about-chapter-label,
+  .reference-label {
+    display: none;
+  }
+}
+
 .about-chapter-title {
   font-family: var(--font-text);
   font-size: var(--t-xl);
