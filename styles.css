@@ -2424,7 +2424,7 @@ body {
   content: '';
   flex: 1;
   min-width: 1.5em;
-  border-bottom: 1px dotted var(--page-rule);
+  border-bottom: 1px dotted rgba(26, 23, 20, 0.35); /* --page-rule's .14 vanishes as dots */
   margin: 0 0.5em;
   align-self: flex-end;
   transform: translateY(-0.35em);
