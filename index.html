@@ -87,6 +87,9 @@
 
   <!-- The shelf: a page with one lit shelf on it (shelf left, text right at >= 1100px; stacked below) -->
   <main class="bookshelf-scene" id="shelf">
+    <!-- CSS-only entrance: the room starts dim and the light comes up (the text column sits above it) -->
+    <div class="scene-dim" aria-hidden="true"></div>
+
     <div class="shelf-stage">
       <ul class="books" role="list">
       <li><button class="book" type="button" data-book="work" aria-label="Work: selected roles and engagements, 2016 to present" style="--vol-h:1;--vol-w:0.19">

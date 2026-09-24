@@ -380,6 +380,23 @@ body {
   pointer-events: none;
 }
 
+/* The entrance is CSS-only, so first paint is dim, never bright-then-dark:
+   the room starts at .85 dark and the light comes up. The text column
+   sits above this layer, so the facts are readable from the first frame. */
+.scene-dim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: var(--bg);
+  opacity: 0.85;
+  pointer-events: none;
+  animation: sceneLight 520ms var(--ease-room) 80ms forwards;
+}
+
+@keyframes sceneLight {
+  to { opacity: 0; }
+}
+
 .shelf-stage {
   position: relative;
   z-index: 1;
@@ -456,6 +473,21 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Hover tips the volume forward on its tail edge. It does not lift:
+   a tipped book does not rise off the board. */
+.book:hover,
+.book:focus-visible {
+  z-index: 3;
+  transform: rotateX(-7deg);
+  transition-duration: var(--dur-hover);
+  transition-timing-function: var(--ease-object);
+}
+
+.book:active {
+  transform: rotateX(-2deg);
+  transition-duration: 90ms;
+}
+
 .book:focus {
   outline: none;
 }
@@ -494,6 +526,13 @@ body {
   pointer-events: none;
   background: radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.25) 45%, transparent 72%);
   transition: opacity var(--dur-hover-out) var(--ease-room);
+}
+
+.book:hover .book-shadow,
+.book:focus-visible .book-shadow {
+  opacity: 0.7;
+  transition-duration: var(--dur-hover);
+  transition-timing-function: var(--ease-object);
 }
 
 /* ─── The board ──────────────────────────────────────────── */
@@ -717,79 +756,21 @@ body {
   }
 }
 
-
-/* Staggered Entrance Animation */
-@keyframes bookSlideIn {
-  from {
+@media (prefers-reduced-motion: reduce) {
+  .scene-dim {
+    animation: none;
     opacity: 0;
-    transform: translateY(30px);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .book {
+    transition: none;
   }
-}
 
-@keyframes bookSlideInMystery {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+  .book:hover,
+  .book:focus-visible,
+  .book:active {
+    transform: none;
   }
-  to {
-    opacity: 0.6;
-    transform: translateY(0);
-  }
-}
-
-.books .book {
-  animation: bookSlideIn 0.8s var(--ease-out-expo) both;
-}
-
-.books .book:nth-child(1) { animation-delay: 0.1s; }
-.books .book:nth-child(2) { animation-delay: 0.2s; }
-.books .book:nth-child(3) { animation-delay: 0.3s; }
-.books .book:nth-child(4) { animation-delay: 0.4s; }
-.books .book:nth-child(5) {
-  animation: bookSlideInMystery 0.8s var(--ease-out-expo) both;
-  animation-delay: 0.5s;
-}
-
-/* Subtle idle animation - hints interactivity */
-@keyframes bookBreathe {
-  0%, 100% {
-    transform: translateY(0) rotate(var(--book-rotate, 0deg));
-  }
-  50% {
-    transform: translateY(-2px) rotate(var(--book-rotate, 0deg));
-  }
-}
-
-.books .book:not(:hover) {
-  --book-rotate: -0.5deg;
-}
-
-.books .book:nth-child(1) { --book-rotate: -0.5deg; }
-.books .book:nth-child(2) { --book-rotate: 0.3deg; }
-.books .book:nth-child(3) { --book-rotate: -0.2deg; }
-.books .book:nth-child(4) { --book-rotate: 0.4deg; }
-.books .book:nth-child(5) { --book-rotate: 0.2deg; }
-
-/* After entrance animation, add subtle breathe */
-.books .book {
-  animation:
-    bookSlideIn 0.8s var(--ease-out-expo) both,
-    bookBreathe 4s ease-in-out 1.5s infinite;
-  will-change: transform;
-}
-
-.books .book:hover {
-  animation-play-state: paused, paused;
-}
-
-.books .book:nth-child(5) {
-  animation:
-    bookSlideInMystery 0.8s var(--ease-out-expo) both,
-    bookBreathe 4s ease-in-out 2s infinite;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -2462,12 +2443,6 @@ body {
 /* ═══════════════════════════════════════════════════════════
    ANIMATIONS
    ═══════════════════════════════════════════════════════════ */
-
-/* Book Selection Animation */
-.book.is-selected {
-  transform: translateY(-30px) translateZ(50px) rotateY(-15deg);
-  z-index: 10;
-}
 
 /* ─── Page-turn engine (single-leaf 3D flip) ───────────────────────
    The turning leaf, its faces, the sheen, and the dynamic page shadows
