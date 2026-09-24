@@ -1681,10 +1681,13 @@ body {
 
 .page,
 .turn-leaf-face {
-  --m-in: 6.5cqw;
-  --m-out: 11cqw;
-  --m-top: 6cqw;
-  --m-bot: 9.5cqw;
+  /* the spread the margins are measured against: the real spread, but
+     never wider than two 0.72 pages of this height (WP3's proportion) */
+  --spread-w: min(100cqw, var(--page-h) * 1.44 + var(--gutter-width));
+  --m-in: calc(var(--spread-w) * 0.065);
+  --m-out: calc(var(--spread-w) * 0.11);
+  --m-top: calc(var(--spread-w) * 0.06);
+  --m-bot: calc(var(--spread-w) * 0.095);
 }
 
 .page-left,
