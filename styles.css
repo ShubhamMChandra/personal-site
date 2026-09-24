@@ -731,7 +731,8 @@ body {
   }
 
   .shelf-board {
-    width: min(calc(var(--group-w) + 40px + 2 * 20px), 100%);
+    width: calc(var(--group-w) + 40px + 2 * 20px);
+    max-width: 100%;
     height: 22px;
     background: linear-gradient(180deg, var(--wood-top) 0 5px, var(--wood-face) 5px 100%);
   }
