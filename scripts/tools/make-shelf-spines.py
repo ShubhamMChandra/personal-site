@@ -58,8 +58,9 @@ GILT = ('#7a5a28', '#c9a24f', '#f1dc9a')    # dark, mid, highlight
 PEWTER = ('#5a5f66', '#8e939b', '#b9bec5')  # the cloth Colophon, kept the quietest volume
 # Per-emblem placement, in symbol units (the <symbol> viewBox is 20 wide):
 # dx moves the ink centre onto the spine axis (the laurel path sits 1.01
-# right of its symbol centre); scale enlarges about the emblem centre.
-TOOL_ADJUST = {'references': dict(dx=-1.01)}
+# right of its symbol centre); scale enlarges about the emblem centre (the
+# quill is a thin diagonal, so at the common size it read as an apostrophe).
+TOOL_ADJUST = {'references': dict(dx=-1.01), 'contact': dict(scale=1.25)}
 
 # layout in --spine-h units: books stand flush, centred on the lamp
 widths = [b['h'] * b['w'] for b in BOOKS]
