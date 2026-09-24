@@ -1473,7 +1473,7 @@ body {
   width: 100%;
   height: calc(100vh - 140px);
   max-height: 800px;
-  --page-h: calc(100vh - 140px); /* the .open-book height; WP3 moves it to .open-book-wrap */
+  --page-h: min(calc(100vh - 140px), 800px); /* the .open-book height, capped as max-height is; WP3 moves it to .open-book-wrap */
   perspective: 1800px;
   perspective-origin: 50% 45%;
 }
