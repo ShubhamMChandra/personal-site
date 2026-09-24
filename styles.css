@@ -1722,6 +1722,21 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Display lines never hyphenate: a broken word in a tagline, summary,
+   lead or quote reads as a typo. Body copy keeps hyphens: auto. */
+.page h2,
+.turn-leaf-face h2,
+.role-tagline,
+.chapter-summary,
+.about-lead,
+.reference-role,
+.reference-context,
+.contact-note,
+.quote-text,
+.toc-entry-meta {
+  hyphens: manual;
+}
+
 /* Paper texture overlay - extremely subtle */
 .page::after {
   content: '';
