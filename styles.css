@@ -107,20 +107,9 @@
   --font-sans: var(--font-text);
   --font-mono: var(--font-sc);
 
-  /* page type scale, keyed to page height (WP1 sets --page-h on
+  /* page height the type scale is keyed to (WP1 sets it on
      .book-container; WP3 moves it to .open-book-wrap) */
   --page-h: 660px;
-  --t-xs: clamp(13px, calc(var(--page-h) * 0.0197), 14px);
-  --t-sm: clamp(14.5px, calc(var(--page-h) * 0.0235), 15.5px);
-  --t-md: clamp(16px, calc(var(--page-h) * 0.0265), 18px);
-  --t-lg: clamp(19px, calc(var(--page-h) * 0.0333), 22px);
-  --t-xl: clamp(22px, calc(var(--page-h) * 0.0394), 26px);
-  --t-2xl: clamp(30px, calc(var(--page-h) * 0.0576), 38px);
-  --t-3xl: clamp(38px, calc(var(--page-h) * 0.0788), 52px);
-  --t-num: clamp(64px, calc(var(--page-h) * 0.1576), 104px);
-  --v1: calc(var(--t-md) * 1.5);
-  --v-half: calc(var(--v1) / 2);
-  --v2: calc(var(--v1) * 2);
 
   /* spacing */
   --space-xs: 0.5rem;
@@ -164,6 +153,25 @@
   :root {
     --spine-h: clamp(300px, min(100vh - 240px, 42vw), 520px);
   }
+}
+
+/* Page type scale, keyed to page height. A custom property's var()
+   resolves where it is declared, so the scale is declared again on the
+   element that sets --page-h; declared on :root alone it would freeze at
+   the default height. */
+:root,
+.book-container {
+  --t-xs: clamp(13px, calc(var(--page-h) * 0.0197), 14px);
+  --t-sm: clamp(14.5px, calc(var(--page-h) * 0.0235), 15.5px);
+  --t-md: clamp(16px, calc(var(--page-h) * 0.0265), 18px);
+  --t-lg: clamp(19px, calc(var(--page-h) * 0.0333), 22px);
+  --t-xl: clamp(22px, calc(var(--page-h) * 0.0394), 26px);
+  --t-2xl: clamp(30px, calc(var(--page-h) * 0.0576), 38px);
+  --t-3xl: clamp(38px, calc(var(--page-h) * 0.0788), 52px);
+  --t-num: clamp(64px, calc(var(--page-h) * 0.1576), 104px);
+  --v1: calc(var(--t-md) * 1.5);
+  --v-half: calc(var(--v1) / 2);
+  --v2: calc(var(--v1) * 2);
 }
 
 /* Metric-matched local fallbacks so the web fonts swap in without a
