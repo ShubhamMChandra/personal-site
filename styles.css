@@ -2187,161 +2187,6 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   BOOK PAGE CONTENT STYLES
-   ═══════════════════════════════════════════════════════════ */
-
-/* Project Pages */
-.project-header {
-  margin-bottom: var(--space-lg);
-  padding-bottom: var(--space-md);
-  border-bottom: 1px solid rgba(42, 37, 32, 0.1);
-  position: relative;
-}
-
-.project-label {
-  font-family: var(--font-sc);
-  font-size: var(--t-xs);
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  color: var(--page-secondary);
-  display: block;
-  margin-bottom: var(--space-sm);
-  padding-bottom: var(--space-xs);
-  border-bottom: 1px solid var(--page-rule);
-}
-
-.project-title {
-  font-family: var(--font-text);
-  font-size: var(--t-xl);
-  font-weight: 600;
-  line-height: 1.2;
-  color: var(--page-text);
-}
-
-.project-description {
-  font-family: var(--font-text);
-  font-size: var(--t-md);
-  line-height: 1.5;
-  color: var(--page-secondary);
-  margin-bottom: var(--space-md);
-}
-
-.project-description strong {
-  color: var(--page-text);
-  font-weight: 600;
-}
-
-/* Chapter Ornament - scholarly flourish */
-.chapter-ornament {
-  font-size: var(--t-md);
-  display: block;
-  text-align: center;
-  margin: var(--space-lg) 0;
-  color: var(--page-secondary);
-  opacity: 0.4;
-}
-
-.chapter-ornament::before {
-  content: '✦';
-}
-
-/* Advisory List (Other Advisory page) */
-.advisory-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.advisory-list .project-description {
-  padding-left: var(--space-md);
-  border-left: 2px solid var(--page-rule);
-  margin-bottom: 0;
-}
-
-.advisory-list .project-description:last-child {
-  border-left: none;
-  padding-left: 0;
-  font-style: italic;
-  margin-top: var(--space-sm);
-}
-
-.project-image {
-  margin-bottom: var(--space-md);
-}
-
-.image-placeholder {
-  font-family: var(--font-sc);
-  font-size: var(--t-xs);
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  color: var(--page-secondary);
-  aspect-ratio: 16/10;
-  background: linear-gradient(
-    135deg,
-    #e0d8cc 0%,
-    #d4ccc0 100%
-  );
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.project-meta {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-sm);
-  margin-top: var(--space-lg);
-  padding: var(--space-md) 0;
-  border-top: 1px solid rgba(42, 37, 32, 0.15);
-  border-bottom: 1px solid rgba(42, 37, 32, 0.15);
-}
-
-.meta-item {
-  text-align: center;
-  padding: var(--space-xs);
-}
-
-.meta-label {
-  font-family: var(--font-sc);
-  font-size: var(--t-xs);
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  color: var(--page-secondary);
-  display: block;
-  margin-bottom: 4px;
-}
-
-.meta-value {
-  font-family: var(--font-text);
-  font-size: var(--t-lg);
-  font-weight: 600;
-  font-variant-numeric: lining-nums tabular-nums;
-  color: var(--page-text);
-}
-
-.project-link {
-  font-family: var(--font-sc);
-  font-size: var(--t-sm);
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  display: inline-block;
-  color: var(--page-text);
-  text-decoration: none;
-  padding: var(--space-xs) var(--space-sm);
-  border: 1px solid var(--page-text);
-  border-radius: 2px;
-  transition: background var(--duration-fast) var(--ease-out-expo),
-              color var(--duration-fast) var(--ease-out-expo),
-              border-color var(--duration-fast) var(--ease-out-expo);
-}
-
-.project-link:hover {
-  background: var(--page-text);
-  color: var(--page-bg);
-}
-
-/* ═══════════════════════════════════════════════════════════
    TWO-PAGE SPREADS - Chapter Dividers & Role Details
    ═══════════════════════════════════════════════════════════ */
 
@@ -3622,8 +3467,7 @@ body {
     --t-num: 64px;
   }
 
-  .page-right,
-  .turn-leaf-face.page-right {
+  .page-right {
     padding: 22px 20px 28px;
   }
 
@@ -3722,23 +3566,6 @@ body {
 
   .nav-books {
     gap: var(--space-sm);
-  }
-
-  .project-meta {
-    grid-template-columns: 1fr;
-    gap: var(--space-xs);
-  }
-
-  .meta-item {
-    text-align: left;
-    display: flex;
-    justify-content: space-between;
-    padding: var(--space-xs) 0;
-    border-bottom: 1px solid rgba(42, 37, 32, 0.08);
-  }
-
-  .meta-item:last-child {
-    border-bottom: none;
   }
 
   .experience-item {
