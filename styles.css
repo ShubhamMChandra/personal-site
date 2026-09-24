@@ -1737,16 +1737,21 @@ body {
   outline-offset: 3px;
 }
 
-.chapter-company a {
+/* Display-size links (chapter and engagement titles): a fine underline,
+   not the dotted hairline, which reads as a dashed rule at this size.
+   Body-size links keep the dotted hairline. */
+.chapter-company a,
+.engagement-title a {
   color: inherit;
-  text-decoration: none;
-  border-bottom: 1px dotted var(--page-tertiary);
-  transition: border-color var(--duration-fast) ease, border-style var(--duration-fast) ease;
+  text-decoration: underline 1px rgba(26, 23, 20, 0.35);
+  text-underline-offset: 0.12em;
+  text-decoration-skip-ink: auto;
+  transition: text-decoration-color var(--duration-fast) ease;
 }
 
-.chapter-company a:hover {
-  border-bottom-color: var(--accent-maroon);
-  border-bottom-style: solid;
+.chapter-company a:hover,
+.engagement-title a:hover {
+  text-decoration-color: var(--accent-maroon);
 }
 
 .chapter-backing a {
@@ -1974,18 +1979,6 @@ body {
   font-variant-numeric: lining-nums;
   color: var(--page-text);
   margin-bottom: 2px;
-}
-
-.engagement-title a {
-  color: inherit;
-  text-decoration: none;
-  border-bottom: 1px dotted var(--page-tertiary);
-  transition: border-color var(--duration-fast) ease, border-style var(--duration-fast) ease;
-}
-
-.engagement-title a:hover {
-  border-bottom-color: var(--accent-maroon);
-  border-bottom-style: solid;
 }
 
 .engagement-role {
