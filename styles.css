@@ -1731,15 +1731,15 @@ body {
 
 /* Page Content Area */
 .page-content {
+  font-family: var(--font-text);
+  font-size: var(--t-md);
+  line-height: 1.5;
   color: var(--page-text);
-  font-family: var(--font-serif);
-  line-height: 1.7;
   max-width: 440px;
   margin: 0 auto;
   padding: 1.25rem;
   flex: 1;
   min-height: 0; /* Safari flexbox fix */
-  letter-spacing: 0.004em;
   text-rendering: optimizeLegibility;
 }
 
@@ -1759,22 +1759,6 @@ body {
 
 .page::-webkit-scrollbar-thumb:hover {
   background: rgba(42, 37, 32, 0.35);
-}
-
-/* Book page articles */
-.book-page {
-  animation: pageContentFadeIn 0.4s var(--ease-out-expo) forwards;
-}
-
-@keyframes pageContentFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* Page Curl Effect - Interactive page turn triggers */
@@ -1862,11 +1846,11 @@ body {
 
 /* Page Numbers - Harvard Press style */
 .page-number {
+  font-family: var(--font-text);
+  font-size: var(--t-sm);
+  font-variant-numeric: oldstyle-nums;
   position: absolute;
   top: var(--space-md);
-  font-family: var(--font-serif);
-  font-size: 0.8rem;
-  font-variant-numeric: oldstyle-nums;
   color: var(--page-secondary);
   pointer-events: none;
 }
@@ -1881,14 +1865,14 @@ body {
 
 /* Running Header - scholarly small caps */
 .running-header {
+  font-family: var(--font-sc);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--page-secondary);
   position: absolute;
   top: var(--space-lg);
   right: var(--space-xl);
-  font-family: var(--font-serif);
-  font-size: 0.65rem;
-  font-variant: small-caps;
-  letter-spacing: 0.15em;
-  color: var(--page-tertiary);
   pointer-events: none;
 }
 
@@ -2146,31 +2130,31 @@ body {
 }
 
 .project-label {
-  display: block;
-  font-family: var(--font-serif);
-  font-size: 0.75rem;
-  font-variant: small-caps;
-  color: var(--page-secondary);
+  font-family: var(--font-sc);
+  font-size: var(--t-xs);
+  font-weight: 500;
   letter-spacing: 0.12em;
+  color: var(--page-secondary);
+  display: block;
   margin-bottom: var(--space-sm);
   padding-bottom: var(--space-xs);
   border-bottom: 1px solid var(--page-rule);
 }
 
 .project-title {
-  font-family: var(--font-serif);
-  font-size: 1.8rem;
+  font-family: var(--font-text);
+  font-size: var(--t-xl);
   font-weight: 600;
-  color: var(--page-text);
   line-height: 1.2;
-  letter-spacing: -0.01em;
+  color: var(--page-text);
 }
 
 .project-description {
-  font-size: 1.05rem;
+  font-family: var(--font-text);
+  font-size: var(--t-md);
+  line-height: 1.5;
   color: var(--page-secondary);
   margin-bottom: var(--space-md);
-  line-height: 1.75;
 }
 
 .project-description strong {
@@ -2180,12 +2164,11 @@ body {
 
 /* Chapter Ornament - scholarly flourish */
 .chapter-ornament {
+  font-size: var(--t-md);
   display: block;
   text-align: center;
   margin: var(--space-lg) 0;
   color: var(--page-secondary);
-  font-size: 1rem;
-  letter-spacing: 0.5em;
   opacity: 0.4;
 }
 
@@ -2218,6 +2201,11 @@ body {
 }
 
 .image-placeholder {
+  font-family: var(--font-sc);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--page-secondary);
   aspect-ratio: 16/10;
   background: linear-gradient(
     135deg,
@@ -2228,11 +2216,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--page-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
 }
 
 .project-meta {
@@ -2251,32 +2234,31 @@ body {
 }
 
 .meta-label {
-  display: block;
-  font-family: var(--font-serif);
-  font-size: 0.65rem;
-  font-variant: small-caps;
+  font-family: var(--font-sc);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
   color: var(--page-secondary);
-  letter-spacing: 0.1em;
+  display: block;
   margin-bottom: 4px;
 }
 
 .meta-value {
-  font-family: var(--font-serif);
-  font-size: 1.1rem;
+  font-family: var(--font-text);
+  font-size: var(--t-lg);
   font-weight: 600;
-  font-variant-numeric: oldstyle-nums;
+  font-variant-numeric: lining-nums tabular-nums;
   color: var(--page-text);
-  letter-spacing: -0.01em;
 }
 
 .project-link {
+  font-family: var(--font-sc);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  letter-spacing: 0.1em;
   display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
   color: var(--page-text);
   text-decoration: none;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
   padding: var(--space-xs) var(--space-sm);
   border: 1px solid var(--page-text);
   border-radius: 2px;
@@ -2312,43 +2294,42 @@ body {
   overflow: hidden;
 }
 
-/* Large decorative chapter number — watermark behind content */
+/* Chapter numeral — real ink at the head of the verso */
 .chapter-divider[data-chapter]::before {
   content: attr(data-chapter);
-  position: absolute;
-  bottom: -0.08em;
-  right: -0.02em;
-  font-family: var(--font-serif);
-  font-size: 12rem;
+  display: block;
+  position: static;
+  font-family: var(--font-display);
+  font-size: var(--t-num);
   font-weight: 600;
   font-style: italic;
   line-height: 1;
+  letter-spacing: -0.02em;
   color: var(--page-text);
-  opacity: 0.04;
+  opacity: 0.85;
+  margin-bottom: var(--v-half);
   pointer-events: none;
-  z-index: 0;
-  letter-spacing: -0.04em;
 }
 
 .chapter-period {
-  font-family: var(--font-serif);
-  font-size: 0.7rem;
-  font-variant: small-caps;
-  color: var(--page-secondary);
+  font-family: var(--font-sc);
+  font-size: var(--t-xs);
+  font-weight: 500;
   letter-spacing: 0.12em;
+  color: var(--page-secondary);
   margin-bottom: var(--space-sm);
   padding-bottom: var(--space-xs);
   border-bottom: 1px solid var(--page-rule);
 }
 
 .chapter-company {
-  font-family: var(--font-serif);
-  font-size: 1.87rem;
+  font-family: var(--font-display);
+  font-size: var(--t-2xl);
   font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.005em;
   color: var(--page-text);
-  line-height: 1.15;
   margin-bottom: 4px;
-  letter-spacing: -0.01em;
 }
 
 .chapter-company a {
@@ -2376,12 +2357,13 @@ body {
 }
 
 .chapter-role {
-  font-family: var(--font-serif);
-  font-size: 1.05rem;
+  font-family: var(--font-text);
+  font-size: var(--t-lg);
+  font-weight: 500;
   font-style: italic;
+  line-height: 1.35;
   color: var(--page-secondary);
   margin-bottom: var(--space-md);
-  line-height: 1.4;
 }
 
 .chapter-meta {
@@ -2394,25 +2376,27 @@ body {
 }
 
 .chapter-location {
-  font-family: var(--font-serif);
-  font-size: 0.83rem;
-  font-variant: small-caps;
+  font-family: var(--font-sc);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
   color: var(--page-secondary);
-  letter-spacing: 0.08em;
 }
 
 .chapter-backing {
-  font-family: var(--font-serif);
-  font-size: 0.88rem;
+  font-family: var(--font-text);
+  font-size: var(--t-md);
+  line-height: 1.5;
   color: var(--page-text);
 }
 
 .chapter-summary {
-  font-family: var(--font-serif);
-  font-size: 1rem;
+  font-family: var(--font-text);
+  font-size: var(--t-lg);
+  font-weight: 400;
   font-style: italic;
+  line-height: 1.4;
   color: var(--page-secondary);
-  line-height: 1.5;
   margin-top: var(--space-md);
 }
 
@@ -2428,21 +2412,22 @@ body {
 }
 
 .toc-label {
-  font-family: var(--font-serif);
-  font-size: 0.7rem;
-  font-variant: small-caps;
+  font-family: var(--font-sc);
+  font-size: var(--t-xs);
+  font-weight: 500;
   letter-spacing: 0.12em;
-  color: var(--page-tertiary);
+  color: var(--page-secondary);
   margin-bottom: var(--space-xs);
 }
 
 .toc-title {
-  font-family: var(--font-serif);
-  font-size: 2.2rem;
-  font-weight: 400;
+  font-family: var(--font-display);
+  font-size: var(--t-3xl);
+  font-weight: 500;
   font-style: italic;
+  line-height: 1;
+  letter-spacing: -0.01em;
   color: var(--page-text);
-  letter-spacing: -0.02em;
   position: relative;
   padding-bottom: var(--space-md);
 }
@@ -2497,11 +2482,12 @@ body {
 }
 
 .toc-entry-title {
+  font-family: var(--font-text);
+  font-size: var(--t-xl);
+  font-weight: 600;
+  line-height: 1.25;
   grid-column: 1;
   grid-row: 1;
-  font-family: var(--font-serif);
-  font-size: 1.21rem;
-  font-weight: 500;
   color: var(--page-text);
   transition: color var(--duration-fast) ease;
 }
@@ -2511,22 +2497,23 @@ body {
 }
 
 .toc-entry-meta {
+  font-family: var(--font-text);
+  font-size: var(--t-md);
+  line-height: 1.5;
+  font-style: italic;
   grid-column: 1;
   grid-row: 2;
-  font-family: var(--font-serif);
-  font-size: 0.83rem;
-  font-style: italic;
   color: var(--page-tertiary);
 }
 
 .toc-entry-period {
+  font-family: var(--font-sc);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--page-secondary);
   grid-column: 2;
   grid-row: 1;
-  font-family: var(--font-serif);
-  font-size: 0.77rem;
-  font-variant: small-caps;
-  letter-spacing: 0.05em;
-  color: var(--page-secondary);
   white-space: nowrap;
 }
 
@@ -2540,12 +2527,14 @@ body {
 }
 
 .toc-entry-page {
+  font-family: var(--font-text);
+  font-size: var(--t-lg);
+  font-weight: 400;
+  font-style: normal;
+  font-variant-numeric: oldstyle-nums;
   grid-column: 3;
   grid-row: 1 / span 2;
   align-self: center;
-  font-family: var(--font-serif);
-  font-size: 1rem;
-  font-style: italic;
   color: var(--page-secondary);
   min-width: 24px;
   text-align: right;
@@ -2564,19 +2553,21 @@ body {
 }
 
 .engagement-label {
-  display: block;
-  font-family: var(--font-serif);
-  font-size: 0.7rem;
-  font-variant: small-caps;
-  color: var(--page-tertiary);
+  font-family: var(--font-sc);
+  font-size: var(--t-xs);
+  font-weight: 500;
   letter-spacing: 0.12em;
+  color: var(--page-secondary);
+  display: block;
   margin-bottom: 4px;
 }
 
 .engagement-title {
-  font-family: var(--font-serif);
-  font-size: 1rem;
-  font-weight: 600;
+  font-family: var(--font-text);
+  font-size: var(--t-xl);
+  font-weight: 500;
+  line-height: 1.2;
+  font-variant-numeric: lining-nums;
   color: var(--page-text);
   margin-bottom: 2px;
 }
@@ -2594,19 +2585,19 @@ body {
 }
 
 .engagement-role {
-  font-family: var(--font-serif);
-  font-size: 0.72rem;
-  font-variant: small-caps;
-  color: var(--page-secondary);
+  font-family: var(--font-sc);
+  font-size: var(--t-sm);
+  font-weight: 400;
   letter-spacing: 0.05em;
+  color: var(--page-secondary);
   margin-bottom: 4px;
 }
 
 .engagement-desc {
-  font-family: var(--font-serif);
-  font-size: 0.83rem;
-  color: var(--page-secondary);
+  font-family: var(--font-text);
+  font-size: var(--t-md);
   line-height: 1.5;
+  color: var(--page-text);
 }
 
 .engagement-others-block .engagement-desc {
@@ -2624,13 +2615,16 @@ body {
 }
 
 .engagement-metric {
-  font-family: var(--font-serif);
-  font-size: 0.72rem;
+  font-family: var(--font-text);
+  font-size: var(--t-sm);
   color: var(--page-secondary);
 }
 
 .engagement-metric strong {
-  font-size: 0.88rem;
+  font-family: var(--font-text);
+  font-size: var(--t-md);
+  font-weight: 600;
+  font-variant-numeric: lining-nums tabular-nums;
   color: var(--page-text);
 }
 
@@ -2640,20 +2634,19 @@ body {
 }
 
 .role-section-title {
-  font-family: var(--font-serif);
-  font-size: 0.77rem;
-  font-variant: small-caps;
-  font-weight: 600;
+  font-family: var(--font-sc);
+  font-size: var(--t-sm);
+  font-weight: 400;
+  letter-spacing: 0.05em;
   color: var(--page-text);
-  letter-spacing: 0.1em;
   margin-bottom: 4px;
 }
 
 .role-section-desc {
-  font-family: var(--font-serif);
-  font-size: 1rem;
-  color: var(--page-secondary);
-  line-height: 1.55;
+  font-family: var(--font-text);
+  font-size: var(--t-md);
+  line-height: 1.5;
+  color: var(--page-text);
 }
 
 /* Role Details (Right Page) */
@@ -2666,13 +2659,13 @@ body {
 }
 
 .role-tagline {
-  font-family: var(--font-serif);
-  font-size: 1.27rem;
+  font-family: var(--font-text);
+  font-size: var(--t-lg);
   font-weight: 500;
   font-style: italic;
+  line-height: 1.35;
   color: var(--page-text);
   margin-bottom: var(--space-sm);
-  line-height: 1.35;
 }
 
 .role-details {
@@ -2681,9 +2674,10 @@ body {
 }
 
 .role-details p {
-  font-size: 1.01rem;
-  color: var(--page-secondary);
-  line-height: 1.55;
+  font-family: var(--font-text);
+  font-size: var(--t-md);
+  line-height: 1.5;
+  color: var(--page-text);
   margin-bottom: var(--space-xs);
 }
 
@@ -2693,7 +2687,7 @@ body {
 
 .role-details .role-note {
   font-style: italic;
-  font-size: 0.78rem;
+  font-size: var(--t-sm);
   color: var(--page-tertiary);
 }
 
@@ -2713,22 +2707,22 @@ body {
 }
 
 .metric-value {
-  display: block;
-  font-family: var(--font-serif);
-  font-size: 1.21rem;
+  font-family: var(--font-text);
+  font-size: var(--t-lg);
   font-weight: 600;
-  font-variant-numeric: oldstyle-nums;
-  color: var(--page-text);
   line-height: 1.15;
+  font-variant-numeric: lining-nums tabular-nums;
+  display: block;
+  color: var(--page-text);
 }
 
 .metric-label {
+  font-family: var(--font-sc);
+  font-size: var(--t-sm);
+  font-weight: 400;
+  letter-spacing: 0.05em;
   display: block;
-  font-family: var(--font-serif);
-  font-size: 0.62rem;
-  font-variant: small-caps;
   color: var(--page-secondary);
-  letter-spacing: 0.08em;
   margin-top: 1px;
 }
 
@@ -2758,24 +2752,23 @@ body {
 }
 
 .about-chapter-label {
-  font-family: var(--font-serif);
-  font-size: 0.7rem;
-  font-variant: small-caps;
-  color: var(--page-secondary);
+  font-family: var(--font-sc);
+  font-size: var(--t-xs);
+  font-weight: 500;
   letter-spacing: 0.12em;
+  color: var(--page-secondary);
   margin-bottom: var(--space-sm);
   padding-bottom: var(--space-xs);
   border-bottom: 1px solid var(--page-rule);
 }
 
 .about-chapter-title {
-  font-family: var(--font-serif);
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--page-text);
+  font-family: var(--font-text);
+  font-size: var(--t-xl);
+  font-weight: 500;
   line-height: 1.2;
+  color: var(--page-text);
   margin-bottom: var(--space-sm);
-  letter-spacing: -0.01em;
   position: relative;
   padding-bottom: var(--space-sm);
 }
@@ -2792,11 +2785,11 @@ body {
 }
 
 .about-chapter-note {
-  font-family: var(--font-serif);
-  font-size: 0.85rem;
-  font-style: italic;
-  color: var(--page-tertiary);
+  font-family: var(--font-text);
+  font-size: var(--t-md);
   line-height: 1.5;
+  font-style: italic;
+  color: var(--page-secondary);
 }
 
 /* Contact Chapter (left side) */
@@ -2809,24 +2802,24 @@ body {
 }
 
 .contact-chapter-label {
-  font-family: var(--font-serif);
-  font-size: 0.7rem;
-  font-variant: small-caps;
-  color: var(--page-secondary);
+  font-family: var(--font-sc);
+  font-size: var(--t-xs);
+  font-weight: 500;
   letter-spacing: 0.12em;
+  color: var(--page-secondary);
   margin-bottom: var(--space-sm);
   padding-bottom: var(--space-xs);
   border-bottom: 1px solid var(--page-rule);
 }
 
 .contact-chapter-title {
-  font-family: var(--font-serif);
-  font-size: 1.5rem;
+  font-family: var(--font-display);
+  font-size: var(--t-2xl);
   font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.005em;
   color: var(--page-text);
-  line-height: 1.2;
   margin-bottom: var(--space-sm);
-  letter-spacing: -0.01em;
   position: relative;
   padding-bottom: var(--space-sm);
 }
@@ -2843,11 +2836,11 @@ body {
 }
 
 .contact-chapter-note {
-  font-family: var(--font-serif);
-  font-size: 0.85rem;
-  font-style: italic;
-  color: var(--page-tertiary);
+  font-family: var(--font-text);
+  font-size: var(--t-md);
   line-height: 1.5;
+  font-style: italic;
+  color: var(--page-secondary);
 }
 
 /* About Pages */
@@ -2869,37 +2862,30 @@ body {
 }
 
 .about-header h2 {
-  font-family: var(--font-serif);
-  font-size: 2rem;
+  font-family: var(--font-display);
+  font-size: var(--t-2xl);
   font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.005em;
   color: var(--page-text);
-  letter-spacing: -0.01em;
 }
 
 .about-lead {
-  font-family: var(--font-serif);
-  font-size: 1.15rem;
+  font-family: var(--font-text);
+  font-size: var(--t-lg);
+  font-weight: 500;
   font-style: italic;
-  font-weight: 400;
+  line-height: 1.4;
   color: var(--page-text);
   margin-bottom: var(--space-md);
+}
+
+/* Running-text paragraphs. :where() keeps this at zero specificity so
+   classed lines (.about-lead, .engagement-desc ...) keep their own scale. */
+:where(.page-content p) {
+  font-size: var(--t-md);
   line-height: 1.5;
-}
-
-.book-page p {
-  font-size: 1.05rem;
-  color: var(--page-secondary);
-  margin-bottom: var(--space-md);
-  line-height: 1.75;
-}
-
-/* Rendered book pages inject spreads without the .book-page ancestor, so the
-   rule above misses bare prose paragraphs. Restore the gap between consecutive
-   classless paragraphs inside a spread (the Introduction and Colophon prose).
-   Classed lines (.about-lead, taglines) and nested prose (.personal-content)
-   are untouched. */
-.spread-right > p:not([class]) + p:not([class]) {
-  margin-top: var(--space-md);
+  margin: 0 0 var(--v1);
 }
 
 /* Experience List */
@@ -2922,29 +2908,32 @@ body {
 }
 
 .exp-role {
-  display: block;
-  font-family: var(--font-serif);
-  font-size: 1.05rem;
+  font-family: var(--font-text);
+  font-size: var(--t-md);
+  line-height: 1.5;
   font-weight: 600;
+  display: block;
   color: var(--page-text);
   grid-column: 1;
   grid-row: 1;
 }
 
 .exp-company {
-  font-size: 0.9rem;
+  font-family: var(--font-text);
+  font-size: var(--t-md);
+  line-height: 1.5;
   color: var(--page-secondary);
   grid-column: 1;
   grid-row: 2;
 }
 
 .exp-period {
+  font-family: var(--font-sc);
+  font-size: var(--t-sm);
+  font-weight: 400;
+  letter-spacing: 0.05em;
   display: block;
-  font-family: var(--font-serif);
-  font-size: 0.75rem;
-  font-variant: small-caps;
   color: var(--page-secondary);
-  letter-spacing: 0.08em;
   grid-column: 2;
   grid-row: 1 / 3;
   align-self: center;
@@ -2952,11 +2941,11 @@ body {
 
 /* Capabilities */
 .capabilities h3 {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-family: var(--font-sc);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
   color: var(--page-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
   margin-bottom: var(--space-sm);
 }
 
@@ -2965,7 +2954,9 @@ body {
 }
 
 .capabilities li {
-  font-size: 0.9rem;
+  font-family: var(--font-text);
+  font-size: var(--t-md);
+  line-height: 1.5;
   color: var(--page-text);
   padding: var(--space-xs) 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -2988,20 +2979,20 @@ body {
 }
 
 .currently-label {
-  font-family: var(--font-serif);
-  font-size: 0.7rem;
-  font-variant: small-caps;
+  font-family: var(--font-sc);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
   color: var(--page-secondary);
-  letter-spacing: 0.08em;
   min-width: 70px;
   padding-top: 3px;
 }
 
 .currently-value {
-  font-family: var(--font-serif);
-  font-size: 1.05rem;
-  color: var(--page-text);
+  font-family: var(--font-text);
+  font-size: var(--t-md);
   line-height: 1.5;
+  color: var(--page-text);
 }
 
 .currently-value a {
@@ -3017,8 +3008,10 @@ body {
 }
 
 .education-note {
+  font-family: var(--font-text);
+  font-size: var(--t-md);
+  line-height: 1.5;
   margin-top: var(--space-md);
-  font-size: 0.85rem;
   color: var(--page-secondary);
 }
 
@@ -3043,35 +3036,37 @@ body {
 }
 
 .technical-category {
-  font-family: var(--font-serif);
-  font-size: 0.7rem;
-  font-variant: small-caps;
-  letter-spacing: 0.1em;
-  color: var(--page-tertiary);
+  font-family: var(--font-sc);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--page-secondary);
 }
 
 .technical-skills {
-  font-family: var(--font-serif);
-  font-size: 1.05rem;
+  font-family: var(--font-text);
+  font-size: var(--t-md);
+  line-height: 1.5;
   color: var(--page-text);
 }
 
 .technical-note {
-  margin-top: var(--space-md);
-  font-family: var(--font-serif);
-  font-size: 0.85rem;
+  font-family: var(--font-text);
+  font-size: var(--t-md);
+  line-height: 1.5;
   font-style: italic;
+  margin-top: var(--space-md);
   color: var(--page-secondary);
 }
 
 .availability {
+  font-family: var(--font-sc);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  letter-spacing: 0.08em;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  font-family: var(--font-serif);
-  font-size: 0.75rem;
-  font-variant: small-caps;
-  letter-spacing: 0.08em;
   color: var(--page-text);
   margin-top: var(--space-md);
 }
@@ -3097,9 +3092,9 @@ body {
 }
 
 .personal-content p {
-  font-family: var(--font-serif);
-  font-size: 0.85rem;
-  line-height: 1.55;
+  font-family: var(--font-text);
+  font-size: var(--t-md);
+  line-height: 1.5;
   color: var(--page-text);
   margin-bottom: 0;
   padding-bottom: var(--space-sm);
@@ -3137,37 +3132,43 @@ body {
 }
 
 .contact-header .contact-label {
+  font-family: var(--font-sc);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  letter-spacing: 0.1em;
   display: block;
-  font-family: var(--font-serif);
-  font-size: 0.75rem;
-  font-variant: small-caps;
   color: var(--page-secondary);
-  letter-spacing: 0.12em;
   margin-bottom: var(--space-sm);
   padding-bottom: var(--space-xs);
   border-bottom: 1px solid var(--page-rule);
 }
 
 .contact-header h2 {
-  font-family: var(--font-serif);
-  font-size: 2.5rem;
-  font-weight: 600;
-  color: var(--page-text);
+  font-family: var(--font-display);
+  font-size: var(--t-3xl);
+  font-weight: 500;
+  font-style: italic;
+  line-height: 1.05;
   letter-spacing: -0.01em;
+  color: var(--page-text);
 }
 
 .contact-note {
-  font-size: 1.1rem;
+  font-family: var(--font-text);
+  font-size: var(--t-lg);
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1.5;
   color: var(--page-secondary);
   margin-bottom: var(--space-xl);
   max-width: 38ch;
-  line-height: 1.7;
 }
 
 .contact-email {
+  font-family: var(--font-text);
+  font-size: var(--t-xl);
+  font-weight: 500;
   display: inline-block;
-  font-family: var(--font-serif);
-  font-size: 1.15rem;
   color: var(--page-text);
   text-decoration: none;
   border-bottom: 1px solid var(--page-text);
@@ -3194,12 +3195,12 @@ body {
 }
 
 .social-link {
-  font-family: var(--font-serif);
-  font-size: 0.85rem;
-  font-variant: small-caps;
+  font-family: var(--font-sc);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  letter-spacing: 0.08em;
   color: var(--page-secondary);
   text-decoration: none;
-  letter-spacing: 0.1em;
   border-bottom: 1px dotted var(--page-tertiary);
   transition: color var(--duration-fast) var(--ease-out-expo), border-color var(--duration-fast) ease, border-style var(--duration-fast) ease;
 }
@@ -3222,10 +3223,9 @@ body {
 }
 
 .book-footer p {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-family: var(--font-text);
+  font-size: var(--t-sm);
   color: var(--page-secondary);
-  letter-spacing: 0.1em;
 }
 
 .copyright-symbol {
@@ -3238,8 +3238,8 @@ body {
    ═══════════════════════════════════════════════════════════ */
 
 .references-intro {
-  font-family: var(--font-serif);
-  font-size: 1.11rem;
+  font-family: var(--font-text);
+  font-size: var(--t-lg);
   font-style: italic;
   color: var(--page-secondary);
   margin-bottom: var(--space-lg);
@@ -3259,30 +3259,31 @@ body {
 }
 
 .quote-text {
-  font-family: var(--font-serif);
-  font-size: 1.11rem;
+  font-family: var(--font-text);
+  font-size: var(--t-lg);
+  font-weight: 400;
   font-style: italic;
-  line-height: 1.7;
+  line-height: 1.45;
   color: var(--page-text);
   margin-bottom: var(--space-sm);
-  quotes: """ """ "'" "'";
+  quotes: '\201C' '\201D' '\2018' '\2019';
+  text-indent: -0.45em;
 }
 
 .quote-text::before {
   content: open-quote;
-  font-size: 1.76em;
-  color: var(--accent-gold);
-  margin-right: 0.1em;
 }
 
 .quote-text::after {
   content: close-quote;
-  font-size: 1.76em;
-  color: var(--accent-gold);
-  margin-left: 0.1em;
 }
 
 .quote-attribution {
+  font-family: var(--font-sc);
+  font-size: var(--t-sm);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  text-align: right;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -3290,11 +3291,10 @@ body {
 }
 
 .quote-author {
-  font-family: var(--font-serif);
-  font-size: 0.99rem;
+  font-family: var(--font-text);
+  font-size: var(--t-sm);
   font-weight: 600;
   color: var(--page-text);
-  letter-spacing: 0.02em;
 }
 
 .quote-author::before {
@@ -3303,20 +3303,22 @@ body {
 }
 
 .quote-role {
-  font-family: var(--font-mono);
-  font-size: 0.76rem;
-  color: var(--page-secondary);
+  font-family: var(--font-sc);
+  font-size: var(--t-sm);
+  font-weight: 400;
   letter-spacing: 0.05em;
+  color: var(--page-secondary);
 }
 
 .references-note {
+  font-family: var(--font-text);
+  font-size: var(--t-md);
+  line-height: 1.5;
+  font-style: italic;
+  color: var(--page-secondary);
   margin-top: var(--space-lg);
   padding-top: var(--space-md);
   border-top: 1px solid rgba(42, 37, 32, 0.08);
-  font-family: var(--font-serif);
-  font-size: 0.88rem;
-  font-style: italic;
-  color: var(--page-tertiary);
   text-align: left;
 }
 
@@ -3330,24 +3332,24 @@ body {
 }
 
 .reference-label {
-  font-family: var(--font-serif);
-  font-size: 0.7rem;
-  font-variant: small-caps;
-  color: var(--page-secondary);
+  font-family: var(--font-sc);
+  font-size: var(--t-xs);
+  font-weight: 500;
   letter-spacing: 0.12em;
+  color: var(--page-secondary);
   margin-bottom: var(--space-sm);
   padding-bottom: var(--space-xs);
   border-bottom: 1px solid var(--page-rule);
 }
 
 .reference-author {
-  font-family: var(--font-serif);
-  font-size: 1.76rem;
+  font-family: var(--font-display);
+  font-size: var(--t-2xl);
   font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.005em;
   color: var(--page-text);
-  line-height: 1.2;
   margin-bottom: var(--space-sm);
-  letter-spacing: -0.01em;
   position: relative;
   padding-bottom: var(--space-sm);
 }
@@ -3364,19 +3366,20 @@ body {
 }
 
 .reference-role {
-  font-family: var(--font-serif);
-  font-size: 1.05rem;
+  font-family: var(--font-text);
+  font-size: var(--t-lg);
+  font-weight: 500;
   font-style: italic;
   color: var(--page-secondary);
   margin-bottom: var(--space-md);
 }
 
 .reference-context {
-  font-family: var(--font-serif);
-  font-size: 0.99rem;
-  color: var(--page-tertiary);
+  font-family: var(--font-text);
+  font-size: var(--t-md);
   line-height: 1.5;
   font-style: italic;
+  color: var(--page-tertiary);
 }
 
 /* Reference Quote Page (right side) */
@@ -3395,14 +3398,8 @@ body {
 }
 
 .reference-quote-page .quote-text {
-  font-size: 1.23rem;
-  line-height: 1.75;
   color: var(--page-text);
-}
-
-.reference-quote-page .quote-text::before,
-.reference-quote-page .quote-text::after {
-  font-size: 1.52em;
+  line-height: 1.75;
 }
 
 /* ═══════════════════════════════════════════════════════════
