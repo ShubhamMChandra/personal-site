@@ -1163,6 +1163,11 @@ body {
   --m-out: calc(var(--spread-w) * 0.11);
   --m-top: calc(var(--spread-w) * 0.06);
   --m-bot: calc(var(--spread-w) * 0.095);
+  /* How far a chapter opening sinks below the head margin: the page's
+     spare height, not a % (which resolves against the width): ~50px on a
+     760px page, ~25px at 580, 0 below ~400, so a short page never pushes
+     its foot off the page. Shared by chapter versos and the title page. */
+  --chapter-drop: calc(var(--m-top) + clamp(0px, var(--page-h) * 0.14 - 56px, 92px));
 }
 
 .page-left,
@@ -1672,8 +1677,8 @@ body {
   min-height: 0; /* Safari flexbox fix */
 }
 
-/* Versos start at the head margin. Only Work versos drop the chapter
-   head about a third of the way down (the classic chapter opening). */
+/* Versos start at the head margin. Only Work versos (chapters and the
+   title page) drop the head down the page (the classic chapter opening). */
 .title-page,
 .chapter-divider,
 .about-chapter,
@@ -1688,10 +1693,7 @@ body {
 
 /* Chapter Divider (Left Page) */
 .chapter-divider {
-  /* Sink the head by the page's spare height, not a % (which resolves
-     against the width): ~50px on a 760px page, ~25px at 580, 0 below ~400,
-     so a short page never pushes the summary past its foot. */
-  padding-top: calc(var(--m-top) + clamp(0px, var(--page-h) * 0.14 - 56px, 92px));
+  padding-top: var(--chapter-drop);
   position: relative;
 }
 
@@ -1820,6 +1822,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding-top: var(--chapter-drop); /* the title sits on the chapter-opening line */
 }
 
 .book-title-label {
@@ -2645,6 +2648,10 @@ body {
     display: flex;
     flex-flow: row wrap;
     align-items: baseline;
+    padding-top: 0;
+  }
+
+  .mobile-left-inline.title-page {
     padding-top: 0;
   }
 
