@@ -73,6 +73,13 @@ class Book {
   }
 
   bindEvents() {
+    // Overflow state of each page: re-read when the reader scrolls a page
+    // or the window resizes (the page height, and so the fit, changes)
+    ;[this.leftPage, this.rightPage].forEach((el) => {
+      if (el) el.addEventListener('scroll', () => this.markScrollEnd(el), { passive: true })
+    })
+    window.addEventListener('resize', () => this.markOverflow(), { passive: true })
+
     if (this.prevBtn) {
       this.prevBtn.addEventListener('click', () => this.prevPage())
     }
@@ -281,6 +288,23 @@ class Book {
       pageNum.textContent = this.currentPage + 1
       this.rightPageEl.appendChild(pageNum)
     }
+
+    this.markOverflow()
+  }
+
+  // A page that cannot hold its copy scrolls. Mark it so CSS can fade the
+  // cut line into the foot margin (until the reader reaches the end)
+  // instead of slicing it at the scroll edge.
+  markOverflow() {
+    ;[this.leftPage, this.rightPage].forEach((el) => {
+      if (!el) return
+      el.classList.toggle('is-overflowing', el.scrollHeight > el.clientHeight + 1)
+      this.markScrollEnd(el)
+    })
+  }
+
+  markScrollEnd(el) {
+    el.classList.toggle('is-at-end', el.scrollTop + el.clientHeight >= el.scrollHeight - 1)
   }
 
   formatBookTitle(bookId) {
