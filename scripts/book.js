@@ -319,8 +319,8 @@ class Book {
   formatBookTitle(bookId) {
     const titles = {
       work: 'Selected Work',
-      about: 'About Me',
-      contact: 'Get in Touch',
+      about: 'About',
+      contact: 'Contact',
       references: 'References',
       colophon: 'Colophon'
     }
