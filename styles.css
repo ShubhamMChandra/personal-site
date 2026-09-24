@@ -3315,6 +3315,7 @@ body {
   .book-view[data-active-book="about"] .open-book { border-left-color: var(--book-about); }
   .book-view[data-active-book="contact"] .open-book { border-left-color: var(--book-contact); }
   .book-view[data-active-book="references"] .open-book { border-left-color: var(--book-references); }
+  .book-view[data-active-book="colophon"] .open-book { border-left-color: var(--book-colophon); }
 
   .page {
     transform: none; /* Remove desktop 3D rotation */
