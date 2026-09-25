@@ -358,6 +358,12 @@ class Book {
     const isFirstPage = this.currentPage === 0
     const isLastPage = this.currentPage >= this.pages.length - 1
 
+    // A one-spread book has nowhere to turn: hide the nav instead of
+    // showing "1 of 1" between two dead arrows
+    if (this.bookView) {
+      this.bookView.classList.toggle('is-single-spread', this.pages.length === 1)
+    }
+
     if (this.prevBtn) {
       this.prevBtn.disabled = isFirstPage
     }

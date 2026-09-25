@@ -1622,6 +1622,12 @@ body {
   margin-top: var(--space-lg);
 }
 
+/* One-spread books (Contact) have nowhere to turn. Hidden rather than
+   removed, so the open book keeps the same position as every other book */
+.book-view.is-single-spread .page-nav {
+  visibility: hidden;
+}
+
 .page-nav-btn {
   width: 44px;
   height: 44px;
