@@ -378,13 +378,16 @@ body {
   pointer-events: none;
 }
 
-/* Wall grain: the speck tile at .5 (tile alpha .06, so .03 on screen) */
+/* Wall plaster: a dark-only, band-limited tile (scripts/tools/make-textures.py),
+   baked at its final strength and drawn at 1. Black on purpose: the wall's
+   darkest pixel is below the shared DARK tone, so any lighter tone could only
+   lighten it, and light points on near-black read as dust on the glass. 128 CSS px
+   = 384 / 256 / 128 device px at DPR 3 / 2 / 1, all integer. */
 .bookshelf-scene::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: url(assets/textures/grain-128.png) 0 0 / 128px 128px;
-  opacity: 0.5;
+  background: url(assets/textures/wall-plaster-128.png) 0 0 / 128px 128px;
   pointer-events: none;
 }
 

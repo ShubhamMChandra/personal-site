@@ -2,7 +2,7 @@
 """Seeded texture tiles for the shelf spines (and, from WP3, the book boards).
 
 HOW TO REGENERATE
-  python3 -m venv /tmp/tex && /tmp/tex/bin/pip install numpy scipy pillow
+  python3 -m venv /tmp/tex && /tmp/tex/bin/pip install numpy==2.2.6 scipy==1.15.3 pillow==12.3.0
   /tmp/tex/bin/python scripts/tools/make-textures.py
 The tiles are written to assets/textures/. The generator is seeded (SEED
 below), so with the same numpy/scipy/Pillow versions the output is
@@ -30,8 +30,11 @@ Tiles (all periodic, so they can be used in a <pattern> or a CSS background):
   cloth-weave-128.png    plain-weave book cloth at a 4 px pitch, threads with a
                          crown, per-thread thickness variation, faint warp
                          slubs (the Colophon pamphlet)
-  grain-128.png          plain speck grain: the room's wall, and the fine
-                         component of the calf
+  grain-128.png          plain speck grain: the fine component of the calf
+                         only (never on a dark ground: its darkest tone is
+                         lighter than the wall)
+  wall-plaster-128.png   dark-only, black, band-limited (4-64 px) plaster for
+                         the room's wall, baked, drawn at 1
   wear-cap-256x48.png    rubbing strip for head and tail: warm-light blotches
                          fading to nothing over 48 px, periodic in x,
                          concentrated in the outer ~30 % at each corner
@@ -172,6 +175,19 @@ def grain(rng, size=128):
     return np.where(light, a, 0), np.where(light, 0, a)
 
 
+def wall_plaster(rng, size=128):
+    """Dark-only plaster for the room's wall. Band-limited so nothing is finer than
+    4 px (no single-px points: at DPR 3 those become hard 3x3 squares that read as
+    dust). Baked black, because the wall's darkest pixel (lum ~6-9) is below the
+    shared DARK tone (lum 17): any tone lighter than the wall can only lighten it."""
+    big = fft_noise(rng, size, 18, 64)             # plaster unevenness
+    fine = fft_noise(rng, size, 4, 12) * 0.5        # a little tooth, never single px
+    v = big + fine
+    v = v / v.std()
+    da = np.clip(-v, 0, None) * 0.075               # dark side only; max .19 at ~2.5 sigma
+    return np.zeros_like(da), np.clip(da, 0, 0.19)
+
+
 def corner_profile(w, inner=0.4, floor=0.12):
     """1 at both ends of the strip, `floor` across the middle. Symmetric, so the strip
     stays periodic in x. `inner` is the half-width (as a fraction of w/2) of the
@@ -229,6 +245,7 @@ def main():
     save_two_tone('grain-128.png', *grain(np.random.default_rng(SEED)))
     save_two_tone('wear-cap-256x48.png', *wear_cap(np.random.default_rng(SEED + 4)), light_rgb=WEAR)
     save_two_tone('wear-joint-48x256.png', *wear_joint(np.random.default_rng(SEED + 5)), light_rgb=WEAR)
+    save_two_tone('wall-plaster-128.png', *wall_plaster(np.random.default_rng(SEED + 6)), dark_rgb=(0, 0, 0))
     save_shadow('shadow-soft-96.png', shadow_soft())
     save_shadow('contact-256x48.png', contact_strip())
 
