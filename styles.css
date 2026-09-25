@@ -2719,12 +2719,11 @@ body {
     right: 0;
     display: block;
     height: 64px;
-    background: linear-gradient(
-      to top,
-      var(--paper-lo) 0%,
-      var(--paper-lo) 32%,
-      transparent 100%
-    );
+    margin: 0 -20px; /* span the sheet's padding box (.page-right side padding) */
+    /* The sheet's own paper, masked to fade upward, so no edge of the band shows */
+    background: linear-gradient(90deg, var(--paper-edge) 0%, var(--paper-mid) 40%, var(--paper-hi) 100%);
+    -webkit-mask-image: linear-gradient(to top, #000 32%, transparent);
+    mask-image: linear-gradient(to top, #000 32%, transparent);
     opacity: 1;
     mix-blend-mode: normal;
     pointer-events: none;
