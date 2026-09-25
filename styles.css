@@ -378,19 +378,6 @@ body {
   pointer-events: none;
 }
 
-/* Wall plaster: a dark-only, band-limited tile (scripts/tools/make-textures.py),
-   baked at its final strength and drawn at 1. Black on purpose: the wall's
-   darkest pixel is below the shared DARK tone, so any lighter tone could only
-   lighten it, and light points on near-black read as dust on the glass. 128 CSS px
-   = 384 / 256 / 128 device px at DPR 3 / 2 / 1, all integer. */
-.bookshelf-scene::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url(assets/textures/wall-plaster-128.png) 0 0 / 128px 128px;
-  pointer-events: none;
-}
-
 /* The entrance is CSS-only, so first paint is dim, never bright-then-dark:
    the room starts at .85 dark and the light comes up. The text column
    sits above this layer, so the facts are readable from the first frame. */
@@ -420,25 +407,40 @@ body {
   align-items: center;
 }
 
-/* The only evidence of the light: a warm pool from above the frame. The
-   box starts well above the stage so its top edge is never seen. */
+/* The only evidence of the light, and the wall's plaster, on one box.
+
+   The pool is a warm radial gradient from above the frame. The plaster is a
+   dark-only, band-limited tile (scripts/tools/make-textures.py), baked at its
+   final strength and drawn at 1. Black on purpose: the wall's darkest pixel
+   is below the shared DARK tone, so any lighter tone could only lighten it,
+   and light points on near-black read as dust on the glass. 128 CSS px =
+   384 / 256 / 128 device px at DPR 3 / 2 / 1, all integer.
+
+   The plaster must paint ABOVE the pool, otherwise the lamp washes it out
+   where the wall is most looked at. So both live on this box, the plaster as
+   the top layer. The box reaches past every edge of the scene, which clips
+   it, so there is one plaster layer everywhere and no seam. The pool layer
+   keeps its old rect: 2.8x the stage wide and centred, from 320px above the
+   stage, --spine-h + 460px tall. 2.8x the stage = 280% of the box less 5.6
+   reaches, because the box is the stage plus one reach on each side. */
 .shelf-stage::before {
+  --reach-x: 100vw;
+  --reach-y: 300vh;
   content: '';
   position: absolute;
-  top: -320px;
-  left: -90%;
-  right: -90%;
-  height: calc(var(--spine-h) + 460px);
+  inset: calc(-1 * var(--reach-y)) calc(-1 * var(--reach-x));
   pointer-events: none;
-  background: radial-gradient(
-    34% calc((var(--spine-h) + 130px) * 0.95) at 50% 250px,
-    rgba(255, 196, 130, 0.20) 0%,
-    rgba(255, 186, 120, 0.125) 24%,
-    rgba(255, 180, 110, 0.065) 48%,
-    rgba(255, 180, 110, 0.025) 70%,
-    rgba(255, 180, 110, 0.007) 86%,
-    transparent 100%
-  );
+  background:
+    url(assets/textures/wall-plaster-128.png) 0 0 / 128px 128px,
+    radial-gradient(
+      34% calc((var(--spine-h) + 130px) * 0.95) at 50% 250px,
+      rgba(255, 196, 130, 0.20) 0%,
+      rgba(255, 186, 120, 0.125) 24%,
+      rgba(255, 180, 110, 0.065) 48%,
+      rgba(255, 180, 110, 0.025) 70%,
+      rgba(255, 180, 110, 0.007) 86%,
+      transparent 100%
+    ) 50% calc(var(--reach-y) - 320px) / calc(280% - 5.6 * var(--reach-x)) calc(var(--spine-h) + 460px) no-repeat;
 }
 
 /* ─── Shadows: anchored at the group's centre, on the board's top edge ── */
