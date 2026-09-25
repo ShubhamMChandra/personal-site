@@ -56,7 +56,7 @@ Shadow sprites (black, alpha only, not tiles; exempt from rule 3):
 import os
 import numpy as np
 from PIL import Image
-from scipy.ndimage import gaussian_filter
+from scipy.ndimage import gaussian_filter, label
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'assets', 'textures')
 SEED = 0x2F6E2B1
@@ -187,8 +187,27 @@ def wall_plaster(rng, size=128):
     fine = fft_noise(rng, size, 4, 12) * 0.5        # a little tooth, never single px
     v = big + fine
     v = v / v.std()
-    da = np.clip(-v, 0, None) * 0.075               # dark side only; max .19 at ~2.5 sigma
-    return np.zeros_like(da), np.clip(da, 0, 0.19)
+    da = np.clip(np.clip(-v, 0, None) * 0.075, 0, 0.19)  # dark side only; max .19 at ~2.5 sigma
+    return np.zeros_like(da), drop_small_islands(da, min_px=12)
+
+
+def drop_small_islands(a, min_px):
+    """Enforce the band limit after quantisation. Cutting a field at zero leaves
+    1-3 px islands (and holes) along the cut, because only there does the value
+    cross the first quantisation step. An island is a lone dark point; a hole is
+    a lone relatively light point. Remove islands smaller than min_px and fill
+    holes smaller than min_px at the first level. Labelled on a 3x3 tiling so
+    shapes that cross the tile edge are measured whole."""
+    step = float(a.max()) / LEVELS
+    on = np.rint(a / step) > 0
+    n = a.shape[0]
+    out = a.copy()
+    for mask, value in ((on, 0.0), (~on, step)):
+        lab, _ = label(np.tile(mask, (3, 3)))
+        sizes = np.bincount(lab.ravel())
+        small = (sizes[lab] < min_px) & (lab > 0)
+        out[small[n:2 * n, n:2 * n]] = value
+    return out
 
 
 def paper_tooth(rng, size=128):
