@@ -247,11 +247,34 @@ class Book {
       }
     }
 
+    // New content opens at its top, not at the old page's scroll offset.
+    // Reset before the furniture so markOverflow measures the top of page.
+    this.resetScroll()
+
     // Add page furniture (page numbers and running header)
     this.addPageFurniture(isMobile)
 
     this.updatePageIndicator()
     this.updateNavButtons()
+  }
+
+  // Every renderPage() caller swaps content while the page is hidden or
+  // under the leaf, so the reset is never seen. Resize does not come here,
+  // so the reader keeps their place when the URL bar or orientation changes.
+  resetScroll() {
+    ;[this.leftPage, this.rightPage, this.rightPageEl].forEach((el) => {
+      if (!el || el.scrollTop === 0) return
+      const overflowY = getComputedStyle(el).overflowY
+      if (overflowY !== 'auto' && overflowY !== 'scroll') {
+        el.scrollTop = 0
+        return
+      }
+      // iOS ignores scrollTop while a flick's momentum is still running;
+      // dropping overflow for one write stops it
+      el.style.overflowY = 'hidden'
+      el.scrollTop = 0
+      el.style.overflowY = ''
+    })
   }
 
   addPageFurniture(isMobile) {
