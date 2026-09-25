@@ -555,9 +555,15 @@ body {
   outline: none;
 }
 
+/* Ring the visible spine, not the taller button box, so the ring stays
+   above the board's top edge */
 .book:focus-visible {
+  outline: none;
+}
+
+.book:focus-visible .spine {
   outline: 2px solid var(--accent);
-  outline-offset: 6px; /* clears the tail cap */
+  outline-offset: 4px;
   border-radius: 2px;
 }
 
