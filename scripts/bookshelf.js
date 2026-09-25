@@ -73,6 +73,9 @@ class Bookshelf {
     this.isAnimating = true
     this.selectedBook = bookId
 
+    // Take the shelf out of the tab order while a book covers it
+    this.scene.inert = true
+
     // Update nav active state
     this.navBookBtns.forEach(btn => {
       btn.classList.toggle('is-active', btn.dataset.book === bookId)
@@ -102,6 +105,7 @@ class Bookshelf {
   returnToShelf() {
     this.isAnimating = true
     this.selectedBook = null
+    this.scene.inert = false
 
     // Update nav
     this.navBookBtns.forEach(btn => {
