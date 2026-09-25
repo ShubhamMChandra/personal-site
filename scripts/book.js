@@ -317,6 +317,9 @@ class Book {
   markOverflow() {
     ;[this.leftPage, this.rightPage, this.rightPageEl].forEach((el) => {
       if (!el) return
+      // Measure without the fade: the phone sheet's ::after is in flow, so
+      // a class left over from a longer sheet would keep itself true
+      el.classList.remove('is-overflowing')
       el.classList.toggle('is-overflowing', el.scrollHeight > el.clientHeight + 1)
       this.markScrollEnd(el)
     })
