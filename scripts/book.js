@@ -266,7 +266,7 @@ class Book {
     // The title-page / contents spread is display matter: like a printed
     // book it carries no running heads and blind folios (the title page
     // would otherwise read its own title three times across the spread)
-    if (!isMobile && spread && spread.classList.contains('toc-spread')) {
+    if (spread && spread.classList.contains('toc-spread')) {
       this.markOverflow()
       return
     }
@@ -303,7 +303,9 @@ class Book {
       // Mobile: single page number
       const pageNum = document.createElement('span')
       pageNum.className = 'page-number page-number-right'
-      pageNum.textContent = this.currentPage + 1
+      // The sheet is the folded spread, so it carries the verso's folio
+      // (the number the Contents page cites)
+      pageNum.textContent = leftPageNum
       this.rightPageEl.appendChild(pageNum)
     }
 
