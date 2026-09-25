@@ -29,10 +29,34 @@ class Book {
     this.leftPageCurl = document.querySelector('.page-left .page-curl')
     this.rightPageCurl = document.querySelector('.page-right .page-curl')
 
+    // Page-turn leaf engine elements
+    this.openBookEl = document.querySelector('.open-book')
+    this.turnLeaf = document.querySelector('.turn-leaf')
+    this.frontFace = document.querySelector('.turn-leaf-front')
+    this.backFace = document.querySelector('.turn-leaf-back')
+    this.frontContent = document.querySelector('.turn-leaf-front .page-content')
+    this.backContent = document.querySelector('.turn-leaf-back .page-content')
+    this.leafShade = document.querySelector('.turn-leaf-shade')
+    this.shadowLeft = document.querySelector('.page-shadow-left')
+    this.shadowRight = document.querySelector('.page-shadow-right')
+
+    // Timing — single source of truth lives in CSS (:root tokens)
+    const rootStyles = getComputedStyle(document.documentElement)
+    this.turnMs = (parseFloat(rootStyles.getPropertyValue('--duration-turn')) || 0.72) * 1000
+    this.turnEase = (rootStyles.getPropertyValue('--ease-page-turn') || 'ease').trim() || 'ease'
+
+    // Capability + motion preference
+    this.supportsLeaf = typeof CSS !== 'undefined' && !!CSS.supports &&
+      CSS.supports('backface-visibility', 'hidden')
+    const motionQuery = matchMedia('(prefers-reduced-motion: reduce)')
+    this.reduceMotion = motionQuery.matches
+    motionQuery.addEventListener('change', (e) => { this.reduceMotion = e.matches })
+
     this.currentBook = null
     this.pages = []
     this.currentPage = 0
-    this.isAnimating = false
+    this.targetPage = 0
+    this.chasing = false
 
     // Callback for closing book (set by main.js)
     this.onCloseBook = null
@@ -49,6 +73,15 @@ class Book {
   }
 
   bindEvents() {
+    // Overflow state of each page: re-read when the reader scrolls a page
+    // or the window resizes (the page height, and so the fit, changes).
+    // On phones the sheet itself (.page-right) is the scroller, so it is
+    // tracked too.
+    ;[this.leftPage, this.rightPage, this.rightPageEl].forEach((el) => {
+      if (el) el.addEventListener('scroll', () => this.markScrollEnd(el), { passive: true })
+    })
+    window.addEventListener('resize', () => this.markOverflow(), { passive: true })
+
     if (this.prevBtn) {
       this.prevBtn.addEventListener('click', () => this.prevPage())
     }
@@ -123,6 +156,7 @@ class Book {
     this.currentBook = bookId
     this.loadBookContent(bookId)
     this.currentPage = 0
+    this.targetPage = 0
     this.renderPage()
     this.bookView.classList.add('is-visible')
     this.bookView.setAttribute('aria-hidden', 'false')
@@ -131,11 +165,20 @@ class Book {
 
   closeBook() {
     this.bookView.classList.remove('is-visible')
+    this.bookView.classList.remove('is-turning')
     this.bookView.setAttribute('aria-hidden', 'true')
     delete this.bookView.dataset.activeBook
+    // Reset any in-flight turn so the next open starts clean
+    if (this.turnLeaf) {
+      this.turnLeaf.getAnimations().forEach((a) => a.cancel())
+      this.turnLeaf.hidden = true
+      this.turnLeaf.style.willChange = ''
+    }
     this.currentBook = null
     this.pages = []
     this.currentPage = 0
+    this.targetPage = 0
+    this.chasing = false
   }
 
   loadBookContent(bookId) {
@@ -175,7 +218,11 @@ class Book {
     if (leftContent && rightContent) {
       // Two-page spread layout
       if (isMobile) {
-        // Mobile: show right content only, or combine both
+        // Mobile single column: fold the left page in above the right so
+        // its headshot / chapter intro isn't dropped. A rule separates them.
+        const leftClone = leftContent.cloneNode(true)
+        leftClone.classList.add('mobile-left-inline')
+        this.rightPage.appendChild(leftClone)
         this.rightPage.appendChild(rightContent.cloneNode(true))
       } else {
         this.leftPage.appendChild(leftContent.cloneNode(true))
@@ -200,6 +247,10 @@ class Book {
       }
     }
 
+    // New content opens at its top, not at the old page's scroll offset.
+    // Reset before the furniture so markOverflow measures the top of page.
+    this.resetScroll()
+
     // Add page furniture (page numbers and running header)
     this.addPageFurniture(isMobile)
 
@@ -207,46 +258,109 @@ class Book {
     this.updateNavButtons()
   }
 
+  // Every renderPage() caller swaps content while the page is hidden or
+  // under the leaf, so the reset is never seen. Resize does not come here,
+  // so the reader keeps their place when the URL bar or orientation changes.
+  resetScroll() {
+    ;[this.leftPage, this.rightPage, this.rightPageEl].forEach((el) => {
+      if (!el || el.scrollTop === 0) return
+      const overflowY = getComputedStyle(el).overflowY
+      if (overflowY !== 'auto' && overflowY !== 'scroll') {
+        el.scrollTop = 0
+        return
+      }
+      // iOS ignores scrollTop while a flick's momentum is still running;
+      // dropping overflow for one write stops it
+      el.style.overflowY = 'hidden'
+      el.scrollTop = 0
+      el.style.overflowY = ''
+    })
+  }
+
   addPageFurniture(isMobile) {
     const leftPageNum = (this.currentPage * 2) + 1
     const rightPageNum = leftPageNum + 1
-    const bookTitle = this.formatBookTitle(this.currentBook)
 
     // Remove existing furniture
     document.querySelectorAll('.page-number, .running-header').forEach(el => el.remove())
 
+    const spread = this.pages[this.currentPage]
+
+    // The title-page / contents spread is display matter: like a printed
+    // book it carries no running heads and blind folios (the title page
+    // would otherwise read its own title three times across the spread)
+    if (spread && spread.classList.contains('toc-spread')) {
+      this.markOverflow()
+      return
+    }
+
     if (!isMobile) {
-      // Left page: page number bottom-left
-      const leftNum = document.createElement('span')
-      leftNum.className = 'page-number page-number-left'
-      leftNum.textContent = leftPageNum
-      this.leftPageEl.appendChild(leftNum)
+      // Verso running head: the book's title (the template's data-title).
+      // Recto running head: the chapter, i.e. the first [data-running-head]
+      // on this spread's left page; falls back to the book's title.
+      const template = document.querySelector(`#${this.currentBook}-book`)
+      const bookTitle = (template && template.dataset.title) || this.formatBookTitle(this.currentBook)
+      const headEl = spread && spread.querySelector('.spread-left [data-running-head]')
+      const chapterTitle = headEl ? headEl.textContent.replace(/\s+/g, ' ').trim() : bookTitle
 
-      // Right page: page number bottom-right, running header top-right
-      const rightNum = document.createElement('span')
-      rightNum.className = 'page-number page-number-right'
-      rightNum.textContent = rightPageNum
-      this.rightPageEl.appendChild(rightNum)
+      const place = (pageEl, className, text) => {
+        const el = document.createElement('span')
+        el.className = className
+        el.textContent = text
+        pageEl.appendChild(el)
+      }
 
-      const header = document.createElement('span')
-      header.className = 'running-header'
-      header.textContent = bookTitle
-      this.rightPageEl.appendChild(header)
+      // Folios sit at the foot, on the outer edge of each page
+      place(this.leftPageEl, 'running-header running-header-left', bookTitle)
+      place(this.leftPageEl, 'page-number page-number-left', leftPageNum)
+
+      // A blank recto (a one-page chapter) is printed without a head or folio
+      const recto = spread && spread.querySelector('.spread-right')
+      if (recto && !recto.children.length && !recto.textContent.trim()) {
+        this.markOverflow()
+        return
+      }
+      place(this.rightPageEl, 'running-header running-header-right', chapterTitle)
+      place(this.rightPageEl, 'page-number page-number-right', rightPageNum)
     } else {
       // Mobile: single page number
       const pageNum = document.createElement('span')
       pageNum.className = 'page-number page-number-right'
-      pageNum.textContent = this.currentPage + 1
+      // The sheet is the folded spread, so it carries the verso's folio
+      // (the number the Contents page cites)
+      pageNum.textContent = leftPageNum
       this.rightPageEl.appendChild(pageNum)
     }
+
+    this.markOverflow()
+  }
+
+  // A page that cannot hold its copy scrolls. Mark it so CSS can fade the
+  // cut line into the foot margin (until the reader reaches the end)
+  // instead of slicing it at the scroll edge. The phone sheet (.page-right)
+  // is marked too, so its scroll fade shows only while there is more below.
+  markOverflow() {
+    ;[this.leftPage, this.rightPage, this.rightPageEl].forEach((el) => {
+      if (!el) return
+      // Measure without the fade: the phone sheet's ::after is in flow, so
+      // a class left over from a longer sheet would keep itself true
+      el.classList.remove('is-overflowing')
+      el.classList.toggle('is-overflowing', el.scrollHeight > el.clientHeight + 1)
+      this.markScrollEnd(el)
+    })
+  }
+
+  markScrollEnd(el) {
+    el.classList.toggle('is-at-end', el.scrollTop + el.clientHeight >= el.scrollHeight - 1)
   }
 
   formatBookTitle(bookId) {
     const titles = {
       work: 'Selected Work',
-      about: 'About Me',
-      contact: 'Get in Touch',
-      references: 'References'
+      about: 'About',
+      contact: 'Contact',
+      references: 'References',
+      colophon: 'Colophon'
     }
     return titles[bookId] || bookId
   }
@@ -267,6 +381,12 @@ class Book {
     const isFirstPage = this.currentPage === 0
     const isLastPage = this.currentPage >= this.pages.length - 1
 
+    // A one-spread book has nowhere to turn: hide the nav instead of
+    // showing "1 of 1" between two dead arrows
+    if (this.bookView) {
+      this.bookView.classList.toggle('is-single-spread', this.pages.length === 1)
+    }
+
     if (this.prevBtn) {
       this.prevBtn.disabled = isFirstPage
     }
@@ -285,62 +405,206 @@ class Book {
     }
   }
 
-  prevPage() {
-    if (this.currentPage <= 0 || this.isAnimating) return
+  // ─── Navigation intent (target-chasing queue) ──────────────────
+  // Clicks/keys update a target; the chase loop turns one leaf at a
+  // time toward it, so rapid input riffles and settles on the right
+  // spread instead of stacking or dropping turns.
 
-    this.isAnimating = true
-    this.animatePageTurn('prev', () => {
-      this.currentPage--
-      this.renderPage()
-      this.isAnimating = false
-    })
+  prevPage() {
+    if (this.targetPage <= 0) return
+    this.targetPage--
+    this.runChase()
   }
 
   nextPage() {
-    if (this.currentPage >= this.pages.length - 1 || this.isAnimating) return
-
-    this.isAnimating = true
-    this.animatePageTurn('next', () => {
-      this.currentPage++
-      this.renderPage()
-      this.isAnimating = false
-    })
+    if (this.targetPage >= this.pages.length - 1) return
+    this.targetPage++
+    this.runChase()
   }
 
-  animatePageTurn(direction, callback) {
-    const outClass = direction === 'next' ? 'is-turning-out' : 'is-turning-in'
-    const inClass = direction === 'next' ? 'is-turning-in' : 'is-turning-out'
+  async runChase() {
+    if (this.chasing) return
+    this.chasing = true
+    try {
+      while (this.currentPage !== this.targetPage) {
+        const direction = this.targetPage > this.currentPage ? 'next' : 'prev'
+        await this.turnTo(direction)
+      }
+    } finally {
+      this.chasing = false
+    }
+  }
 
-    // Add 3D page lift animation
-    if (direction === 'next' && this.rightPageEl) {
-      this.rightPageEl.classList.add('is-turning-next')
-    } else if (direction === 'prev' && this.leftPageEl) {
-      this.leftPageEl.classList.add('is-turning-prev')
+  // Dispatch a single one-step turn by the best available technique.
+  // Reduced motion still gets the leaf flip, just a flatter/quicker one
+  // (gentle=true) — the crossfade is only a last resort when the 3D leaf
+  // is unsupported.
+  async turnTo(direction) {
+    if (window.innerWidth <= 900) return this.slideTo(direction)
+    if (!this.supportsLeaf || !this.turnLeaf) {
+      return this.reduceMotion ? this.crossfade(direction) : this.instantTurn(direction)
+    }
+    try {
+      await this.leafTo(direction, this.reduceMotion)
+    } catch (err) {
+      // 3D flip failed (older engine) — fall back to an instant swap
+      console.warn('Page-turn leaf failed, using instant swap', err)
+      this.instantTurn(direction)
+    }
+  }
+
+  instantTurn(direction) {
+    this.currentPage += direction === 'next' ? 1 : -1
+    this.renderPage()
+  }
+
+  // Fill an arbitrary content element with one side of a given spread
+  fillSide(contentEl, spreadIndex, side) {
+    if (!contentEl) return
+    contentEl.innerHTML = ''
+    const spread = this.pages[spreadIndex]
+    if (!spread) return
+    const leftContent = spread.querySelector('.spread-left')
+    const rightContent = spread.querySelector('.spread-right')
+    if (leftContent && rightContent) {
+      const src = side === 'left' ? leftContent : rightContent
+      contentEl.appendChild(src.cloneNode(true))
+    } else if (side === 'right') {
+      // Legacy single-content spread lives on the right side
+      contentEl.appendChild(spread.cloneNode(true))
+    }
+  }
+
+  // ─── Desktop: real single-leaf 3D flip via the Web Animations API ──
+  // gentle=true (reduced motion) flattens the arc and shortens it.
+  async leafTo(direction, gentle = false) {
+    const from = this.currentPage
+    const isNext = direction === 'next'
+    const to = isNext ? from + 1 : from - 1
+    const leaf = this.turnLeaf
+
+    const frontSide = isNext ? 'right' : 'left'
+    const backSide = isNext ? 'left' : 'right'
+
+    // Front = the half we turn from; back = the half we land on.
+    this.frontFace.className = 'turn-leaf-face turn-leaf-front is-' + frontSide
+    this.backFace.className = 'turn-leaf-face turn-leaf-back is-' + backSide
+    this.fillSide(this.frontContent, from, frontSide)
+    this.fillSide(this.backContent, to, backSide)
+
+    // Pre-swap the static half hidden behind the leaf so it is correct
+    // the instant the leaf lifts away from it (kills the reveal snap).
+    this.fillSide(isNext ? this.rightPage : this.leftPage, to, isNext ? 'right' : 'left')
+
+    // Clear any lingering fills, then position + reveal the leaf.
+    ;[leaf, this.leafShade, this.shadowLeft, this.shadowRight]
+      .forEach((el) => el && el.getAnimations().forEach((a) => a.cancel()))
+    leaf.classList.remove('turn-leaf--next', 'turn-leaf--prev')
+    leaf.classList.add(isNext ? 'turn-leaf--next' : 'turn-leaf--prev')
+    leaf.style.willChange = 'transform'
+    leaf.hidden = false
+    this.bookView.classList.add('is-turning')
+    void leaf.offsetWidth // flush layout so the start transform applies
+
+    const endDeg = isNext ? -180 : 180
+    const midDeg = endDeg / 2
+    // Full motion arcs the leaf toward the reader at mid-flight (translateZ
+    // lift) so it reads as paper peeling off the spine, not a flat pivot.
+    // Reduced motion keeps it flat and quick.
+    const lift = gentle ? 1 : 62
+    const dur = gentle ? Math.round(this.turnMs * 0.6) : this.turnMs
+    const shadePeak = gentle ? 0.4 : 0.6
+    const anims = [
+      leaf.animate(
+        [
+          { transform: 'translateZ(1px) rotateY(0deg)', offset: 0 },
+          { transform: `translateZ(${lift}px) rotateY(${midDeg}deg)`, offset: 0.5 },
+          { transform: `translateZ(1px) rotateY(${endDeg}deg)`, offset: 1 }
+        ],
+        { duration: dur, easing: this.turnEase, fill: 'forwards' }
+      ),
+      this.leafShade.animate(
+        [{ opacity: 0 }, { opacity: shadePeak, offset: 0.45 }, { opacity: 0 }],
+        { duration: dur, easing: 'ease-in-out' }
+      )
+    ]
+    // The revealed half darkens early; the covered half darkens late.
+    const liftShadow = isNext ? this.shadowRight : this.shadowLeft
+    const landShadow = isNext ? this.shadowLeft : this.shadowRight
+    if (liftShadow) {
+      anims.push(liftShadow.animate(
+        [{ opacity: 0 }, { opacity: 0.5, offset: 0.25 }, { opacity: 0, offset: 0.62 }],
+        { duration: dur, easing: 'ease-out' }
+      ))
+    }
+    if (landShadow) {
+      anims.push(landShadow.animate(
+        [{ opacity: 0, offset: 0.38 }, { opacity: 0.5, offset: 0.82 }, { opacity: 0 }],
+        { duration: dur, easing: 'ease-in' }
+      ))
     }
 
-    this.rightPage.classList.add(outClass)
+    await Promise.all(anims.map((a) => a.finished))
 
-    setTimeout(() => {
-      callback()
+    // Commit the destination while the leaf still covers the landing
+    // half, then retire the leaf — nothing changes in view instantly.
+    this.currentPage = to
+    this.renderPage()
+    leaf.hidden = true
+    leaf.style.willChange = ''
+    leaf.classList.remove('turn-leaf--next', 'turn-leaf--prev')
+    this.bookView.classList.remove('is-turning')
+  }
 
-      // Remove 3D lift classes
-      if (this.rightPageEl) this.rightPageEl.classList.remove('is-turning-next')
-      if (this.leftPageEl) this.leftPageEl.classList.remove('is-turning-prev')
+  // ─── Mobile: direction-aware slide + fade (single visible page) ──
+  async slideTo(direction) {
+    const isNext = direction === 'next'
+    const to = isNext ? this.currentPage + 1 : this.currentPage - 1
+    const outX = isNext ? -24 : 24
+    const inX = isNext ? 24 : -24
+    const page = this.rightPage
 
-      this.rightPage.classList.remove(outClass)
-      this.rightPage.classList.add(inClass)
+    const outAnim = page.animate(
+      [
+        { opacity: 1, transform: 'translateX(0)' },
+        { opacity: 0, transform: `translateX(${outX}px)` }
+      ],
+      { duration: 180, easing: 'ease-in', fill: 'forwards' }
+    )
+    await outAnim.finished
+    this.currentPage = to
+    this.renderPage()
+    outAnim.cancel()
+    await page.animate(
+      [
+        { opacity: 0, transform: `translateX(${inX}px)` },
+        { opacity: 1, transform: 'translateX(0)' }
+      ],
+      { duration: 200, easing: 'ease-out' }
+    ).finished
+  }
 
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          this.rightPage.classList.remove(inClass)
-        })
-      })
-    }, 300)
+  // ─── Reduced motion: dissolve the page CONTENT on the stable cream
+  // pages. Never fade the whole book to opacity 0 — that reveals the dark
+  // backdrop and reads as a black flash. Only the ink crossfades. ──────
+  async crossfade(direction) {
+    const to = direction === 'next' ? this.currentPage + 1 : this.currentPage - 1
+    const targets = [this.leftPage, this.rightPage].filter(Boolean)
+    await Promise.all(targets.map((t) =>
+      t.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 120, easing: 'ease-in', fill: 'forwards' }).finished
+    ))
+    this.currentPage = to
+    this.renderPage()
+    targets.forEach((t) => t.getAnimations().forEach((a) => a.cancel()))
+    await Promise.all(targets.map((t) =>
+      t.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150, easing: 'ease-out' }).finished
+    ))
   }
 
   goToPage(pageNum) {
     if (pageNum < 0 || pageNum >= this.pages.length) return
     this.currentPage = pageNum
+    this.targetPage = pageNum
     this.renderPage()
   }
 

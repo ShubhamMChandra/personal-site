@@ -43,7 +43,7 @@ console.log(`✓ references-1.png (Greg)`)
 const refs = ['Geremy', 'Stephanie']
 for (let i = 0; i < refs.length; i++) {
   await page.keyboard.press('ArrowRight')
-  await page.waitForTimeout(500)
+  await page.waitForTimeout(1100)
   await page.screenshot({ path: `${OUTPUT}/references-${i + 2}.png` })
   console.log(`✓ references-${i + 2}.png (${refs[i]})`)
 }

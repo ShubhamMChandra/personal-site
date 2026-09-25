@@ -60,7 +60,6 @@ This is a **vanilla HTML/CSS/JS** project with no build step or frameworks.
 - `scripts/main.js` — Entry point
 - `scripts/bookshelf.js` — Shelf interactions
 - `scripts/book.js` — Page navigation
-- `scripts/cursor.js` — Custom cursor
 
 ### Styling Conventions
 - Use CSS custom properties from `:root`

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Gold book spine on the dark study - miniature of the shelf -->
+  <rect width="32" height="32" rx="6" fill="#0a0908"/>
+  <rect x="11" y="6" width="10" height="20" rx="1.5" fill="none" stroke="#d4a855" stroke-width="1.6"/>
+  <line x1="11.8" y1="10.5" x2="21.2" y2="10.5" stroke="#d4a855" stroke-width="1"/>
+  <line x1="11.8" y1="21.5" x2="21.2" y2="21.5" stroke="#d4a855" stroke-width="1"/>
+</svg>

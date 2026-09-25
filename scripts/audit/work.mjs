@@ -45,7 +45,7 @@ console.log(`✓ work-1.png (Table of Contents)`)
 const pages = ['Consulting', 'Garner Health', 'NJOY', 'L.E.K.']
 for (let i = 0; i < pages.length; i++) {
   await page.keyboard.press('ArrowRight')
-  await page.waitForTimeout(500)
+  await page.waitForTimeout(1100)
   await page.screenshot({ path: `${OUTPUT}/work-${i + 2}.png` })
   console.log(`✓ work-${i + 2}.png (${pages[i]})`)
 }
