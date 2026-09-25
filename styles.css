@@ -2313,6 +2313,16 @@ body {
   border-bottom: none;
 }
 
+/* Colophon "How it's built": tighter rows so four short entries fit the
+   page instead of scrolling */
+.book-view[data-active-book="colophon"] .technical-list {
+  gap: 8px;
+}
+
+.book-view[data-active-book="colophon"] .technical-item {
+  padding-bottom: 8px;
+}
+
 .technical-category {
   font-family: var(--font-sc);
   font-size: var(--t-xs);
