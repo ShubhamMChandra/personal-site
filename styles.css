@@ -2646,6 +2646,13 @@ body {
     text-align: left;
   }
 
+  /* A one-page chapter (empty recto) ends on its summary: no rule below */
+  .mobile-left-inline:has(+ .spread-right:empty) {
+    border-bottom: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+
   /* Compact chapter opening: no chapter drop; the numeral sits inline
      before the company; location and backing stay on separate lines. */
   .mobile-left-inline.chapter-divider {
