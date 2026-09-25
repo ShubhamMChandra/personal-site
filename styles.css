@@ -272,6 +272,15 @@ body {
   transition-delay: 0s;
 }
 
+/* Narrow desktop windows: the open book reaches x 60, under the top-left
+   Shelf button, so the button drops to the bottom-left corner */
+@media (min-width: 901px) and (max-width: 1340px) {
+  .collapsed-nav {
+    top: auto;
+    bottom: 20px;
+  }
+}
+
 .nav-shelf-btn {
   height: 36px;
   padding: 0 var(--space-sm) 0 var(--space-xs);
