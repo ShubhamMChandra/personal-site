@@ -35,6 +35,9 @@ Tiles (all periodic, so they can be used in a <pattern> or a CSS background):
                          lighter than the wall)
   wall-plaster-128.png   dark-only, black, band-limited (4-64 px) plaster for
                          the room's wall, baked, drawn at 1
+  paper-tooth-128.png    dark-only paper tooth (2.5-40 px), warm DARK tone,
+                         baked: the open book's pages (desktop now, phone in
+                         WP3). Never on a ground darker than lum ~40
   wear-cap-256x48.png    rubbing strip for head and tail: warm-light blotches
                          fading to nothing over 48 px, periodic in x,
                          concentrated in the outer ~30 % at each corner
@@ -188,6 +191,17 @@ def wall_plaster(rng, size=128):
     return np.zeros_like(da), np.clip(da, 0, 0.19)
 
 
+def paper_tooth(rng, size=128):
+    """Dark-only paper tooth: short fibre plus formation mottle. Warm DARK tone,
+    which is safe on paper (lum 190-235) and on nothing darker than lum ~40."""
+    fibre = fft_noise(rng, size, 2.5, 7)            # fibre / tooth
+    form = fft_noise(rng, size, 10, 40) * 0.8       # formation (look-through) mottle
+    v = fibre + form
+    v = v / v.std()
+    da = np.clip(-v, 0, None) * 0.020               # dark side only; max .05 at ~2.5 sigma
+    return np.zeros_like(da), np.clip(da, 0, 0.05)
+
+
 def corner_profile(w, inner=0.4, floor=0.12):
     """1 at both ends of the strip, `floor` across the middle. Symmetric, so the strip
     stays periodic in x. `inner` is the half-width (as a fraction of w/2) of the
@@ -246,6 +260,7 @@ def main():
     save_two_tone('wear-cap-256x48.png', *wear_cap(np.random.default_rng(SEED + 4)), light_rgb=WEAR)
     save_two_tone('wear-joint-48x256.png', *wear_joint(np.random.default_rng(SEED + 5)), light_rgb=WEAR)
     save_two_tone('wall-plaster-128.png', *wall_plaster(np.random.default_rng(SEED + 6)), dark_rgb=(0, 0, 0))
+    save_two_tone('paper-tooth-128.png', *paper_tooth(np.random.default_rng(SEED + 7)))
     save_shadow('shadow-soft-96.png', shadow_soft())
     save_shadow('contact-256x48.png', contact_strip())
 

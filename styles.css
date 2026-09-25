@@ -1239,15 +1239,15 @@ body {
   hyphens: manual;
 }
 
-/* Paper texture overlay - extremely subtle */
+/* Paper tooth: a dark-only pre-rendered tile, baked and drawn at 1, no blend
+   (spec G9: no live filters, no blend modes). 128 CSS px is an integer
+   device-px tile at every DPR. Overlays the copy, which it darkens by <= 2 levels. */
 .page::after {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.05;
+  background: url(assets/textures/paper-tooth-128.png) 0 0 / 128px 128px;
   pointer-events: none;
-  mix-blend-mode: multiply;
 }
 
 /* Left page - flat at rest (crisp text); depth comes from the inset gutter
@@ -2748,10 +2748,7 @@ body {
     position: relative;
   }
 
-  /* Scroll-fade indicator — hints that more content exists below.
-     opacity + mix-blend-mode are reset here because .page::after (the
-     paper-grain texture on the same pseudo slot) sets opacity:0.03 /
-     multiply, which would otherwise render this fade invisible. */
+  /* Scroll-fade indicator. background is reset here because .page::after (the paper-tooth tile on the same pseudo slot) would otherwise paint over the fade. */
   .page-right::after {
     content: '';
     position: sticky;
@@ -2765,8 +2762,6 @@ body {
     background: linear-gradient(90deg, var(--paper-edge) 0%, var(--paper-mid) 40%, var(--paper-hi) 100%);
     -webkit-mask-image: linear-gradient(to top, #000 32%, transparent);
     mask-image: linear-gradient(to top, #000 32%, transparent);
-    opacity: 1;
-    mix-blend-mode: normal;
     pointer-events: none;
     z-index: 5;
     flex-shrink: 0;
