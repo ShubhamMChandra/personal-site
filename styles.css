@@ -2886,9 +2886,15 @@ body {
     gap: var(--space-sm);
   }
 
+  /* Three equal columns: a 45% basis orphaned the third stat on its own row */
   .metric {
-    flex: 1 1 45%;
-    min-width: 80px;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  /* A third of the sheet must still hold "Engagements" at 360px */
+  .metric-label {
+    font-size: var(--t-xs);
   }
 
   .contact-email {
