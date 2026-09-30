@@ -123,10 +123,10 @@
   --dur-close-again: 440ms;
   --dur-open-m: 450ms;
   --dur-close-m: 380ms;
-  --dur-turn: 600ms;       /* Decision III */
-  --dur-turn-chase: 450ms; /* 0.75 x the single turn */
+  --dur-turn: 720ms;       /* Decision III, +20% (owner, 2026-09-29) */
+  --dur-turn-chase: 540ms; /* 0.75 x the single turn */
   --dur-turn-m: 320ms;
-  --duration-turn: 0.6s;   /* read by book.js until WP4 renames */
+  --duration-turn: 0.72s;  /* read by book.js until WP4 renames */
   --ease-page-turn: var(--ease-hinge);
   --duration-fast: 0.2s;   /* WP5 deletes these four */
   --duration-medium: 0.4s;
