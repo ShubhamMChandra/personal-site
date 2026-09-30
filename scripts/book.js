@@ -25,8 +25,13 @@ class Book {
     this.leftPageEl = document.querySelector('.page-left')
     this.rightPageEl = document.querySelector('.page-right')
 
-    // Phone: the text scrolls in .page-scroller, under a still page
+    // Phone: the text scrolls in .page-scroller, under a still page. The
+    // turning leaf and the shadow it throws live in the recto's slot.
     this.pageScroller = document.querySelector('.page-right .page-scroller')
+    this.pageSlot = document.querySelector('.page-slot')
+    this.stripLeaf = document.querySelector('.strip-leaf')
+    this.stripShadow = document.querySelector('.strip-shadow')
+    this.activeStrip = null
 
     // Page curl elements for click-to-turn
     this.leftPageCurl = document.querySelector('.page-left .page-curl')
@@ -141,6 +146,29 @@ class Book {
       })
     }
 
+    // Phone: a horizontal swipe on the page turns it. touch-action: pan-y
+    // on the scroller keeps vertical drags native (they end in
+    // pointercancel). Mouse drags are text selection, never a turn.
+    if (this.pageSlot) {
+      let down = null
+      this.pageSlot.addEventListener('pointerdown', (e) => {
+        down = (this.isPhone() && e.pointerType !== 'mouse')
+          ? { x: e.clientX, y: e.clientY, id: e.pointerId }
+          : null
+      })
+      this.pageSlot.addEventListener('pointerup', (e) => {
+        if (!down || e.pointerId !== down.id) return
+        const dx = e.clientX - down.x
+        const dy = e.clientY - down.y
+        down = null
+        if (Math.abs(dx) >= 40 && Math.abs(dy) < 0.36 * Math.abs(dx)) {
+          if (dx < 0) this.nextPage()
+          else this.prevPage()
+        }
+      })
+      this.pageSlot.addEventListener('pointercancel', () => { down = null })
+    }
+
     // Table of Contents click handler (event delegation)
     if (this.rightPage) {
       this.rightPage.addEventListener('click', (e) => {
@@ -156,6 +184,7 @@ class Book {
   }
 
   openBook(bookId) {
+    this.finishStrip()
     this.currentBook = bookId
     this.loadBookContent(bookId)
     this.currentPage = 0
@@ -172,6 +201,7 @@ class Book {
     this.bookView.setAttribute('aria-hidden', 'true')
     delete this.bookView.dataset.activeBook
     // Reset any in-flight turn so the next open starts clean
+    this.finishStrip()
     if (this.turnLeaf) {
       this.turnLeaf.getAnimations().forEach((a) => a.cancel())
       this.turnLeaf.hidden = true
@@ -438,6 +468,12 @@ class Book {
     this.chasing = true
     try {
       while (this.currentPage !== this.targetPage) {
+        // A phone turns one leaf straight to the target, so a Contents
+        // jump or a burst of taps is one turn, not a riffle
+        if (this.isPhone()) {
+          await this.phoneTurn(this.targetPage)
+          continue
+        }
         const direction = this.targetPage > this.currentPage ? 'next' : 'prev'
         await this.turnTo(direction)
       }
@@ -451,7 +487,6 @@ class Book {
   // (gentle=true) — the crossfade is only a last resort when the 3D leaf
   // is unsupported.
   async turnTo(direction) {
-    if (window.innerWidth <= 900) return this.slideTo(direction)
     if (!this.supportsLeaf || !this.turnLeaf) {
       return this.reduceMotion ? this.crossfade(direction) : this.instantTurn(direction)
     }
@@ -567,34 +602,184 @@ class Book {
     this.bookView.classList.remove('is-turning')
   }
 
-  // ─── Mobile: direction-aware slide + fade (single visible page) ──
-  // 280 ms out + 320 ms in: 600 ms, so a phone turn reads as a page, not
-  // a flick. The desktop leaf takes a little longer (--duration-turn).
-  async slideTo(direction) {
-    const isNext = direction === 'next'
-    const to = isNext ? this.currentPage + 1 : this.currentPage - 1
-    const outX = isNext ? -24 : 24
-    const inX = isNext ? 24 : -24
-    const page = this.rightPage
+  isPhone() {
+    return window.innerWidth <= 900
+  }
 
-    const outAnim = page.animate(
-      [
-        { opacity: 1, transform: 'translateX(0)' },
-        { opacity: 0, transform: `translateX(${outX}px)` }
-      ],
-      { duration: 280, easing: 'ease-in', fill: 'forwards' }
-    )
-    await outAnim.finished
+  // ─── Phone: the page turns from the binding ─────────────────────
+  // The leaf is STRIPS hinged strips, each nested in the one before and
+  // each a window onto a clone of the page, so the sheet bows as it
+  // lifts from the fore-edge and folds into the gutter. Only transform
+  // and opacity animate. Recipe: mobilepage/final/IMPLEMENT.md §4.
+  async phoneTurn(to) {
+    if (this.reduceMotion) return this.fadeTo(to)
+    try {
+      await this.stripTo(to)
+    } catch (err) {
+      console.warn('Phone page turn failed, swapping the page instead', err)
+      this.finishStrip()
+      this.currentPage = to
+      this.renderPage()
+    }
+  }
+
+  stripTo(to) {
+    const dir = to > this.currentPage ? 1 : -1
+    const page = this.rightPageEl
+    let cover = null
+    let strips
+
+    if (dir > 0) {
+      // Next: the leaf carries the outgoing page away; the real page
+      // already holds the destination beneath it
+      strips = this.buildLeaf(page)
+      this.currentPage = to
+      this.renderPage()
+    } else {
+      // Previous: a still cover keeps the outgoing page in view, the real
+      // page takes the destination under it, and the leaf brings a copy
+      // of the destination in from the verso to land on the cover
+      cover = this.clonePage(page)
+      cover.classList.add('page-cover')
+      this.pageSlot.insertBefore(cover, this.stripShadow)
+      cover.querySelector('.page-scroller').scrollTop = this.pageScroller.scrollTop
+      this.currentPage = to
+      this.renderPage()
+      strips = this.buildLeaf(page)
+    }
+
+    this.bookView.classList.add('is-turning')
+    const anims = this.animateLeaf(strips, dir)
+
+    return new Promise((resolve) => {
+      let done = false
+      const finish = () => {
+        if (done) return
+        done = true
+        anims.forEach((a) => a.cancel())
+        this.stripLeaf.hidden = true
+        this.stripLeaf.replaceChildren()
+        if (cover) cover.remove()
+        this.bookView.classList.remove('is-turning')
+        this.activeStrip = null
+        resolve()
+      }
+      this.activeStrip = { finish }
+      Promise.all(anims.map((a) => a.finished)).then(finish, finish)
+    })
+  }
+
+  // Land an in-flight phone turn at once (close, reopen, another book)
+  finishStrip() {
+    if (this.activeStrip) this.activeStrip.finish()
+  }
+
+  clonePage(page) {
+    const clone = page.cloneNode(true)
+    clone.setAttribute('aria-hidden', 'true')
+    return clone
+  }
+
+  buildLeaf(page) {
+    const STRIPS = 4
+    const OV = 1 // strips overlap by 1px so no seam shows the page beneath
+    const leaf = this.stripLeaf
+    leaf.replaceChildren()
+    const pw = this.pageSlot.clientWidth
+    const sw = Math.ceil((pw + (STRIPS - 1) * OV) / STRIPS)
+    const scrollTop = page.querySelector('.page-scroller').scrollTop
+    const div = (className) => {
+      const el = document.createElement('div')
+      el.className = className
+      return el
+    }
+
+    let parent = leaf
+    const strips = []
+    for (let i = 0; i < STRIPS; i++) {
+      const hinge = i * (sw - OV)
+      const strip = div('strip')
+      strip.style.left = (i ? sw - OV : 0) + 'px'
+      strip.style.width = (i === STRIPS - 1 ? pw - hinge : sw) + 'px'
+
+      const front = div('strip-face strip-front')
+      const clone = this.clonePage(page)
+      clone.style.width = pw + 'px'
+      clone.style.left = -hinge + 'px'
+      const shadeL = div('face-shade face-shade-l')
+      const shadeR = div('face-shade face-shade-r')
+      front.append(clone, shadeL, shadeR)
+
+      strip.append(front, div('strip-face strip-back'))
+      parent.appendChild(strip)
+      parent = strip
+      strips.push({ strip, shadeL, shadeR, clone })
+    }
+
+    // A clone shows the same scroll position as the page it copies (a
+    // scroller only takes scrollTop once it is laid out)
+    leaf.hidden = false
+    strips.forEach((st) => { st.clone.querySelector('.page-scroller').scrollTop = scrollTop })
+    return strips
+  }
+
+  // dir 1 (Next): the leaf turns 0 -> -180deg; dir -1 (Previous): back.
+  // A phone sees only the first ~100deg (the rest lands on the verso,
+  // off-screen), so the angle follows t^1.75: a lift that gathers speed,
+  // like a page pushed over from the fore-edge. The fore-edge strip leads
+  // the root by 0.055 sin(pi t), so the sheet leaves flat, bows in flight
+  // and lands flat.
+  animateLeaf(strips, dir) {
+    const DUR = 600
+    const LEAD = 0.055
+    const N = 28
+    const n = strips.length
+    const world = (i, t) => 180 * Math.pow(Math.min(1, t + i * LEAD * Math.sin(Math.PI * t)), 1.75)
+    // Shade grows with the angle. The left gradient carries the strip's
+    // root angle and the right its tip, so tone is continuous at seams.
+    const shade = (a) => (0.26 * Math.sin(Math.min(a, 90) * Math.PI / 180)).toFixed(3)
+    const opts = { duration: DUR, easing: 'linear', fill: 'forwards' }
+    const anims = []
+
+    for (let i = 0; i < n; i++) {
+      const kf = []
+      const kfL = []
+      const kfR = []
+      for (let k = 0; k <= N; k++) {
+        const offset = k / N
+        const p = dir > 0 ? offset : 1 - offset
+        const w = world(i, p)
+        const wPrev = i ? world(i - 1, p) : 0
+        kf.push({ transform: `rotateY(${(wPrev - w).toFixed(3)}deg)`, offset })
+        kfL.push({ opacity: shade(w), offset })
+        kfR.push({ opacity: shade(world(i + 1, p)), offset })
+      }
+      anims.push(strips[i].strip.animate(kf, opts))
+      anims.push(strips[i].shadeL.animate(kfL, opts))
+      anims.push(strips[i].shadeR.animate(kfR, opts))
+    }
+
+    // the shadow the lifted leaf throws on the page beneath
+    const under = dir > 0
+      ? [{ opacity: 0 }, { opacity: 0.9, offset: 0.35 }, { opacity: 1, offset: 0.55 }, { opacity: 0.5, offset: 0.72 }, { opacity: 0, offset: 0.85 }, { opacity: 0 }]
+      : [{ opacity: 0 }, { opacity: 0, offset: 0.15 }, { opacity: 0.5, offset: 0.28 }, { opacity: 1, offset: 0.45 }, { opacity: 0.9, offset: 0.65 }, { opacity: 0 }]
+    anims.push(this.stripShadow.animate(under, opts))
+    return anims
+  }
+
+  // Phone, reduced motion: the ink crossfades on the still page; no leaf
+  async fadeTo(to) {
+    const inkOf = () => [
+      this.pageScroller,
+      ...this.rightPageEl.querySelectorAll(':scope > .page-number, :scope > .running-header')
+    ]
+    const outs = inkOf().map((el) => el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 120, easing: 'ease-in', fill: 'forwards' }))
+    await Promise.all(outs.map((a) => a.finished))
     this.currentPage = to
     this.renderPage()
-    outAnim.cancel()
-    await page.animate(
-      [
-        { opacity: 0, transform: `translateX(${inX}px)` },
-        { opacity: 1, transform: 'translateX(0)' }
-      ],
-      { duration: 320, easing: 'ease-out' }
-    ).finished
+    const ins = inkOf().map((el) => el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150, easing: 'ease-out' }))
+    outs.forEach((a) => a.cancel())
+    await Promise.all(ins.map((a) => a.finished))
   }
 
   // ─── Reduced motion: dissolve the page CONTENT on the stable cream
@@ -616,6 +801,12 @@ class Book {
 
   goToPage(pageNum) {
     if (pageNum < 0 || pageNum >= this.pages.length) return
+    // A phone turns to a Contents entry as one leaf
+    if (this.isPhone() && pageNum !== this.currentPage) {
+      this.targetPage = pageNum
+      this.runChase()
+      return
+    }
     this.currentPage = pageNum
     this.targetPage = pageNum
     this.renderPage()
