@@ -1619,6 +1619,21 @@ body {
   );
 }
 
+/* Phone-only boxes (see RESPONSIVE DESIGN). The desktop lays the spread
+   out as if they were not there: the wrappers generate no box, and the
+   phone's leaf, its shadow and the fore-edge stack are not drawn. */
+.page-slot,
+.page-window,
+.page-scroller {
+  display: contents;
+}
+
+.strip-shadow,
+.strip-leaf,
+.fore-edge {
+  display: none;
+}
+
 /* Hide the resting corner curls while a turn is in flight */
 .book-view.is-turning .page-curl {
   opacity: 0;
@@ -2606,69 +2621,368 @@ body {
    ═══════════════════════════════════════════════════════════ */
 
 @media (max-width: 900px) {
-  /* Mobile: constrain book view to fit viewport with fixed nav at bottom */
+  /* ─── The phone reading view: a page in a bound book ──────────
+     The book is wider than the phone. The facing page runs off the left
+     edge, so the screen shows the recto with its gutter crease, a sliver
+     of the verso, calf boards at head, tail and fore-edge, and the edges
+     of the page block. Paper, crease, running head and folio are pinned
+     to the sheet; only .page-scroller moves. */
   .book-view {
+    --chrome-top: 52px;
+    --chrome-bot: 60px;
+    --room-right: 5px;      /* dark room beyond the fore-edge board */
+    --board: 6px;           /* calf visible around the page block */
+    --verso-sliver: 12px;   /* facing page visible left of the gutter */
+    --verso-hidden: 220px;  /* the rest of the facing page, off-screen */
+    --stack-max: 12px;      /* fore-edge stack at the first spread */
+    --stack-min: 3px;       /* ... and at the last */
+    --head-stack: 5px;      /* page edges above and below the paper */
+    --crease-w: 44px;
+    --sheet-in: 33px;       /* text margin from the fold */
+    --sheet-out: 11px;      /* text margin from the fore-edge */
+    --sheet-head: 60px;
+    --sheet-foot: 58px;
+    --board-tile: url(assets/textures/calf-mottle-256.png) 0 0 / 160px 160px;
+    --board-leather: linear-gradient(180deg, #6e2a2e, var(--book-work) 55%, #47161a);
+
     display: flex;
     flex-direction: column;
-    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0)
-             env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
-    overflow-x: hidden;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: calc(var(--chrome-top) + env(safe-area-inset-top, 0px)) 0 0;
+    overflow: hidden;
   }
 
+  .book-view[data-active-book="about"] { --board-leather: linear-gradient(180deg, #294d5a, var(--book-about) 55%, #172a31); }
+  .book-view[data-active-book="contact"] { --board-leather: linear-gradient(180deg, #2c553c, var(--book-contact) 55%, #182e20); }
+  .book-view[data-active-book="references"] { --board-leather: linear-gradient(180deg, #4b2f5c, var(--book-references) 55%, #2b1b35); }
+  /* The Colophon is a pamphlet in book cloth on the shelf, so its boards are cloth */
+  .book-view[data-active-book="colophon"] {
+    --board-tile: url(assets/textures/cloth-weave-128.png) 0 0 / 160px 160px;
+    --board-leather: linear-gradient(180deg, #3a3c44, var(--book-colophon) 55%, #1b1c21);
+  }
+
+  /* The stage: the room between the chrome rows. It clips the turning
+     leaf, so a lifted page never crosses the Shelf button or the nav. */
   .book-container {
-    flex-direction: column;
+    position: relative;
+    display: block;
     flex: 1;
     min-height: 0;
-    padding-top: 56px;   /* Fixed space for shelf button */
-    padding-bottom: 80px; /* Fixed space for page nav */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    max-width: 100%;
-    overflow-x: hidden;
-    height: auto;        /* Override desktop calc(100vh - 140px) */
-    max-height: none;    /* Override desktop max-height: 800px */
-  }
-
-  .open-book {
-    flex: none;
-    flex-direction: column;
-    width: calc(100% - 24px);
-    max-width: 400px;
-    margin: 0 auto;
-    border-radius: 4px 8px 8px 4px;
-    overflow: hidden;
-    /* Tier 1: CSS fallback using svh (smallest viewport height) */
-    height: clamp(400px, 65svh, 580px);
-    /* Tier 2: JS-computed height bypasses all viewport unit bugs on real Safari */
-    height: var(--mobile-book-height, clamp(400px, 65svh, 580px));
-    min-height: 0;     /* Kill base min-height: 500px — Safari flex quirk */
+    width: 100%;
+    max-width: none;
+    height: auto;
     max-height: none;
-    display: flex;
-    /* Add book-like left edge (spine indicator) */
-    border-left: 6px solid var(--book-work); /* Default, overridden per book */
-    box-shadow:
-      0 15px 40px rgba(0, 0, 0, 0.3),
-      0 5px 15px rgba(0, 0, 0, 0.2),
-      inset 3px 0 8px -3px rgba(0, 0, 0, 0.15);
+    padding: 0;
+    overflow: hidden;
+    perspective: none;
+
+    /* fixed page sizes (no height-keyed scale on a phone) */
+    --t-xs: 13px;
+    --t-sm: 14.5px;
+    --t-md: 16.5px;
+    --t-lg: 19px;
+    --t-xl: 22px;
+    --t-2xl: 30px;
+    --t-3xl: 38px;
+    --t-num: 64px;
   }
 
-  /* Book-specific spine colors on mobile */
-  .book-view[data-active-book="work"] .open-book { border-left-color: var(--book-work); }
-  .book-view[data-active-book="about"] .open-book { border-left-color: var(--book-about); }
-  .book-view[data-active-book="contact"] .open-book { border-left-color: var(--book-contact); }
-  .book-view[data-active-book="references"] .open-book { border-left-color: var(--book-references); }
-  .book-view[data-active-book="colophon"] .open-book { border-left-color: var(--book-colophon); }
+  .page-edge,
+  .book-spine-center,
+  .page-curl,
+  .page-shadow,
+  .turn-leaf {
+    display: none;
+  }
+
+  /* The boards. Their content box is the page block, whose head and tail
+     edges show as thin stacks above and below the paper. */
+  .open-book {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(-1 * var(--verso-hidden));
+    right: calc(var(--room-right) + env(safe-area-inset-right, 0px));
+    flex: none;
+    flex-direction: row;
+    width: auto;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    margin: 0;
+    padding: var(--board) var(--board) var(--board) 0;
+    border: 0;
+    border-radius: 0;
+    transform-style: flat;
+    background:
+      repeating-linear-gradient(180deg, #f0e9d8 0 1px, #cdbf9f 1px 2px) content-box,
+      var(--board-tile),
+      var(--board-leather);
+    box-shadow: 4px 0 18px rgba(0, 0, 0, 0.5), 2px 0 3px rgba(0, 0, 0, 0.4);
+  }
+
+  /* where the leather turns over the edge of the board */
+  .open-book::before {
+    inset: 2px 2px 2px 0;
+    height: auto;
+    background: none;
+    border-radius: 0;
+    border-top: 1px solid rgba(255, 235, 210, 0.08);
+    border-right: 1px solid rgba(255, 235, 210, 0.10);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.35);
+    z-index: auto;
+  }
+
+  /* the page block's own edge against the boards */
+  .open-book::after {
+    content: '';
+    position: absolute;
+    inset: var(--board) var(--board) var(--board) 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), 0 1px 4px rgba(0, 0, 0, 0.45);
+    pointer-events: none;
+  }
 
   .page {
-    transform: none; /* Remove desktop 3D rotation */
-    border-radius: 0 4px 4px 0;
-    min-height: 0;    /* Safari flex containment — prevent content push */
+    transform: none;
+    border-radius: 0;
+    min-height: 0;
     overflow: hidden;
+    box-shadow: none;
   }
 
+  /* The verso: a sliver, bowing down into the gutter */
   .page-left {
+    display: block;
+    flex: 0 0 calc(var(--verso-hidden) + var(--verso-sliver));
+    margin: var(--head-stack) 0;
+    padding: 0;
+    background:
+      linear-gradient(270deg, rgba(30, 20, 10, 0.44) 0, rgba(30, 20, 10, 0.30) 3px, rgba(30, 20, 10, 0.16) 8px, rgba(30, 20, 10, 0.06) 14px, transparent 22px),
+      var(--paper-pool),
+      linear-gradient(180deg, var(--paper-hi), var(--paper-mid) 60%, var(--paper-lo));
+  }
+
+  .page-left .page-content {
     display: none;
+  }
+
+  /* The recto's box. The camera for the turning leaf, which lives here
+     with the shadow it throws; only the leaf is ever 3D. */
+  .page-slot {
+    display: block;
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    margin: var(--head-stack) 0;
+    perspective: 2400px;
+    perspective-origin: 28% 50%;
+    background: linear-gradient(180deg, var(--paper-hi), var(--paper-mid) 60%, var(--paper-lo));
+  }
+
+  /* The recto: square, full height, and still. The crease is darkest at
+     the fold, where a 1px line catches the light. */
+  .page-right {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    padding: 0;
+    overflow: hidden;
+    transform-origin: 0 50%;
+    background:
+      linear-gradient(90deg, rgba(255, 250, 240, 0.28) 0 1px, transparent 1px),
+      linear-gradient(90deg, rgba(30, 20, 10, 0.44) 0, rgba(30, 20, 10, 0.32) 2px, rgba(30, 20, 10, 0.22) 7px, rgba(30, 20, 10, 0.13) 13px, rgba(30, 20, 10, 0.065) 22px, rgba(30, 20, 10, 0.025) 33px, transparent var(--crease-w)),
+      var(--paper-pool),
+      linear-gradient(180deg, var(--paper-hi), var(--paper-mid) 60%, var(--paper-lo));
+  }
+
+  /* The window is static and carries the head and foot fade; the scroller
+     inside it moves (a mask on the scroller itself scrolls with it) */
+  .page-window {
+    display: block;
+    position: absolute;
+    inset: 0;
+    -webkit-mask-image: linear-gradient(180deg, transparent 34px, #000 var(--sheet-head), #000 calc(100% - var(--sheet-foot)), transparent calc(100% - 34px));
+    mask-image: linear-gradient(180deg, transparent 34px, #000 var(--sheet-head), #000 calc(100% - var(--sheet-foot)), transparent calc(100% - 34px));
+  }
+
+  .page-scroller {
+    display: block;
+    position: absolute;
+    inset: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+    scrollbar-width: none;
+    padding: var(--sheet-head) var(--sheet-out) 0 var(--sheet-in);
+  }
+
+  .page-scroller::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  /* The foot margin, as a box: some engines drop a scroller's bottom
+     padding from the scroll range, so the last line would sit in the fade */
+  .page-scroller::after {
+    content: '';
+    display: block;
+    height: var(--sheet-foot);
+  }
+
+  .page-right .page-content {
+    margin: 0 auto;
+    overflow: visible;
+    flex: none;
+    min-height: 0;
+  }
+
+  /* Pinned furniture: the chapter's running head in the head margin, the
+     folio at the foot of the outer corner */
+  .running-header-right {
+    top: 18px;
+    transform: none;
+    left: var(--sheet-in);
+    right: var(--sheet-out);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    z-index: 2;
+  }
+
+  .page-number {
+    bottom: 16px;
+    z-index: 2;
+  }
+
+  .page-number-right {
+    right: var(--sheet-out);
+  }
+
+  /* The fore-edge: the unread pages. The strip is always --stack-max
+     wide; the recto's own paper edge slides over it (on transform) so the
+     visible stack thins as you read, without the page ever rewrapping. */
+  .fore-edge {
+    display: block;
+    position: relative;
+    flex: 0 0 var(--stack-max);
+    margin: var(--head-stack) 0;
+    overflow: hidden;
+    background:
+      linear-gradient(90deg, transparent calc(100% - 2px), rgba(30, 20, 10, 0.25)),
+      repeating-linear-gradient(90deg, transparent 0 2px, rgba(120, 100, 70, 0.18) 2px 3px, transparent 3px 5px),
+      repeating-linear-gradient(90deg, #f0e9d8 0 1px, #cdbf9f 1px 2px);
+  }
+
+  .stack-cover {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: var(--stack-max);
+    background: linear-gradient(180deg, var(--paper-hi), var(--paper-mid) 60%, var(--paper-lo));
+    transform: translateX(calc(-1 * (var(--stack-min) + (var(--stack-max) - var(--stack-min)) * (1 - var(--t, 0)))));
+    transition: transform 600ms var(--ease-room);
+  }
+
+  /* the recto's shadow on the stack */
+  .stack-cover::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 4px;
+    background: linear-gradient(90deg, rgba(30, 20, 10, 0.22), transparent);
+    transform: translateX(100%);
+  }
+
+  /* ─── The turning leaf (book.js stripTo) ───
+     Hinged strips nested one inside the next, each a window onto a clone
+     of the page, fold from the fore-edge into the gutter */
+  .strip-shadow {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    opacity: 0;
+    pointer-events: none;
+    background: linear-gradient(90deg, rgba(20, 12, 6, 0.55) 0, rgba(20, 12, 6, 0.30) 22%, rgba(20, 12, 6, 0.10) 55%, transparent 85%);
+  }
+
+  .strip-leaf {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    transform-style: preserve-3d;
+    pointer-events: none;
+  }
+
+  .strip-leaf[hidden] {
+    display: none;
+  }
+
+  .strip {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    transform-origin: 0 50%;
+    transform-style: preserve-3d;
+  }
+
+  .strip-face {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  .strip-front .page-right {
+    right: auto;
+  }
+
+  .strip-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(180deg, var(--paper-hi), var(--paper-mid) 60%, var(--paper-lo));
+  }
+
+  .strip-back::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url(assets/textures/paper-tooth-128.png) 0 0 / 128px 128px;
+  }
+
+  .strip-back::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(20, 12, 6, 0.22);
+  }
+
+  .face-shade {
+    position: absolute;
+    inset: 0;
+    z-index: 9;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .face-shade-l {
+    background: linear-gradient(90deg, rgb(20, 12, 6), rgba(20, 12, 6, 0));
+  }
+
+  .face-shade-r {
+    background: linear-gradient(90deg, rgba(20, 12, 6, 0), rgb(20, 12, 6));
+  }
+
+  /* Previous: a still copy of the outgoing page, under the landing leaf */
+  .page-right.page-cover {
+    z-index: 2;
   }
 
   /* The left page, folded into the single mobile column above the right
@@ -2740,143 +3054,127 @@ body {
     height: 106px;
   }
 
-  .page-right {
-    transform: none; /* Remove 3D tilt */
-    box-shadow: none;
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    position: relative;
-  }
-
-  /* Scroll-fade indicator. background is reset here because .page::after (the paper-tooth tile on the same pseudo slot) would otherwise paint over the fade. */
-  .page-right::after {
-    content: '';
-    position: sticky;
-    bottom: -40px; /* sticky insets by the container's padding-bottom; cancel it so the fade sits on the sheet's foot */
-    left: 0;
-    right: 0;
-    display: block;
-    height: 64px;
-    margin: 0 -20px; /* span the sheet's padding box (.page-right side padding) */
-    /* The sheet's own paper, masked to fade upward, so no edge of the band shows */
-    background: linear-gradient(90deg, var(--paper-edge) 0%, var(--paper-mid) 40%, var(--paper-hi) 100%);
-    -webkit-mask-image: linear-gradient(to top, #000 32%, transparent);
-    mask-image: linear-gradient(to top, #000 32%, transparent);
-    pointer-events: none;
-    z-index: 5;
-    flex-shrink: 0;
-  }
-
-  /* No fade on a sheet that fits: a sticky fade on a short page sits in
-     flow under the copy and paints as a grey band. At the end of a long
-     sheet the fade only goes transparent, because removing it would
-     shorten the scroll and jump the copy. (book.js markOverflow sets the
-     classes.) */
-  .page-right:not(.is-overflowing)::after {
-    display: none;
-  }
-
-  .page-right.is-at-end::after {
-    opacity: 0;
-  }
-
-  .book-spine-center {
-    display: none;
-  }
-
-  .page-edge {
-    display: none;
-  }
-
-  /* No page-curl affordance on mobile — the fixed prev/next bar is the
-     nav, and the curl ghosted over the last line of body text. */
-  .page-curl {
-    display: none;
-  }
-
-  /* Nav shelf button positioning */
-  .nav-shelf-btn {
-    position: fixed;
-    top: calc(12px + env(safe-area-inset-top, 0));
-    left: 16px;
-    z-index: 100;
-    background: rgba(10, 9, 8, 0.9);
-    backdrop-filter: blur(8px);
-  }
-
-  /* The sheet: fixed page sizes (no height-keyed scale on a phone) and
-     the spec's sheet padding */
-  .book-container {
-    --t-xs: 13px;
-    --t-sm: 14.5px;
-    --t-md: 16.5px;
-    --t-lg: 19px;
-    --t-xl: 22px;
-    --t-2xl: 30px;
-    --t-3xl: 38px;
-    --t-num: 64px;
-  }
-
-  .page-right {
-    padding: 22px 20px 40px; /* 40px foot keeps the last line clear of the folio */
-  }
-
-  /* FIX: Allow spread-right content to flow and trigger page scroll.
-     Desktop uses overflow:hidden + height:100% to clip within the fixed book,
-     but on mobile we need content to grow so .page-right can scroll it. */
+  /* Content flows at its own height inside the scroller (the desktop
+     clips each spread to the fixed page) */
   .spread-left,
   .spread-right {
     height: auto;
     overflow: visible;
-  }
-
-  .spread-right {
-    overflow: visible;
     min-height: 0;
   }
 
-  /* FIX: page-content must also allow content to grow on mobile
-     so that .page-right overflow-y:auto can produce a scrollbar. */
-  .page-content {
-    overflow: visible;
-    flex: none;       /* Don't constrain to parent flex height */
-    min-height: 0;
+  /* ─── Chrome: text only, on the room, 44px targets ─── */
+  .collapsed-nav {
+    top: env(safe-area-inset-top, 0px);
+    left: 6px;
+    height: var(--chrome-top, 52px);
+    display: flex;
+    align-items: center;
+    padding: 0;
   }
 
-  /* Ensure page numbers don't overlap with shelf button */
-  .page-number {
-    bottom: 8px;
-    z-index: 6; /* above the scroll fade, which is opaque at the foot */
-  }
-
-  .page-number-right {
-    right: 20px;
-  }
-
-  /* Fixed page navigation at bottom of screen */
-  .page-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    justify-content: center;
-    margin-top: 0;
-    z-index: 100;
-    background: rgba(10, 9, 8, 0.9);
-    backdrop-filter: blur(8px);
-    padding: 12px 0;
-    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0));
+  .nav-shelf-btn,
+  .page-nav-btn {
+    width: auto;
+    min-width: 44px;
+    height: 44px;
+    padding: 0 10px;
+    border: 0;
     border-radius: 0;
+    background: none;
+    font-family: var(--font-sc);
+    font-size: 14.5px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: none;
+    color: var(--text-secondary);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .nav-shelf-btn svg,
+  .page-nav-btn svg {
+    display: none;
+  }
+
+  .nav-shelf-btn::before {
+    content: '\2039\00a0';
+  }
+
+  .page-prev::before {
+    content: '\2039\00a0Previous';
+  }
+
+  .page-next::before {
+    content: 'Next\00a0\203A';
+  }
+
+  .page-nav-btn:hover:not(:disabled),
+  .page-nav-btn:active:not(:disabled) {
+    transform: none;
+  }
+
+  .page-nav {
+    position: relative;
+    flex: none;
+    height: calc(var(--chrome-bot) + env(safe-area-inset-bottom, 0px));
+    margin: 0;
+    padding: 0 6px env(safe-area-inset-bottom, 0px);
+    gap: 4px;
+    justify-content: center;
+    background: none;
+    border-radius: 0;
+  }
+
+  .page-indicator {
+    font-family: var(--font-sc);
+    font-size: 14.5px;
+    letter-spacing: 0.1em;
+    gap: 0.35em;
+    padding: 0 4px;
+  }
+
+  .page-indicator::before,
+  .page-indicator::after {
+    content: '\00b7';
+    color: var(--text-tertiary);
+    padding: 0 0.3em;
+  }
+}
+
+/* The narrowest phones: the address must stay one unbroken line in the
+   296px measure (at 22px it needs 304) */
+@media (max-width: 900px) {
+  .contact-email,
+  .currently-label {
+    hyphens: manual;
+  }
+}
+
+@media (max-width: 380px) {
+  .contact-email {
+    font-size: 20.5px;
+  }
+
+  /* the chapter numeral takes its own line (as on the desktop verso), so
+     a 30px company name such as "Independent Consulting" stays one line */
+  .mobile-left-inline.chapter-divider::before {
+    flex: 0 0 100%;
+    margin: 0 0 2px;
+  }
+
+  .mobile-left-inline.chapter-divider > .chapter-company {
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 900px) and (prefers-reduced-motion: reduce) {
+  .stack-cover {
+    transition: none;
   }
 }
 
 @media (max-width: 600px) {
-  .collapsed-nav {
-    padding: 0 var(--space-md);
-  }
-
   .nav-books {
     gap: var(--space-sm);
   }
