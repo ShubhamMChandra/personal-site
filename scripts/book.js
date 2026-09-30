@@ -557,8 +557,8 @@ class Book {
   }
 
   // ─── Mobile: direction-aware slide + fade (single visible page) ──
-  // 280 ms out + 320 ms in: the same 600 ms the desktop leaf takes, so a
-  // phone turn reads as a page, not a flick.
+  // 280 ms out + 320 ms in: 600 ms, so a phone turn reads as a page, not
+  // a flick. The desktop leaf takes a little longer (--duration-turn).
   async slideTo(direction) {
     const isNext = direction === 'next'
     const to = isNext ? this.currentPage + 1 : this.currentPage - 1
