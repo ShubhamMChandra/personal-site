@@ -25,6 +25,9 @@ class Book {
     this.leftPageEl = document.querySelector('.page-left')
     this.rightPageEl = document.querySelector('.page-right')
 
+    // Phone: the text scrolls in .page-scroller, under a still page
+    this.pageScroller = document.querySelector('.page-right .page-scroller')
+
     // Page curl elements for click-to-turn
     this.leftPageCurl = document.querySelector('.page-left .page-curl')
     this.rightPageCurl = document.querySelector('.page-right .page-curl')
@@ -75,9 +78,9 @@ class Book {
   bindEvents() {
     // Overflow state of each page: re-read when the reader scrolls a page
     // or the window resizes (the page height, and so the fit, changes).
-    // On phones the sheet itself (.page-right) is the scroller, so it is
-    // tracked too.
-    ;[this.leftPage, this.rightPage, this.rightPageEl].forEach((el) => {
+    // The phone's scroller needs no marks: its fade is a still mask on
+    // .page-window, clear of the text at the top and at the end.
+    ;[this.leftPage, this.rightPage].forEach((el) => {
       if (el) el.addEventListener('scroll', () => this.markScrollEnd(el), { passive: true })
     })
     window.addEventListener('resize', () => this.markOverflow(), { passive: true })
@@ -262,7 +265,7 @@ class Book {
   // under the leaf, so the reset is never seen. Resize does not come here,
   // so the reader keeps their place when the URL bar or orientation changes.
   resetScroll() {
-    ;[this.leftPage, this.rightPage, this.rightPageEl].forEach((el) => {
+    ;[this.leftPage, this.rightPage, this.pageScroller].forEach((el) => {
       if (!el || el.scrollTop === 0) return
       const overflowY = getComputedStyle(el).overflowY
       if (overflowY !== 'auto' && overflowY !== 'scroll') {
@@ -281,10 +284,20 @@ class Book {
     const leftPageNum = (this.currentPage * 2) + 1
     const rightPageNum = leftPageNum + 1
 
-    // Remove existing furniture
-    document.querySelectorAll('.page-number, .running-header').forEach(el => el.remove())
+    // Remove this spread's furniture. Only the real pages': a phone turn's
+    // leaf carries copies of the outgoing page, folio and all.
+    ;[this.leftPageEl, this.rightPageEl].forEach((pageEl) => {
+      pageEl.querySelectorAll(':scope > .page-number, :scope > .running-header')
+        .forEach(el => el.remove())
+    })
 
     const spread = this.pages[this.currentPage]
+
+    // Phone: the fore-edge stack thins as the reader goes through the book
+    if (this.openBookEl) {
+      const t = this.pages.length > 1 ? this.currentPage / (this.pages.length - 1) : 0
+      this.openBookEl.style.setProperty('--t', t.toFixed(3))
+    }
 
     // The title-page / contents spread is display matter: like a printed
     // book it carries no running heads and blind folios (the title page
@@ -294,22 +307,22 @@ class Book {
       return
     }
 
+    // Verso running head: the book's title (the template's data-title).
+    // Recto running head: the chapter, i.e. the first [data-running-head]
+    // on this spread's left page; falls back to the book's title.
+    const template = document.querySelector(`#${this.currentBook}-book`)
+    const bookTitle = (template && template.dataset.title) || this.formatBookTitle(this.currentBook)
+    const headEl = spread && spread.querySelector('.spread-left [data-running-head]')
+    const chapterTitle = headEl ? headEl.textContent.replace(/\s+/g, ' ').trim() : bookTitle
+
+    const place = (pageEl, className, text) => {
+      const el = document.createElement('span')
+      el.className = className
+      el.textContent = text
+      pageEl.appendChild(el)
+    }
+
     if (!isMobile) {
-      // Verso running head: the book's title (the template's data-title).
-      // Recto running head: the chapter, i.e. the first [data-running-head]
-      // on this spread's left page; falls back to the book's title.
-      const template = document.querySelector(`#${this.currentBook}-book`)
-      const bookTitle = (template && template.dataset.title) || this.formatBookTitle(this.currentBook)
-      const headEl = spread && spread.querySelector('.spread-left [data-running-head]')
-      const chapterTitle = headEl ? headEl.textContent.replace(/\s+/g, ' ').trim() : bookTitle
-
-      const place = (pageEl, className, text) => {
-        const el = document.createElement('span')
-        el.className = className
-        el.textContent = text
-        pageEl.appendChild(el)
-      }
-
       // Folios sit at the foot, on the outer edge of each page
       place(this.leftPageEl, 'running-header running-header-left', bookTitle)
       place(this.leftPageEl, 'page-number page-number-left', leftPageNum)
@@ -323,13 +336,12 @@ class Book {
       place(this.rightPageEl, 'running-header running-header-right', chapterTitle)
       place(this.rightPageEl, 'page-number page-number-right', rightPageNum)
     } else {
-      // Mobile: single page number
-      const pageNum = document.createElement('span')
-      pageNum.className = 'page-number page-number-right'
-      // The sheet is the folded spread, so it carries the verso's folio
-      // (the number the Contents page cites)
-      pageNum.textContent = leftPageNum
-      this.rightPageEl.appendChild(pageNum)
+      // Phone: one page, with the chapter's running head and one folio,
+      // pinned to the page outside the scroller. The sheet is the folded
+      // spread, so it carries the verso's folio (the number the Contents
+      // page cites).
+      place(this.rightPageEl, 'running-header running-header-right', chapterTitle)
+      place(this.rightPageEl, 'page-number page-number-right', leftPageNum)
     }
 
     this.markOverflow()
@@ -337,14 +349,10 @@ class Book {
 
   // A page that cannot hold its copy scrolls. Mark it so CSS can fade the
   // cut line into the foot margin (until the reader reaches the end)
-  // instead of slicing it at the scroll edge. The phone sheet (.page-right)
-  // is marked too, so its scroll fade shows only while there is more below.
+  // instead of slicing it at the scroll edge.
   markOverflow() {
-    ;[this.leftPage, this.rightPage, this.rightPageEl].forEach((el) => {
+    ;[this.leftPage, this.rightPage].forEach((el) => {
       if (!el) return
-      // Measure without the fade: the phone sheet's ::after is in flow, so
-      // a class left over from a longer sheet would keep itself true
-      el.classList.remove('is-overflowing')
       el.classList.toggle('is-overflowing', el.scrollHeight > el.clientHeight + 1)
       this.markScrollEnd(el)
     })

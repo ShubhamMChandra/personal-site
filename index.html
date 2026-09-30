@@ -398,11 +398,22 @@
         <!-- Center Spine -->
         <div class="book-spine-center"></div>
 
-        <!-- Right Page -->
-        <div class="page page-right">
-          <div class="page-content" data-page="right"></div>
-          <div class="page-curl"></div>
+        <!-- Right Page. The slot and the window/scroller pair are phone-only
+             boxes (display: contents on the desktop): on a phone only the
+             scroller moves, under the pinned paper, head and folio -->
+        <div class="page-slot">
+          <div class="page page-right">
+            <div class="page-window"><div class="page-scroller">
+              <div class="page-content" data-page="right"></div>
+            </div></div>
+            <div class="page-curl"></div>
+          </div>
+          <div class="strip-shadow" aria-hidden="true"></div>
+          <div class="strip-leaf" aria-hidden="true" inert hidden></div>
         </div>
+
+        <!-- Phone only: the fore-edge of the unread pages -->
+        <div class="fore-edge" aria-hidden="true"><div class="stack-cover"></div></div>
 
         <!-- Dynamic shadow overlays swept across the static halves during a turn -->
         <div class="page-shadow page-shadow-left" aria-hidden="true"></div>
