@@ -33,6 +33,12 @@ class Book {
     this.stripShadow = document.querySelector('.strip-shadow')
     this.activeStrip = null
 
+    // The phone's one peek: never on a deep-link boot (the reader came
+    // for a page, not a lesson), never twice in a visit
+    this.peeked = /^#(work|about|contact|references|colophon)$/.test(location.hash)
+    this.peekTimer = null
+    this.peeking = false
+
     // Page curl elements for click-to-turn
     this.leftPageCurl = document.querySelector('.page-left .page-curl')
     this.rightPageCurl = document.querySelector('.page-right .page-curl')
@@ -125,9 +131,18 @@ class Book {
       })
     }
 
+    // Any touch, click, scroll or key ends the phone's peek at rest
+    if (this.bookView) {
+      this.bookView.addEventListener('pointerdown', () => this.cancelPeek(), { capture: true })
+    }
+    if (this.pageScroller) {
+      this.pageScroller.addEventListener('scroll', () => this.cancelPeek(), { passive: true })
+    }
+
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
       if (!this.bookView.classList.contains('is-visible')) return
+      this.cancelPeek()
 
       if (e.key === 'ArrowLeft') {
         this.prevPage()
@@ -193,6 +208,7 @@ class Book {
     this.bookView.classList.add('is-visible')
     this.bookView.setAttribute('aria-hidden', 'false')
     this.bookView.dataset.activeBook = bookId
+    this.schedulePeek()
   }
 
   closeBook() {
@@ -201,6 +217,7 @@ class Book {
     this.bookView.setAttribute('aria-hidden', 'true')
     delete this.bookView.dataset.activeBook
     // Reset any in-flight turn so the next open starts clean
+    this.cancelPeek()
     this.finishStrip()
     if (this.turnLeaf) {
       this.turnLeaf.getAnimations().forEach((a) => a.cancel())
@@ -452,12 +469,14 @@ class Book {
   // spread instead of stacking or dropping turns.
 
   prevPage() {
+    this.cancelPeek()
     if (this.targetPage <= 0) return
     this.targetPage--
     this.runChase()
   }
 
   nextPage() {
+    this.cancelPeek()
     if (this.targetPage >= this.pages.length - 1) return
     this.targetPage++
     this.runChase()
@@ -612,6 +631,8 @@ class Book {
   // lifts from the fore-edge and folds into the gutter. Only transform
   // and opacity animate. Recipe: mobilepage/final/IMPLEMENT.md §4.
   async phoneTurn(to) {
+    this.peeked = true
+    this.cancelPeek()
     if (this.reduceMotion) return this.fadeTo(to)
     try {
       await this.stripTo(to)
@@ -730,34 +751,10 @@ class Book {
   // the root by 0.055 sin(pi t), so the sheet leaves flat, bows in flight
   // and lands flat.
   animateLeaf(strips, dir) {
-    const DUR = 600
     const LEAD = 0.055
-    const N = 28
-    const n = strips.length
-    const world = (i, t) => 180 * Math.pow(Math.min(1, t + i * LEAD * Math.sin(Math.PI * t)), 1.75)
-    // Shade grows with the angle. The left gradient carries the strip's
-    // root angle and the right its tip, so tone is continuous at seams.
-    const shade = (a) => (0.26 * Math.sin(Math.min(a, 90) * Math.PI / 180)).toFixed(3)
-    const opts = { duration: DUR, easing: 'linear', fill: 'forwards' }
-    const anims = []
-
-    for (let i = 0; i < n; i++) {
-      const kf = []
-      const kfL = []
-      const kfR = []
-      for (let k = 0; k <= N; k++) {
-        const offset = k / N
-        const p = dir > 0 ? offset : 1 - offset
-        const w = world(i, p)
-        const wPrev = i ? world(i - 1, p) : 0
-        kf.push({ transform: `rotateY(${(wPrev - w).toFixed(3)}deg)`, offset })
-        kfL.push({ opacity: shade(w), offset })
-        kfR.push({ opacity: shade(world(i + 1, p)), offset })
-      }
-      anims.push(strips[i].strip.animate(kf, opts))
-      anims.push(strips[i].shadeL.animate(kfL, opts))
-      anims.push(strips[i].shadeR.animate(kfR, opts))
-    }
+    const turn = (i, t) => 180 * Math.pow(Math.min(1, t + i * LEAD * Math.sin(Math.PI * t)), 1.75)
+    const opts = { duration: 600, easing: 'linear', fill: 'forwards' }
+    const anims = this.animateStrips(strips, (i, t) => turn(i, dir > 0 ? t : 1 - t), opts)
 
     // the shadow the lifted leaf throws on the page beneath
     const under = dir > 0
@@ -765,6 +762,79 @@ class Book {
       : [{ opacity: 0 }, { opacity: 0, offset: 0.15 }, { opacity: 0.5, offset: 0.28 }, { opacity: 1, offset: 0.45 }, { opacity: 0.9, offset: 0.65 }, { opacity: 0 }]
     anims.push(this.stripShadow.animate(under, opts))
     return anims
+  }
+
+  // world(i, t): strip i's angle off the page, in degrees, at progress t.
+  // Each strip rotates by its angle less its parent's.
+  animateStrips(strips, world, opts) {
+    const N = 28
+    // Shade grows with the angle. The left gradient carries the strip's
+    // root angle and the right its tip, so tone is continuous at seams.
+    const shade = (a) => (0.26 * Math.sin(Math.min(a, 90) * Math.PI / 180)).toFixed(3)
+    const anims = []
+    strips.forEach((st, i) => {
+      const kf = []
+      const kfL = []
+      const kfR = []
+      for (let k = 0; k <= N; k++) {
+        const offset = k / N
+        const w = world(i, offset)
+        const wPrev = i ? world(i - 1, offset) : 0
+        kf.push({ transform: `rotateY(${(wPrev - w).toFixed(3)}deg)`, offset })
+        kfL.push({ opacity: shade(w), offset })
+        kfR.push({ opacity: shade(world(i + 1, offset)), offset })
+      }
+      anims.push(st.strip.animate(kf, opts))
+      anims.push(st.shadeL.animate(kfL, opts))
+      anims.push(st.shadeR.animate(kfR, opts))
+    })
+    return anims
+  }
+
+  // ─── Phone: one peek ────────────────────────────────────────────
+  // The first time a book opens (not from a deep link), the page's
+  // fore-edge corner lifts a few degrees and settles: the page says it
+  // turns. Once per visit; any touch, key or scroll ends it at rest.
+  schedulePeek() {
+    this.cancelPeek()
+    if (this.peeked || this.reduceMotion || !this.isPhone() || this.pages.length < 2) return
+    // the book fades in over 300ms; the peek follows 500ms after that
+    this.peekTimer = setTimeout(() => this.peek(), 800)
+  }
+
+  peek() {
+    this.peekTimer = null
+    if (this.peeked || this.chasing || this.activeStrip || this.currentPage !== 0 ||
+        !this.bookView.classList.contains('is-visible')) return
+    this.peeked = true
+    const strips = this.buildLeaf(this.rightPageEl) // the real page stays beneath
+    const opts = { duration: 640, easing: 'ease-in-out', fill: 'forwards' }
+    // root 8deg, fore-edge corner ~24deg
+    const lift = (i, t) => (8 + 5.4 * i) * Math.sin(Math.PI * t)
+    const anims = this.animateStrips(strips, lift, opts)
+    anims.push(this.stripShadow.animate([{ opacity: 0 }, { opacity: 0.55, offset: 0.5 }, { opacity: 0 }], opts))
+
+    let done = false
+    const finish = () => {
+      if (done) return
+      done = true
+      anims.forEach((a) => a.cancel())
+      this.stripLeaf.hidden = true
+      this.stripLeaf.replaceChildren()
+      this.activeStrip = null
+      this.peeking = false
+    }
+    this.peeking = true
+    this.activeStrip = { finish }
+    Promise.all(anims.map((a) => a.finished)).then(finish, finish)
+  }
+
+  cancelPeek() {
+    if (this.peekTimer) {
+      clearTimeout(this.peekTimer)
+      this.peekTimer = null
+    }
+    if (this.peeking) this.finishStrip()
   }
 
   // Phone, reduced motion: the ink crossfades on the still page; no leaf
@@ -800,6 +870,7 @@ class Book {
   }
 
   goToPage(pageNum) {
+    this.cancelPeek()
     if (pageNum < 0 || pageNum >= this.pages.length) return
     // A phone turns to a Contents entry as one leaf
     if (this.isPhone() && pageNum !== this.currentPage) {
