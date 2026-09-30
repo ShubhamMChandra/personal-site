@@ -365,12 +365,15 @@ class Book {
     return titles[bookId] || bookId
   }
 
+  // The indicator counts pages, as the folios do, not spreads: the spread
+  // printed as folios 3 and 4 reads "3–4 of 12". The phone sheet is the
+  // same spread folded into one column, so it reads the same.
   updatePageIndicator() {
-    const total = this.pages.length || 1
-    const current = this.currentPage + 1
+    const total = (this.pages.length || 1) * 2
+    const verso = (this.currentPage * 2) + 1
 
     if (this.currentPageEl) {
-      this.currentPageEl.textContent = current
+      this.currentPageEl.textContent = `${verso}–${verso + 1}`
     }
     if (this.totalPagesEl) {
       this.totalPagesEl.textContent = total
