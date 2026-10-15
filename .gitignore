@@ -9,3 +9,12 @@ backstop_data/html_report/
 backstop_data/ci_report/
 .percy/
 percy-logs/
+
+# Personal design notes and photos stay on this machine; the repo is public
+design/direction/in-his-words.md
+design/direction/STATE.md
+design/direction/RECAP.md
+design/direction/triads.md
+design/direction/watch.jpg
+design/direction/refs/
+design/moodboard/images/
