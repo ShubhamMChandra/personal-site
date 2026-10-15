@@ -21,6 +21,7 @@ npx serve -p 3847
 | Contact page/links | `npm run audit:contact` |
 | References/testimonials | `npm run audit:references` |
 | Global CSS (fonts, colors) | `npm run audit:all` |
+| Design spot-checks (cursor, tooltip, scroll-fade, chapters) | `npm run audit:design-verify` |
 | Mobile layout | `npm run audit:mobile` |
 | Tablet layout | `npm run audit:tablet` |
 | One book at ALL sizes | `npm run audit:responsive work` |
@@ -82,6 +83,7 @@ All screenshots go to `./audit-screenshots/`
 | `audit:tablet` | `tablet-shelf.png`, `tablet-work.png`, etc. |
 | `audit:responsive` | `responsive-{book}-desktop.png`, `-tablet.png`, `-mobile.png` |
 | `audit:all` | `all-shelf.png`, `all-work.png`, etc. |
+| `audit:design-verify` | `verify-01-initial.png` … `verify-09-work-spread3.png` |
 
 ---
 
