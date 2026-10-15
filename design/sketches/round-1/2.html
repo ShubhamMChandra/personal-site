@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sketch 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap">
+<style>
+/* layout: a page set over a field of warm light far larger than the screen; drag sideways to look around */
+:root {
+  --ground: #110d12;
+  --veil: 28, 21, 25;
+  --ink: #f1e8da;
+  --ink-soft: #b4a897;
+  --amber: #f0b04f;
+  --pencil: #e2d8c8;
+  --font-ui: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-text: "Source Serif 4", Georgia, "Times New Roman", serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { background: var(--ground); touch-action: pan-y; }
+body {
+  margin: 0; background: var(--ground); color: var(--ink); font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased; touch-action: pan-y;
+}
+body.dragging { cursor: grabbing; user-select: none; -webkit-user-select: none; }
+canvas#field { position: fixed; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; }
+.wrap { position: relative; z-index: 2; padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px)); }
+.hero { min-height: 64svh; display: flex; flex-direction: column; justify-content: space-between; gap: 2rem; padding-block: calc(26px + env(safe-area-inset-top, 0px)) 2.2rem; text-shadow: 0 1px 14px rgba(var(--veil), .85); }
+.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+.name { margin: 0; font-weight: 600; font-size: clamp(1.7rem, 1.25rem + 1.8vw, 2.4rem); letter-spacing: -.012em; line-height: 1.05; }
+.place { margin: .35rem 0 0; color: var(--ink-soft); font-size: .95rem; }
+.back { font-size: .8rem; color: var(--ink-soft); text-decoration: none; padding: .2rem 0; }
+.back:hover, .back:focus-visible { color: var(--ink); }
+.lead { margin: 0; max-width: 20ch; font-family: var(--font-text); font-weight: 500; font-size: clamp(1.55rem, 1.1rem + 2.2vw, 2.6rem); line-height: 1.2; letter-spacing: -.005em; text-wrap: balance; }
+.note { margin: 0; display: flex; align-items: center; gap: .5rem; font-style: italic; font-size: .85rem; color: var(--pencil); opacity: .8; }
+.note svg { width: 46px; height: 22px; overflow: visible; }
+.note path { fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; filter: url(#rough); }
+.content { position: relative; z-index: 2; padding-block: 5rem calc(5rem + env(safe-area-inset-bottom, 0px)); background: linear-gradient(to bottom, rgba(var(--veil), 0), rgba(var(--veil), .62) 9rem, rgba(var(--veil), .72)); }
+.inner { max-width: 35rem; margin-inline: auto; display: grid; gap: 3.2rem; }
+.prose { display: grid; gap: 1.15em; font-family: var(--font-text); font-size: 1.12rem; line-height: 1.66; }
+.prose p { margin: 0; }
+h2 { margin: 0 0 1rem; font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.roles { list-style: none; margin: 0; padding: 0; display: grid; gap: .85rem; }
+.roles li { display: grid; grid-template-columns: 1fr auto; gap: .1rem 1rem; align-items: baseline; }
+.roles .org { font-weight: 600; font-size: 1.02rem; }
+.roles .years { color: var(--ink-soft); font-size: .9rem; font-variant-numeric: tabular-nums; }
+.roles .what { grid-column: 1 / -1; color: var(--ink-soft); font-size: .92rem; }
+footer { display: flex; flex-wrap: wrap; gap: .6rem 1.6rem; font-size: 1rem; }
+footer a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--amber); text-decoration-thickness: 1.5px; text-underline-offset: .28em; }
+footer a:hover, footer a:focus-visible { color: var(--amber); }
+a:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; border-radius: 2px; }
+.grain { position: fixed; inset: -50%; z-index: 5; pointer-events: none; opacity: .45; mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+@media (max-width: 520px) { .prose { font-size: 1.07rem; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <filter id="rough" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="1.8" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+<canvas id="field" aria-hidden="true"></canvas>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="top">
+      <header>
+        <h1 class="name">Shubham Chandra</h1>
+        <p class="place">Chicago</p>
+      </header>
+      <a class="back" href="index.html">All sketches</a>
+    </div>
+    <p class="lead">I do better with things that take a little time to make sense of.</p>
+  </section>
+</div>
+
+<div class="content wrap">
+  <div class="inner">
+    <main class="prose">
+      <p>I’m drawn to interesting textures, small restaurants that don’t advertise themselves, and travel that doesn’t come with a gift shop. I like being in places that aren’t trying to perform for you. Street level feels honest: you’re walking, noticing, adjusting. In Kerala, that’s a fabric market, not a landmark.</p>
+      <p>Back home, I pay attention to craft. Clothes are an easy example: weave, weight, hand feel, drape. I’m not interested in labels as a proxy for taste. I’m interested in the work. Cooking is the same impulse. Start with something solid, then tinker until it tastes like mine.</p>
+      <p>I read a lot of sci-fi, especially the kind that starts fun and ends up making you stare at the ceiling for ten minutes. Consciousness, time, huge structures, weird rules.</p>
+    </main>
+    <section aria-labelledby="before">
+      <h2 id="before">Before</h2>
+      <ul class="roles">
+        <li><span class="org">Garner Health</span><span class="years">2021–22</span><span class="what">Head of Business Operations</span></li>
+        <li><span class="org">NJOY</span><span class="years">2018–21</span><span class="what">Head of Strategy, Office of the CEO</span></li>
+        <li><span class="org">L.E.K. Consulting</span><span class="years">2016–18</span><span class="what">Associate</span></li>
+      </ul>
+    </section>
+    <footer>
+      <a href="#">Email</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">Curriculum vitae</a>
+    </footer>
+  </div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+
+<script>
+(() => {
+  const cv = document.getElementById('field')
+  const ctx = cv.getContext('2d', { alpha: false })
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const coarse = matchMedia('(pointer: coarse)').matches
+
+  const S = 2600
+  let W = 0, H = 0, dpr = 1
+  function resize () {
+    dpr = Math.min(window.devicePixelRatio || 1, 2)
+    W = innerWidth; H = innerHeight
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr)
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+  }
+  resize()
+  addEventListener('resize', resize)
+
+  // seeded, so the field is the same every visit
+  let seed = 1996
+  const R = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296 }
+  const gauss = () => { let u = 0, v = 0; while (!u) u = R(); while (!v) v = R(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v) }
+  const wrap = v => ((v % S) + S) % S
+
+  // three hand-drawn rivers the light gathers along
+  const rivers = [
+    [[0, 900], [700, 560], [1500, 1320], [2600, 1000]],
+    [[200, 2400], [900, 1700], [1640, 2140], [2420, 1480]],
+    [[1300, 0], [1080, 720], [1940, 880], [2120, 2600]]
+  ]
+  const bez = (p, t) => { const u = 1 - t; return [u * u * u * p[0][0] + 3 * u * u * t * p[1][0] + 3 * u * t * t * p[2][0] + t * t * t * p[3][0], u * u * u * p[0][1] + 3 * u * u * t * p[1][1] + 3 * u * t * t * p[2][1] + t * t * t * p[3][1]] }
+  const tints = [[255, 241, 222], [255, 212, 148], [255, 172, 92], [255, 226, 196], [186, 206, 255]]
+  const weights = [0.42, 0.26, 0.14, 0.13, 0.05]
+  const pickTint = () => { let r = R(), i = 0; while (i < weights.length - 1 && r > weights[i]) { r -= weights[i]; i++ } return i }
+  function layer (n, f, rMin, rMax, aMin, aMax, share, spread) {
+    const pts = []
+    for (let i = 0; i < n; i++) {
+      let x, y
+      if (R() < share) { const [bx, by] = bez(rivers[i % rivers.length], R()); x = bx + gauss() * spread; y = by + gauss() * spread } else { x = R() * S; y = R() * S }
+      pts.push({ x: wrap(x), y: wrap(y), r: rMin + (rMax - rMin) * Math.pow(R(), 2.2), a: aMin + (aMax - aMin) * R(), tint: pickTint(), ph: R() * 6.283, sp: 0.4 + R() * 1.4, boost: 0 })
+    }
+    return { pts, f }
+  }
+  const far = layer(440, 0.35, 0.5, 1.2, 0.26, 0.62, 0.55, 170)
+  const mid = layer(440, 0.6, 0.7, 2.3, 0.5, 1.0, 0.76, 82)
+  const near = layer(42, 1.0, 6, 22, 0.08, 0.22, 0.66, 140)
+  const here = { x: 1560, y: 1080 }
+  for (let i = 0; i < 9; i++) mid.pts.push({ x: here.x + gauss() * 15, y: here.y + gauss() * 11, r: 1.3 + R() * 1.6, a: 0.95, tint: 1, ph: R() * 6.283, sp: 0.9, boost: 0 })
+  const circle = []
+  for (let i = 0; i <= 72; i++) { const t = 0.5 + (i / 72) * Math.PI * 2.16; const w = 1 + 0.05 * Math.sin(t * 3.3) + 0.025 * Math.sin(t * 7.1); circle.push([Math.cos(t) * 62 * w, Math.sin(t) * 42 * w + i * 0.06]) }
+
+  const sprites = tints.map(([r, g, b]) => {
+    const c = document.createElement('canvas'); c.width = c.height = 64
+    const g2 = c.getContext('2d'), gr = g2.createRadialGradient(32, 32, 0, 32, 32, 32)
+    gr.addColorStop(0, `rgba(${r},${g},${b},1)`); gr.addColorStop(0.16, `rgba(${r},${g},${b},.85)`); gr.addColorStop(0.42, `rgba(${r},${g},${b},.22)`); gr.addColorStop(1, `rgba(${r},${g},${b},0)`)
+    g2.fillStyle = gr; g2.fillRect(0, 0, 64, 64); return c
+  })
+
+  // soft colour, drawn once into a small tile and scaled up so it stays soft
+  const NS = 520, neb = document.createElement('canvas'); neb.width = neb.height = NS
+  ;(() => {
+    const n = neb.getContext('2d'), k = NS / S
+    const blobs = [[700, 650, 660, [240, 146, 58], 0.52], [1500, 1250, 740, [206, 66, 112], 0.46], [2150, 600, 560, [214, 92, 64], 0.36], [500, 1900, 680, [158, 62, 98], 0.36], [1900, 2100, 600, [246, 188, 84], 0.4], [1100, 1500, 460, [184, 96, 52], 0.34], [2400, 1500, 520, [232, 100, 70], 0.34], [1560, 1080, 300, [255, 206, 120], 0.3]]
+    for (const [bx, by, br, [r, g, b], a] of blobs) {
+      for (const ox of [-S, 0, S]) for (const oy of [-S, 0, S]) {
+        const gx = (bx + ox) * k, gy = (by + oy) * k, rr = br * k
+        const gr = n.createRadialGradient(gx, gy, 0, gx, gy, rr)
+        gr.addColorStop(0, `rgba(${r},${g},${b},${a})`); gr.addColorStop(0.55, `rgba(${r},${g},${b},${a * 0.35})`); gr.addColorStop(1, `rgba(${r},${g},${b},0)`)
+        n.fillStyle = gr; n.fillRect(0, 0, NS, NS)
+      }
+    }
+  })()
+
+  const cam = { x: 980, y: 620 }, vel = { x: 0, y: 0 }
+  const hover = { x: 0, y: 0 }, hoverT = { x: 0, y: 0 }
+  const sparks = []
+  let dragging = false, moved = 0, last = null, pid = null
+
+  const offset = (f, sy) => [(cam.x + hover.x * 60) * (f / 0.6), (cam.y + sy + hover.y * 40) * (f / 0.6)]
+  const toScreen = (p, ox, oy, pad) => {
+    let x = wrap(p.x - ox), y = wrap(p.y - oy)
+    if (x > W + pad) x -= S
+    if (y > H + pad) y -= S
+    return [x, y]
+  }
+
+  function tap (x, y) {
+    const sy = scrollY * 0.18
+    for (const L of [mid, near]) {
+      const [ox, oy] = offset(L.f, sy)
+      for (const p of L.pts) { const [px, py] = toScreen(p, ox, oy, 60); const d = Math.hypot(px - x, py - y); if (d < 170) p.boost = Math.max(p.boost, 0.6 * (1 - d / 170)) }
+    }
+  }
+
+  const isUI = el => el && el.closest && el.closest('a, button')
+  addEventListener('pointerdown', e => {
+    if (isUI(e.target) || e.button > 0) return
+    dragging = true; moved = 0; pid = e.pointerId
+    last = { x: e.clientX, y: e.clientY, t: performance.now() }; vel.x = vel.y = 0
+  })
+  addEventListener('pointermove', e => {
+    if (e.pointerType === 'mouse') { hoverT.x = (e.clientX - W / 2) / W; hoverT.y = (e.clientY - H / 2) / H }
+    if (!dragging || e.pointerId !== pid) return
+    const dx = e.clientX - last.x, dy = e.pointerType === 'mouse' ? e.clientY - last.y : 0
+    moved += Math.abs(dx) + Math.abs(e.clientY - last.y)
+    if (moved > 4) document.body.classList.add('dragging')
+    cam.x -= dx; cam.y -= dy
+    const now = performance.now(), dt = Math.max(8, now - last.t)
+    vel.x = -dx / dt * 16; vel.y = -dy / dt * 16
+    last = { x: e.clientX, y: e.clientY, t: now }
+  })
+  const stop = e => {
+    if (!dragging || e.pointerId !== pid) return
+    dragging = false; document.body.classList.remove('dragging')
+    if (e.type === 'pointerup' && moved < 6) tap(e.clientX, e.clientY)
+    if (reduce || e.type === 'pointercancel') { vel.x = 0; vel.y = 0 }
+  }
+  addEventListener('pointerup', stop)
+  addEventListener('pointercancel', stop)
+
+  function drawLayer (L, now, sy) {
+    const [ox, oy] = offset(L.f, sy)
+    for (const p of L.pts) {
+      const [x, y] = toScreen(p, ox, oy, 60)
+      if (x < -60 || y < -60 || x > W + 60 || y > H + 60) continue
+      const tw = reduce ? 1 : 0.7 + 0.3 * Math.sin(now / 1000 * p.sp + p.ph)
+      const a = Math.min(1, p.a * tw + p.boost)
+      p.boost *= 0.975
+      const s = p.r * 8
+      ctx.globalAlpha = a
+      ctx.drawImage(sprites[p.tint], x - s / 2, y - s / 2, s, s)
+    }
+  }
+
+  let prev = performance.now()
+  function frame (now) {
+    const dt = Math.min(48, now - prev) / 16.67; prev = now
+    if (!dragging && !reduce) {
+      cam.x += vel.x * dt; cam.y += vel.y * dt
+      const decay = Math.pow(0.94, dt); vel.x *= decay; vel.y *= decay
+      cam.x += 0.1 * dt; cam.y += 0.025 * dt
+    }
+    hover.x += (hoverT.x - hover.x) * 0.04 * dt; hover.y += (hoverT.y - hover.y) * 0.04 * dt
+    const sy = scrollY * 0.18
+
+    ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1
+    ctx.fillStyle = '#110d12'; ctx.fillRect(0, 0, W, H)
+    const [nx0, ny0] = offset(0.25, sy), nx = wrap(nx0), ny = wrap(ny0)
+    for (const i of [0, 1]) for (const j of [0, 1]) { const x = -nx + i * S, y = -ny + j * S; if (x < W && y < H && x + S > 0 && y + S > 0) ctx.drawImage(neb, x, y, S, S) }
+
+    ctx.globalCompositeOperation = 'lighter'
+    drawLayer(far, now, sy); drawLayer(mid, now, sy); drawLayer(near, now, sy)
+    for (let i = sparks.length - 1; i >= 0; i--) {
+      const s = sparks[i]; s.x += s.vx * dt; s.y += s.vy * dt; s.vx *= 0.97; s.vy = s.vy * 0.97 - 0.01 * dt; s.life -= 0.012 * dt
+      if (s.life <= 0) { sparks.splice(i, 1); continue }
+      const z = s.r * 9; ctx.globalAlpha = s.life * 0.9; ctx.drawImage(sprites[s.tint], s.x - z / 2, s.y - z / 2, z, z)
+    }
+
+    ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1
+    const [mx, my] = offset(0.6, sy)
+    const [cx, cy] = toScreen(here, mx, my, 120)
+    if (false) {
+      ctx.strokeStyle = 'rgba(226,216,200,.55)'; ctx.lineWidth = 1.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round'
+      ctx.beginPath(); circle.forEach(([px, py], i) => { i ? ctx.lineTo(cx + px, cy + py) : ctx.moveTo(cx + px, cy + py) }); ctx.stroke()
+      ctx.fillStyle = 'rgba(226,216,200,.7)'; ctx.font = 'italic 500 12px "Schibsted Grotesk", Helvetica, Arial, sans-serif'
+      ctx.fillText('this one', cx + 58, cy - 40)
+    }
+    requestAnimationFrame(frame)
+  }
+  requestAnimationFrame(frame)
+})()
+</script>
+</body>
+</html>

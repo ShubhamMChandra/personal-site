@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sketch 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap">
+<style>
+/* a page on a drawing. under the words, someone is drawing a place in ink: streets, blocks, a river.
+   every line is redrawn by hand a few times a second, so it never quite holds still.
+   the place draws itself as you go; windows light as you pass. the words sit where the drawing is faint. */
+:root {
+  --paper: #e6d8be;
+  --ink: #261f19;
+  --ink-soft: #4f443a;
+  --font-ui: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-text: "Source Serif 4", Georgia, "Times New Roman", serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { background: var(--paper); }
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-touch-callout: none;
+}
+#map { position: absolute; inset: 0 auto auto 0; z-index: 0; pointer-events: none; }
+.page {
+  position: relative; z-index: 2;
+  max-width: 33rem;
+  margin-left: max(24px, env(safe-area-inset-left, 0px));
+  margin-right: max(24px, env(safe-area-inset-right, 0px));
+  padding-top: calc(46svh + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px));
+  display: grid; gap: 2.7rem;
+}
+@media (min-width: 900px) {
+  .page { margin-left: 7vw; padding-top: 110px; }
+}
+header { display: grid; gap: .3rem; }
+.name { margin: 0; font-family: var(--font-ui); font-weight: 650; font-size: clamp(1.8rem, 1.3rem + 1.8vw, 2.5rem); letter-spacing: -.014em; line-height: 1.04; }
+.place { margin: 0; font-family: var(--font-ui); color: var(--ink-soft); font-size: .95rem; }
+.roles { margin: 0; padding: 0; list-style: none; display: grid; gap: .7rem; font-family: var(--font-ui); font-size: .92rem; }
+.roles li { display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: baseline; cursor: default; }
+.roles .what { color: var(--ink-soft); }
+.roles .where { font-weight: 600; display: inline-block; }
+.roles .when { color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.prose { display: grid; gap: 1.1em; font-size: 1.12rem; line-height: 1.62; font-optical-sizing: auto; }
+.prose p { margin: 0; }
+.prose .lead { font-size: 1.3rem; line-height: 1.42; font-weight: 500; }
+.prose h2 { margin: 0 0 .2em; font-family: var(--font-ui); font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.links { display: flex; flex-wrap: wrap; gap: .5rem 1.6rem; font-family: var(--font-ui); font-size: .98rem; }
+.links a { color: var(--ink); text-decoration: none; padding: .1em 0; display: inline-block; }
+.links a:focus-visible { outline: none; }
+.back { position: absolute; z-index: 3; right: max(20px, env(safe-area-inset-right, 0px)); top: max(18px, env(safe-area-inset-top, 0px)); font-family: var(--font-ui); font-size: .8rem; color: var(--ink-soft); text-decoration: none; }
+.back:hover, .back:focus-visible { color: var(--ink); }
+.grain { position: fixed; inset: -50%; z-index: 4; pointer-events: none; opacity: .5; mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+</style>
+</head>
+<body>
+<canvas id="map" aria-hidden="true"></canvas>
+<a class="back" href="../index.html">All sketches</a>
+
+<main class="page" id="page">
+  <header>
+    <h1 class="name">Shubham Chandra</h1>
+    <p class="place">Chicago</p>
+  </header>
+
+  <ul class="roles">
+    <li><span><span class="where">Garner Health</span> <span class="what">Head of Business Operations</span></span><span class="when">2021–22</span></li>
+    <li><span><span class="where">NJOY</span> <span class="what">Head of Strategy, Office of the CEO</span></span><span class="when">2018–21</span></li>
+    <li><span><span class="where">L.E.K. Consulting</span> <span class="what">Associate</span></span><span class="when">2016–18</span></li>
+  </ul>
+
+  <section class="prose">
+    <h2>Beyond work</h2>
+    <p class="lead">I do better with things that take a little time to make sense of.</p>
+    <p>I’m drawn to interesting textures, small restaurants that don’t advertise themselves, and travel that doesn’t come with a gift shop. I like being in places that aren’t trying to perform for you. Street level feels honest: you’re walking, noticing, adjusting. In Kerala, that’s a fabric market, not a landmark. Heat, noise, color, bargaining, getting a little turned around and not minding it. I like the feeling of earning your way into a place.</p>
+    <p>Back home, I pay attention to craft. Clothes are an easy example: weave, weight, hand feel, drape. I’m not interested in labels as a proxy for taste. I’m interested in the work. Cooking is the same impulse. Start with something solid, then tinker until it tastes like mine.</p>
+    <p>I read a lot of sci-fi, especially the kind that starts fun and ends up making you stare at the ceiling for ten minutes. Consciousness, time, huge structures, weird rules. I like direct people and sharp conversation. I can be meticulous about what I care about and pretty relaxed about everything else.</p>
+  </section>
+
+  <nav class="links" aria-label="Contact">
+    <a href="#">Email</a>
+    <a href="#">LinkedIn</a>
+    <a href="#">Curriculum vitae</a>
+  </nav>
+</main>
+<div class="grain" aria-hidden="true"></div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const canvas = document.getElementById('map')
+  const ctx = canvas.getContext('2d')
+  const page = document.getElementById('page')
+  const dpr = Math.min(2, window.devicePixelRatio || 1)
+
+  const INK = '38,31,25'
+  const GRAPHITE = '90,80,71'
+  const WASH = { river: '58,99,200', park: '118,168,56', plaza: '240,178,44', brick: '226,74,43', rose: '232,96,150' }
+  const LIGHT = '246,184,52'
+
+  let W = 0, H = 0, vh = 0, quiet = null, hero = null
+  let paths = [], washes = [], windows = [], frames = [], trace = []
+  let dirty = true, lastT = 0, lastScroll = window.scrollY
+  const FRAMES = 3                      // a hand redraws every line; three versions, shown in turn
+  const BOIL = reduce ? 0 : 8           // times a second
+
+  const rnd = (a, b) => a + Math.random() * (b - a)
+  const smooth = t => t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t)
+  const inRect = (x, y, r) => x > r.left && x < r.right && y > r.top && y < r.bottom
+  const jit = (n, amp) => Array.from({ length: FRAMES }, () => Array.from({ length: n }, () => [rnd(-amp, amp), rnd(-amp, amp)]))
+
+  // a line as the hand draws it: points, width, ink, and three wobbles
+  function line (pts, o = {}) {
+    const p = { pts, w: o.w || 1.5, col: o.col || INK, alpha: o.alpha == null ? .86 : o.alpha, p: reduce ? 1 : 0, delay: o.delay || 0, speed: o.speed || 2.4, kind: o.kind || 'street', closed: !!o.closed, jit: jit(pts.length + (o.closed ? 1 : 0), o.amp == null ? 1.1 : o.amp) }
+    if (p.closed) p.pts = [...pts, pts[0]]
+    let L = 0; p.cum = [0]
+    for (let i = 1; i < p.pts.length; i++) { L += Math.hypot(p.pts[i][0] - p.pts[i - 1][0], p.pts[i][1] - p.pts[i - 1][1]); p.cum.push(L) }
+    p.len = L
+    p.minY = Math.min(...p.pts.map(q => q[1])); p.maxY = Math.max(...p.pts.map(q => q[1]))
+    p.minX = Math.min(...p.pts.map(q => q[0])); p.maxX = Math.max(...p.pts.map(q => q[0]))
+    return p
+  }
+
+  function layout () {
+    W = document.documentElement.clientWidth
+    H = Math.max(document.documentElement.scrollHeight, window.innerHeight)
+    vh = window.innerHeight
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr)
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px'
+    const r0 = page.querySelector('header').getBoundingClientRect(), r1 = page.querySelector('nav').getBoundingClientRect()
+    const r = page.getBoundingClientRect(), sy = window.scrollY
+    quiet = { left: r.left - 22, right: r.right + 22, top: r0.top + sy - 40, bottom: r1.bottom + sy + 30 }
+    // on a narrow screen the words own the whole width: nothing is drawn in the margins
+    if (quiet.right - quiet.left > W * .8) { quiet.left = -200; quiet.right = W + 200 }
+    hero = { top: 0, bottom: quiet.top }
+    build()
+    buildFrames()
+  }
+
+  function build () {
+    paths = []; washes = []; windows = []
+    const wide = W >= 900
+    // the lattice: streets are not quite straight and not quite evenly spaced
+    const xs = [-30]; while (xs[xs.length - 1] < W + 30) xs.push(xs[xs.length - 1] + rnd(wide ? 88 : 74, wide ? 150 : 118))
+    const ys = [-30]; while (ys[ys.length - 1] < H + 30) ys.push(ys[ys.length - 1] + rnd(wide ? 78 : 76, wide ? 140 : 126))
+    const node = (i, j) => [xs[i] + rnd(-7, 7), ys[j] + rnd(-7, 7)]
+    const nodes = ys.map((_, j) => xs.map((_, i) => node(i, j)))
+
+    // streets, in runs; faint where they pass under the words
+    const run = (seq) => {
+      let cur = [], curQ = null
+      const flush = () => { if (cur.length > 1) paths.push(line(cur, { w: curQ ? 1.1 : 1.5, alpha: curQ ? .18 : .72, delay: rnd(0, .25) })); cur = [] }
+      for (let k = 0; k < seq.length; k++) {
+        const pt = seq[k]
+        const q = inRect(pt[0], pt[1], quiet)
+        if (cur.length && (q !== curQ || Math.random() < .14)) { cur.push(pt); flush(); cur = [pt] } else cur.push(pt)
+        curQ = q
+      }
+      flush()
+    }
+    nodes.forEach(row => run(row))
+    xs.forEach((_, i) => run(nodes.map(row => row[i])))
+
+    // the river: on a wide page it runs the length of the right side; on a phone it crosses the first screen
+    const river = []
+    if (wide) {
+      const x0 = W * rnd(.62, .72), A = W * .07, B = W * .025, ph = rnd(0, 6)
+      for (let y = -40; y <= H + 40; y += 36) river.push([x0 + A * Math.sin(y * .0028 + ph) + B * Math.sin(y * .0091 + ph * 2), y])
+    } else {
+      const y0 = hero.bottom * rnd(.42, .55), A = hero.bottom * .12, ph = rnd(0, 6)
+      for (let x = -40; x <= W + 40; x += 30) river.push([x, y0 + A * Math.sin(x * .011 + ph) + hero.bottom * .05 * Math.sin(x * .031)])
+    }
+    const rw = wide ? rnd(44, 62) : rnd(36, 48)
+    const left = [], right = []
+    for (let i = 0; i < river.length; i++) {
+      const a = river[Math.max(0, i - 1)], b = river[Math.min(river.length - 1, i + 1)]
+      const dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1
+      const nx = -dy / L, ny = dx / L, w = rw * (1 + .18 * Math.sin(i * .7))
+      left.push([river[i][0] + nx * w / 2, river[i][1] + ny * w / 2]); right.push([river[i][0] - nx * w / 2, river[i][1] - ny * w / 2])
+    }
+    washes.push({ poly: [...left, ...right.slice().reverse()], col: WASH.river, alpha: .3, p: reduce ? 1 : 0, delay: .1, speed: 1.1, minY: Math.min(...river.map(q => q[1])), maxY: Math.max(...river.map(q => q[1])), minX: Math.min(...river.map(q => q[0])) - rw, maxX: Math.max(...river.map(q => q[0])) + rw })
+    paths.push(line(left, { w: 2.1, alpha: .8, delay: 0, speed: 1.3, kind: 'bank', amp: 1.4 }))
+    paths.push(line(right, { w: 2.1, alpha: .8, delay: .15, speed: 1.3, kind: 'bank', amp: 1.4 }))
+
+    // bridges where a street crosses the river
+    const cross = (a, b, c, d) => {
+      const den = (b[0] - a[0]) * (d[1] - c[1]) - (b[1] - a[1]) * (d[0] - c[0]); if (Math.abs(den) < 1e-6) return null
+      const t = ((c[0] - a[0]) * (d[1] - c[1]) - (c[1] - a[1]) * (d[0] - c[0])) / den, u = ((c[0] - a[0]) * (b[1] - a[1]) - (c[1] - a[1]) * (b[0] - a[0])) / den
+      return (t > 0 && t < 1 && u > 0 && u < 1) ? [a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1])] : null
+    }
+    const bridges = []
+    for (const st of paths.filter(p => p.kind === 'street' && p.alpha > .5)) {
+      for (let i = 1; i < st.pts.length; i++) {
+        for (let j = 1; j < river.length; j++) {
+          const P = cross(st.pts[i - 1], st.pts[i], river[j - 1], river[j])
+          if (!P) continue
+          const sx = st.pts[i][0] - st.pts[i - 1][0], syy = st.pts[i][1] - st.pts[i - 1][1], L = Math.hypot(sx, syy) || 1
+          const ux = sx / L, uy = syy / L, nx = -uy, ny = ux, half = rw / 2 + 10
+          for (const side of [-1, 1]) bridges.push(line([[P[0] - ux * half + nx * 6 * side, P[1] - uy * half + ny * 6 * side], [P[0] + ux * half + nx * 6 * side, P[1] + uy * half + ny * 6 * side]], { w: 1.5, alpha: .85, delay: .5, kind: 'bridge' }))
+        }
+      }
+    }
+    paths.push(...bridges)
+
+    // the blocks: footprints with hatching, a park, a plaza; nothing under the words but an occasional wash
+    for (let j = 0; j < ys.length - 1; j++) {
+      for (let i = 0; i < xs.length - 1; i++) {
+        const a = nodes[j][i], b = nodes[j][i + 1], c = nodes[j + 1][i + 1], d = nodes[j + 1][i]
+        const cx = (a[0] + c[0]) / 2, cy = (a[1] + c[1]) / 2
+        // a block touching the words at all counts as under them
+        const inQuiet = !(c[0] < quiet.left || a[0] > quiet.right || c[1] < quiet.top || a[1] > quiet.bottom)
+        const inRiver = washes[0] && cx > washes[0].minX - 20 && cx < washes[0].maxX + 20 && cy > washes[0].minY && cy < washes[0].maxY && nearRiver(cx, cy, river, rw)
+        if (inRiver) continue
+        const cw = Math.min(b[0] - a[0], c[0] - d[0]), ch = Math.min(d[1] - a[1], c[1] - b[1])
+        if (cw < 50 || ch < 44) continue
+        const roll = Math.random()
+        if (inQuiet) {
+          if (roll < .1) washes.push(washRect(a, b, c, d, 10, roll < .05 ? WASH.park : WASH.plaza, .11))
+          continue
+        }
+        if (roll < .11) { washes.push(washRect(a, b, c, d, 9, WASH.park, .32)); continue }
+        if (roll < .16) { washes.push(washRect(a, b, c, d, 9, WASH.plaza, .36)); continue }
+        if (roll < .38) continue
+        // one or two footprints in the block
+        const two = cw > 110 && Math.random() < .5
+        const ins = rnd(9, 15)
+        const rects = two
+          ? [[a[0] + ins, a[1] + ins, (cw - ins * 3) * rnd(.4, .6), ch - ins * 2], null]
+          : [[a[0] + ins, a[1] + ins, cw - ins * 2, ch - ins * 2]]
+        if (two) { const r0 = rects[0]; rects[1] = [r0[0] + r0[2] + ins, a[1] + ins, cw - ins * 3 - r0[2], (ch - ins * 2) * rnd(.55, 1)] }
+        for (const r of rects) {
+          const [x, y, w, h] = r
+          const corners = [[x, y], [x + w, y], [x + w, y + h], [x, y + h]].map(q => [q[0] + rnd(-2, 2), q[1] + rnd(-2, 2)])
+          paths.push(line(corners, { w: 1.2, alpha: .7, closed: true, delay: rnd(.25, .5), kind: 'footprint', amp: .9 }))
+          const style = Math.random()
+          if (style < .3) {
+            // hatching, the draughtsman's shade
+            const gap = rnd(6.5, 9), n = Math.floor((w + h) / gap)
+            for (let k = 1; k < n; k++) {
+              const s = k * gap
+              const p0 = s < h ? [x, y + s] : [x + s - h, y + h]
+              const p1 = s < w ? [x + s, y] : [x + w, y + s - w]
+              paths.push(line([p0, p1], { w: .8, alpha: .42, delay: .55 + k * .02, speed: 4, kind: 'hatch', amp: .7 }))
+            }
+          } else if (style < .46) {
+            washes.push({ poly: corners, col: Math.random() < .5 ? WASH.brick : WASH.rose, alpha: .24, p: reduce ? 1 : 0, delay: .5, speed: 2, minY: y, maxY: y + h, minX: x, maxX: x + w })
+          }
+          // windows along the street side
+          const nW = Math.random() < .6 ? Math.floor(rnd(1, 4)) : 0
+          for (let k = 0; k < nW; k++) {
+            const side = Math.random() < .5
+            const wx = side ? x + rnd(8, Math.max(9, w - 12)) : x + w - 9
+            const wy = side ? y + h - 9 : y + rnd(8, Math.max(9, h - 12))
+            const s = rnd(4, 5.5)
+            windows.push({ x: wx, y: wy, s, lit: 0, on: false, jit: jit(6, .7), minY: wy })
+            paths.push(line([[wx, wy], [wx + s, wy], [wx + s, wy + s], [wx, wy + s]], { w: .9, alpha: .75, closed: true, delay: .75, speed: 5, kind: 'window', amp: .5 }))
+          }
+        }
+      }
+    }
+    dirty = true
+  }
+
+  function nearRiver (cx, cy, river, rw) {
+    let best = 1e9
+    for (const q of river) best = Math.min(best, Math.hypot(q[0] - cx, q[1] - cy))
+    return best < rw * .5 + 26
+  }
+  function washRect (a, b, c, d, ins, col, alpha) {
+    const poly = [[a[0] + ins, a[1] + ins], [b[0] - ins, b[1] + ins], [c[0] - ins, c[1] - ins], [d[0] + ins, d[1] - ins]].map(q => [q[0] + rnd(-3, 3), q[1] + rnd(-3, 3)])
+    return { poly, col, alpha, p: reduce ? 1 : 0, delay: rnd(.3, .6), speed: 1.6, minY: Math.min(...poly.map(q => q[1])), maxY: Math.max(...poly.map(q => q[1])), minX: Math.min(...poly.map(q => q[0])), maxX: Math.max(...poly.map(q => q[0])) }
+  }
+
+  // a hand-drawn frame waits around each role and a line under each link; they draw when you reach them
+  function buildFrames () {
+    const old = new Map(frames.map(f => [f.el, f]))
+    frames = []
+    const sy = window.scrollY
+    page.querySelectorAll('.roles .where').forEach(el => {
+      const r = el.getBoundingClientRect(), x = r.left - 7, y = r.top + sy - 4, w = r.width + 14, h = r.height + 8
+      const pts = [[x, y + h * .5], [x, y], [x + w, y], [x + w, y + h], [x, y + h], [x, y + h * .5 - 4]].map(q => [q[0] + rnd(-1.5, 1.5), q[1] + rnd(-1.5, 1.5)])
+      const prev = old.get(el)
+      frames.push({ el, path: line(pts, { w: 1.5, alpha: .9, delay: 0, speed: 1.8, kind: 'frame', amp: 1.2 }), wash: { poly: pts.slice(1, 5), col: WASH.plaza, alpha: .3, p: 0, delay: .3, speed: 2.2, minX: x, maxX: x + w, minY: y, maxY: y + h }, on: prev ? prev.on : false })
+    })
+    page.querySelectorAll('.links a').forEach(el => {
+      const r = el.getBoundingClientRect(), x = r.left - 2, y = r.top + sy + r.height - 1, w = r.width + 6
+      const pts = [[x, y], [x + w * .5, y + 1.5], [x + w, y], [x + w, y + 3], [x + w * .5, y + 2], [x + 2, y + 3.5]]
+      const prev = old.get(el)
+      frames.push({ el, path: line(pts, { w: 1.4, alpha: .9, delay: 0, speed: 2.4, kind: 'frame', amp: .9 }), wash: null, on: prev ? prev.on : false })
+    })
+    for (const f of frames) if (f.on) { f.path.p = 1; if (f.wash) f.wash.p = 1 }
+  }
+
+  // drawing
+  function strokePath (p, frame, prog) {
+    const n = p.pts.length, J = p.jit[frame]
+    const target = p.len * prog
+    ctx.beginPath()
+    for (let i = 0; i < n; i++) {
+      let x = p.pts[i][0] + J[i][0], y = p.pts[i][1] + J[i][1]
+      if (p.cum[i] > target) {
+        const i0 = i - 1, segL = p.cum[i] - p.cum[i0], t = segL ? (target - p.cum[i0]) / segL : 0
+        const x0 = p.pts[i0][0] + J[i0][0], y0 = p.pts[i0][1] + J[i0][1]
+        ctx.lineTo(x0 + (x - x0) * t, y0 + (y - y0) * t)
+        break
+      }
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y)
+    }
+    ctx.stroke()
+  }
+  function fillWash (w, frame, prog) {
+    const J = w.jitF || (w.jitF = jit(w.poly.length, 1.6))
+    const widthDrawn = w.minX + (w.maxX - w.minX + 10) * prog
+    ctx.save()
+    ctx.beginPath(); ctx.rect(w.minX - 6, w.minY - 6, Math.max(0, widthDrawn - w.minX + 6), w.maxY - w.minY + 12); ctx.clip()
+    ctx.fillStyle = `rgba(${w.col},${w.alpha})`
+    ctx.beginPath()
+    w.poly.forEach((q, i) => { const x = q[0] + J[frame][i][0], y = q[1] + J[frame][i][1]; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y) })
+    ctx.closePath(); ctx.fill()
+    ctx.restore()
+  }
+  function drawWindow (wn, frame, t) {
+    const J = wn.jit[frame]
+    if (wn.lit <= 0) return
+    const k = smooth(wn.lit), s = wn.s
+    ctx.fillStyle = `rgba(${LIGHT},${.95 * k})`
+    ctx.fillRect(wn.x - .5 + J[0][0] * .5, wn.y - .5 + J[0][1] * .5, s + 1, s + 1)
+    // the ticks a hand draws around a light
+    ctx.strokeStyle = `rgba(${INK},${.55 * k})`; ctx.lineWidth = .85
+    const cx = wn.x + s / 2, cy = wn.y + s / 2, r0 = s * .9, r1 = s * .9 + 3.4 * k
+    ctx.beginPath()
+    for (let i = 0; i < 6; i++) {
+      const a = i * Math.PI / 3 + .3 + J[i][0] * .12
+      ctx.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0); ctx.lineTo(cx + Math.cos(a) * r1 + J[i][1] * .6, cy + Math.sin(a) * r1)
+    }
+    ctx.stroke()
+  }
+
+  function advance (o, dt, sy) {
+    if (o.p >= 1) return
+    const seen = o.minY < sy + vh + 40
+    if (!seen) return
+    if (o.t0 == null) o.t0 = o.delay
+    if (o.t0 > 0) { o.t0 -= dt; dirty = true; return }
+    o.p = Math.min(1, o.p + dt * o.speed); dirty = true
+  }
+
+  function draw (t, dt) {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    ctx.clearRect(0, 0, W, H)
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round'
+    const sy = window.scrollY, top = sy - 120, bot = sy + vh + 120
+    const frame = BOIL ? Math.floor(t * BOIL) % FRAMES : 0
+    const band = sy + vh * .5
+    for (const w of washes) {
+      advance(w, dt, sy)
+      if (w.p <= 0 || w.maxY < top || w.minY > bot) continue
+      fillWash(w, frame, smooth(w.p))
+    }
+    for (const p of paths) {
+      advance(p, dt, sy)
+      if (p.p <= 0 || p.maxY < top || p.minY > bot) continue
+      ctx.lineWidth = p.w * (1 + .08 * Math.sin(frame * 2.1 + p.len))
+      ctx.strokeStyle = `rgba(${p.col},${p.alpha})`
+      strokePath(p, frame, smooth(p.p))
+    }
+    for (const wn of windows) {
+      if (wn.y < top || wn.y > bot) continue
+      // lights come on as you pass, a little below the middle of the screen
+      if (!wn.on && !reduce && Math.abs(wn.y - band) < 70 && Math.random() < .08) { wn.on = true }
+      if (wn.on && wn.lit < 1) { wn.lit = Math.min(1, wn.lit + dt * 3); dirty = true }
+      drawWindow(wn, frame, t)
+    }
+    for (const f of frames) {
+      if (!f.on) continue
+      advance(f.path, dt, sy)
+      if (f.wash) { advance(f.wash, dt, sy); if (f.wash.p > 0) fillWash(f.wash, frame, smooth(f.wash.p)) }
+      if (f.path.p > 0) { ctx.lineWidth = f.path.w; ctx.strokeStyle = `rgba(${INK},${f.path.alpha})`; strokePath(f.path, frame, smooth(f.path.p)) }
+    }
+    // the pencil, where your hand went, fading as it goes
+    if (trace.length > 1) {
+      const now = t
+      ctx.lineWidth = 1.3
+      for (let i = 1; i < trace.length; i++) {
+        const a = trace[i - 1], b = trace[i], age = now - b.t
+        if (age > 2.4) continue
+        const al = .55 * (1 - age / 2.4)
+        ctx.strokeStyle = `rgba(${GRAPHITE},${al})`
+        ctx.beginPath(); ctx.moveTo(a.x + rnd(-.4, .4), a.y + rnd(-.4, .4)); ctx.lineTo(b.x, b.y); ctx.stroke()
+      }
+      trace = trace.filter(q => now - q.t < 2.4)
+      if (trace.length) dirty = true
+    }
+  }
+
+  let lastFrame = -1
+  function loop (ms) {
+    const t = ms / 1000
+    const dt = lastT ? Math.min(.05, t - lastT) : .016
+    lastT = t
+    const frame = BOIL ? Math.floor(t * BOIL) % FRAMES : 0
+    if (frame !== lastFrame) { lastFrame = frame; dirty = true }
+    if (dirty) { dirty = false; draw(t, dt) }
+    requestAnimationFrame(loop)
+  }
+
+  // reaching a role or a link: by hand on a desktop, by scrolling into the middle of the screen on a phone
+  function wake (f) { if (!f.on) { f.on = true; dirty = true } }
+  function wireFrames () {
+    for (const f of frames) {
+      const host = f.el.closest('li') || f.el
+      if (host.dataset.wired) continue
+      host.dataset.wired = '1'
+      const find = () => frames.find(k => k.el === f.el)
+      host.addEventListener('pointerenter', () => { const k = find(); if (k) wake(k) })
+      host.addEventListener('focusin', () => { const k = find(); if (k) wake(k) })
+      host.addEventListener('touchstart', () => { const k = find(); if (k) wake(k) }, { passive: true })
+    }
+    if ('IntersectionObserver' in window && matchMedia('(hover: none)').matches) {
+      const io = new IntersectionObserver(es => {
+        for (const e of es) if (e.isIntersecting) { const k = frames.find(k => (k.el.closest('li') || k.el) === e.target); if (k) wake(k) }
+      }, { rootMargin: '-42% 0px -42% 0px' })
+      for (const f of frames) io.observe(f.el.closest('li') || f.el)
+    }
+  }
+
+  // lights near your hand come on and stay on
+  function lightNear (px, py, R) {
+    for (const wn of windows) { if (!wn.on && Math.hypot(wn.x - px, wn.y - py) < R) { wn.on = true; dirty = true } }
+  }
+  window.addEventListener('pointermove', e => {
+    if (e.pointerType === 'touch') return
+    const x = e.clientX, y = e.clientY + window.scrollY
+    if (!reduce) { const l = trace[trace.length - 1]; if (!l || Math.hypot(l.x - x, l.y - y) > 3) { trace.push({ x, y, t: performance.now() / 1000 }); dirty = true } }
+    lightNear(x, y, 48)
+  }, { passive: true })
+  window.addEventListener('pointerdown', e => { lightNear(e.clientX, e.clientY + window.scrollY, 90) }, { passive: true })
+  window.addEventListener('touchstart', e => { const t = e.touches[0]; lightNear(t.clientX, t.clientY + window.scrollY, 90) }, { passive: true })
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY
+    dirty = true
+    if (y + vh >= H - 32) frames.filter(f => f.el.matches('.links a')).forEach((f, i) => setTimeout(() => wake(f), i * 160))
+    lastScroll = y
+  }, { passive: true })
+
+  let rt
+  let lastW = document.documentElement.clientWidth
+  window.addEventListener('resize', () => { const w = document.documentElement.clientWidth; if (w === lastW) return; lastW = w; clearTimeout(rt); rt = setTimeout(() => { layout(); wireFrames() }, 160) })
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { layout(); wireFrames() })
+  layout()
+  wireFrames()
+  requestAnimationFrame(loop)
+})()
+</script>
+</body>
+</html>

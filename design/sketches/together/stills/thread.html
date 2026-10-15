@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Still, thread</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Schibsted+Grotesk:wght@400..700&display=swap">
+<style>
+/* layout: a still. The page is a length of hand-woven cotton; the dyed warp threads hold an ikat pattern that only shows once they slide into register */
+:root { --cotton: #e4d9c3; --ink: #261d15; --ink-soft: #5f5345; --link: #9c3f1b; color-scheme: light; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--cotton); color: var(--ink); overflow: hidden; }
+body { font-family: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
+.page { position: relative; padding: 64px 28px 0; display: grid; gap: 1.15rem; }
+.name { margin: 0; font-family: "Fraunces", Georgia, serif; font-variation-settings: "SOFT" 100, "WONK" 1; font-weight: 500; font-size: 2.6rem; line-height: .98; letter-spacing: -.015em; }
+.place { margin: .45rem 0 0; color: var(--ink-soft); }
+.lead { margin: 0; font-family: "Fraunces", Georgia, serif; font-variation-settings: "SOFT" 100; font-size: 1.36rem; line-height: 1.32; }
+.links { display: flex; gap: 1.4rem; font-size: 1rem; }
+.links a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--link); text-decoration-thickness: 1.5px; text-underline-offset: .28em; }
+.band { height: 250px; margin-block: 42px; }
+.prose { margin: 0; font-family: "Fraunces", Georgia, serif; font-variation-settings: "SOFT" 100; font-size: 1.08rem; line-height: 1.64; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="page">
+  <header><h1 class="name">Shubham Chandra</h1><p class="place">Chicago</p></header>
+  <p class="lead">I do better with things that take a little time to make sense of.</p>
+  <div class="links"><a href="#">Email</a><a href="#">LinkedIn</a><a href="#">Curriculum vitae</a></div>
+  <div class="band" data-band></div>
+  <p class="prose">I’m drawn to interesting textures, small restaurants that don’t advertise themselves, and travel that doesn’t come with a gift shop.</p>
+</div>
+<script>
+document.fonts.ready.then(() => {
+  const cv = document.getElementById('c'), ctx = cv.getContext('2d')
+  const W = innerWidth, H = innerHeight, D = 2
+  cv.width = W * D; cv.height = H * D
+  const after = location.hash === '#after'
+  let seed = 31
+  const R = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296 }
+  const rnd = (a, b) => a + R() * (b - a)
+  const hash = (i, j) => { let h = Math.imul(i, 374761393) + Math.imul(j, 668265263) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296 }
+
+  // hand-spun cotton, and the three dyes: indigo, madder, turmeric
+  const COT = [229, 219, 197], IND = [38, 52, 96], MAD = [158, 62, 48], TUR = [205, 150, 58]
+  const TW = 2.5, NT = Math.ceil(W / TW), BUN = 3, NB = Math.ceil(NT / BUN)
+  const band = document.querySelector('[data-band]').getBoundingClientRect()
+  const top = band.top + 14, bot = band.bottom - 14, y0 = top + 14, y1 = bot - 14, yc = (y0 + y1) / 2
+  const A = 8, B = (y1 - y0) / 2
+  const mid = NB / 2, centres = [mid - 16, mid, mid + 16]
+
+  // the pattern as the dyer tied it: bundles of four threads share each tie, so edges step
+  function motif (b, y) {
+    if (y >= top && y < top + 5) return MAD
+    if (y >= top + 8 && y < top + 10) return IND
+    if (y <= bot && y > bot - 5) return MAD
+    if (y <= bot - 8 && y > bot - 10) return IND
+    if (y < y0 || y > y1) return null
+    const bc = b + 0.5
+    let l = 9
+    for (const c of centres) l = Math.min(l, Math.abs(bc - c) / A + Math.abs(y - yc) / B)
+    if (l < 0.15) return IND
+    if (l < 0.29) return null
+    if (l < 0.5) return TUR
+    if (l < 0.71) return MAD
+    if (l < 0.94) return IND
+    // small arrows in the spaces where the big diamonds meet
+    for (const c of [mid - 24, mid - 8, mid + 8, mid + 24]) {
+      for (const ey of [y0, y1]) {
+        const m = Math.abs(bc - c) / 4.2 + Math.abs(y - ey) / (B * 0.5)
+        if (m < 0.45) return TUR
+        if (m < 0.8) return MAD
+      }
+    }
+    return null
+  }
+  // before: each bundle hangs at its own height; after: slid into register, a hair off, as by hand
+  let walk = 0
+  const offB = Array.from({ length: NB }, () => { walk = 0.55 * walk + rnd(-40, 40); return after ? rnd(-2, 2) : walk })
+  const offT = Array.from({ length: NT }, () => after ? rnd(-3.5, 3.5) : rnd(-6, 6))
+  const bleed = Array.from({ length: NT }, () => rnd(1.5, 4))
+
+  const img = ctx.createImageData(W * D, H * D), px = img.data
+  const colAt = (i, y) => {
+    const b = Math.floor(i / BUN), yy = y - offB[b] - offT[i], s = bleed[i]
+    let r = 0, g = 0, bl = 0
+    for (const dy of [-s, -s / 2, 0, s / 2, s]) { const c = motif(b, yy + dy) || COT; r += c[0]; g += c[1]; bl += c[2] }
+    return [r / 5, g / 5, bl / 5]
+  }
+  for (let py = 0; py < H * D; py++) {
+    const y = py / D, wr = Math.floor(py / (3 * D)), edge = py % (3 * D) === 0
+    for (let i = 0; i < NT; i++) {
+      const base = colAt(i, y)
+      const dyed = Math.abs(base[0] - COT[0]) + Math.abs(base[2] - COT[2]) > 12
+      const slub = 0.95 + 0.1 * hash(i, Math.floor(y / 38))
+      const even = dyed ? 0.88 + 0.18 * hash(i + 400, Math.floor(y / 18)) : 1
+      const under = (wr + i) % 2 === 1
+      for (let k = 0; k < TW * D; k++) {
+        const x = i * TW * D + k
+        if (x >= W * D) break
+        const u = (k + 0.5) / (TW * D)
+        let sh = (0.83 + 0.21 * Math.sin(Math.PI * u)) * slub * even
+        sh += 0.045 * Math.sin((py * 0.55 - u * 6) * 1.1 + i * 1.7)
+        if (under) sh *= 0.955
+        if (edge) sh *= 0.9
+        if (u < 0.1 || u > 0.92) sh *= 0.88
+        const o = (py * W * D + x) * 4
+        px[o] = Math.min(255, base[0] * sh); px[o + 1] = Math.min(255, base[1] * sh); px[o + 2] = Math.min(255, base[2] * sh); px[o + 3] = 255
+      }
+    }
+  }
+  ctx.putImageData(img, 0, 0)
+  document.body.dataset.ready = '1'
+})
+</script>
+</body>
+</html>

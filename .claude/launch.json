@@ -1,0 +1,14 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "site",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-c",
+        "import http.server as h; H = type('H', (h.SimpleHTTPRequestHandler,), {'end_headers': lambda s: (s.send_header('Cache-Control', 'no-store'), h.SimpleHTTPRequestHandler.end_headers(s))}); h.ThreadingHTTPServer(('127.0.0.1', 3850), H).serve_forever()"
+      ],
+      "port": 3850
+    }
+  ]
+}

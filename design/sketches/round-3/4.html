@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sketch 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap">
+<style>
+/* one idea: the page is a single piece of heavy cloth, hung from the top. pull it. */
+:root {
+  --wall: #4e3a19;
+  --ink: #1f160b;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { background: var(--wall); }
+body {
+  margin: 0;
+  background: var(--wall);
+  font-family: Fraunces, Georgia, "Times New Roman", serif;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+#cloth {
+  position: fixed; inset: 0; width: 100%; height: 100%; display: block;
+  touch-action: pan-y;
+  -webkit-user-select: none; user-select: none;
+  -webkit-touch-callout: none;
+  cursor: grab;
+}
+#cloth.holding { cursor: grabbing; }
+#doc { position: relative; height: var(--doc-h, 200vh); }
+/* the real links sit exactly where they are printed on the cloth, invisible, so a tap is a tap */
+#doc a.hit {
+  position: absolute; display: block; color: transparent; font-size: 1px;
+  touch-action: pan-y; -webkit-tap-highlight-color: transparent; cursor: pointer;
+  border-radius: 6px; outline-offset: 2px;
+}
+#doc a.hit:focus-visible { outline: 2px solid #fff3d6; }
+.copy { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.back { position: fixed; top: calc(16px + env(safe-area-inset-top, 0px)); right: calc(18px + env(safe-area-inset-right, 0px));
+  z-index: 3; font-size: .82rem; color: var(--ink); opacity: .7; text-decoration: none; font-weight: 500;
+  padding: 4px 9px; border-radius: 999px; background: rgba(196,144,50,.92); }
+.back:hover, .back:focus-visible { opacity: 1; }
+/* if there is no WebGL, show the words plainly */
+body.no-gl #cloth { display: none; }
+body.no-gl .copy { position: static; width: auto; height: auto; clip: auto; clip-path: none; white-space: normal;
+  max-width: 36rem; margin: 3rem auto; padding: 0 24px; color: #efe1bf; font-size: 1.1rem; line-height: 1.6; }
+body.no-gl .copy a { color: #ffd98a; }
+body.no-gl #doc { height: auto; }
+</style>
+</head>
+<body>
+<canvas id="cloth" aria-hidden="true"></canvas>
+<div id="doc"></div>
+<a class="back" href="../index.html">All sketches</a>
+
+<div class="copy" id="copy">
+  <h1>Shubham Chandra</h1>
+  <p>Chicago</p>
+  <p class="lead">I do better with things that take a little time to make sense of.</p>
+  <p>I’m drawn to interesting textures, small restaurants that don’t advertise themselves, and travel that doesn’t come with a gift shop. I like being in places that aren’t trying to perform for you. Street level feels honest: you’re walking, noticing, adjusting. In Kerala, that’s a fabric market, not a landmark. Heat, noise, color, bargaining, getting a little turned around and not minding it.</p>
+  <p>Back home, I pay attention to craft. Clothes are an easy example: weave, weight, hand feel, drape. I’m not interested in labels as a proxy for taste. I’m interested in the work. Cooking is the same impulse. Start with something solid, then tinker until it tastes like mine.</p>
+  <p>I read a lot of sci-fi, especially the kind that starts fun and ends up making you stare at the ceiling for ten minutes. Consciousness, time, huge structures, weird rules.</p>
+  <h2>Before</h2>
+  <p>Garner Health, 2021–22, Head of Business Operations.<br>NJOY, 2018–21, Head of Strategy, Office of the CEO.<br>L.E.K. Consulting, 2016–18, Associate.</p>
+  <p class="nogl-links"><a href="#">Email</a> · <a href="#">LinkedIn</a> · <a href="#">Curriculum vitae</a></p>
+</div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const canvas = document.getElementById('cloth')
+  const doc = document.getElementById('doc')
+  const gl = canvas.getContext('webgl', { antialias: true, alpha: false, depth: false, preserveDrawingBuffer: true })
+  if (!gl) { document.body.classList.add('no-gl'); return }
+
+  const INK = '#1f160b'
+  const INK_SOFT = 'rgba(31,22,11,.68)'
+  const CLOTH = [196, 144, 50]           // ochre canvas
+  const MX = 70, MYT = 60, MYB = 90      // cloth hangs past the viewport on three sides
+
+  const copy = {
+    name: 'Shubham Chandra',
+    place: 'Chicago',
+    links: ['Email', 'LinkedIn', 'Curriculum vitae'],
+    lead: 'I do better with things that take a little time to make sense of.',
+    paras: [
+      'I’m drawn to interesting textures, small restaurants that don’t advertise themselves, and travel that doesn’t come with a gift shop. I like being in places that aren’t trying to perform for you. Street level feels honest: you’re walking, noticing, adjusting. In Kerala, that’s a fabric market, not a landmark. Heat, noise, color, bargaining, getting a little turned around and not minding it.',
+      'Back home, I pay attention to craft. Clothes are an easy example: weave, weight, hand feel, drape. I’m not interested in labels as a proxy for taste. I’m interested in the work. Cooking is the same impulse. Start with something solid, then tinker until it tastes like mine.',
+      'I read a lot of sci-fi, especially the kind that starts fun and ends up making you stare at the ceiling for ten minutes. Consciousness, time, huge structures, weird rules.'
+    ],
+    before: 'Before',
+    roles: [
+      ['Garner Health', '2021–22', 'Head of Business Operations'],
+      ['NJOY', '2018–21', 'Head of Strategy, Office of the CEO'],
+      ['L.E.K. Consulting', '2016–18', 'Associate']
+    ]
+  }
+
+  // ---------- typesetting onto the cloth ----------
+  function wrap (ctx, text, maxW) {
+    const words = text.split(' '), lines = []
+    let line = ''
+    for (const w of words) {
+      const t = line ? line + ' ' + w : w
+      if (ctx.measureText(t).width > maxW && line) { lines.push(line); line = w } else line = t
+    }
+    if (line) lines.push(line)
+    return lines
+  }
+
+  function typeset (vw) {
+    const phone = vw < 600
+    const colW = Math.min(620, vw - 48)
+    const left = MX + (vw - colW) / 2
+    const m = document.createElement('canvas').getContext('2d')
+    const items = [], links = []
+    let y = MYT + (phone ? 84 : 110)
+
+    const text = (str, font, color, x, yy) => { items.push({ str, font, color, x, y: yy }) }
+    const rule = (x1, x2, yy, color, w) => { items.push({ rule: true, x: x1, x2, y: yy, color, w }) }
+
+    const nameSize = phone ? 37 : 60
+    m.font = `600 ${nameSize}px Fraunces`
+    text(copy.name, m.font, INK, left, y); y += nameSize * 0.55
+    const smallF = `500 ${phone ? 17 : 18}px Fraunces`
+    text(copy.place, smallF, INK_SOFT, left, y); y += phone ? 44 : 52
+
+    // links, printed on the cloth; their rects become real anchors
+    m.font = smallF
+    let lx = left
+    for (const l of copy.links) {
+      const w = m.measureText(l).width
+      text(l, smallF, INK, lx, y)
+      rule(lx, lx + w, y + 7, INK, 1.4)
+      links.push({ label: l, x: lx - 8, y: y - 22, w: w + 16, h: 40 })
+      lx += w + (phone ? 26 : 34)
+    }
+    y += phone ? 76 : 96
+
+    const leadF = `500 ${phone ? 23 : 27}px Fraunces`
+    m.font = leadF
+    for (const ln of wrap(m, copy.lead, colW)) { text(ln, leadF, INK, left, y); y += (phone ? 23 : 27) * 1.32 }
+    y += phone ? 18 : 24
+
+    const bodySize = phone ? 17 : 19
+    const bodyF = `400 ${bodySize}px Fraunces`
+    m.font = bodyF
+    for (const p of copy.paras) {
+      for (const ln of wrap(m, p, colW)) { text(ln, bodyF, INK, left, y); y += bodySize * 1.6 }
+      y += bodySize * 0.9
+    }
+    y += phone ? 26 : 36
+
+    // Before
+    const capF = `600 12px Fraunces`
+    items.push({ str: copy.before.toUpperCase(), font: capF, color: INK_SOFT, x: left, y, spacing: 2.2 })
+    y += 30
+    const orgF = `600 ${phone ? 17 : 18}px Fraunces`, whatF = `400 ${phone ? 15 : 16}px Fraunces`
+    for (const [org, yrs, what] of copy.roles) {
+      text(org, orgF, INK, left, y)
+      m.font = whatF
+      text(yrs, whatF, INK_SOFT, left + colW - m.measureText(yrs).width, y)
+      y += phone ? 22 : 24
+      text(what, whatF, INK_SOFT, left, y)
+      y += phone ? 34 : 38
+    }
+    y += phone ? 16 : 28
+
+    // and again at the end, where a reader lands
+    m.font = smallF
+    lx = left
+    for (const l of copy.links) {
+      const w = m.measureText(l).width
+      text(l, smallF, INK, lx, y)
+      rule(lx, lx + w, y + 7, INK, 1.4)
+      links.push({ label: l, x: lx - 8, y: y - 22, w: w + 16, h: 40 })
+      lx += w + (phone ? 26 : 34)
+    }
+    y += phone ? 90 : 120
+    return { items, links, docH: y - MYT }
+  }
+
+  function paintTexture (vw, layout) {
+    const CW = vw + 2 * MX, CH = layout.docH + MYT + MYB
+    const dpr = Math.min(devicePixelRatio || 1, 2, 4096 / CW, 4096 / CH)
+    const c = document.createElement('canvas')
+    c.width = Math.round(CW * dpr); c.height = Math.round(CH * dpr)
+    const ctx = c.getContext('2d')
+    ctx.scale(dpr, dpr)
+    // the cloth itself: ochre, with a twill weave and a little uneven dye
+    ctx.fillStyle = `rgb(${CLOTH.join(',')})`
+    ctx.fillRect(0, 0, CW, CH)
+    const tile = document.createElement('canvas'); tile.width = tile.height = 8
+    const tc = tile.getContext('2d')
+    const img = tc.createImageData(8, 8)
+    for (let j = 0; j < 8; j++) for (let i = 0; i < 8; i++) {
+      const k = (i + j) % 4, o = (j * 8 + i) * 4
+      const d = k === 0 ? 11 : k === 2 ? -11 : k === 1 ? 3 : -3
+      img.data[o] = CLOTH[0] + d; img.data[o + 1] = CLOTH[1] + d; img.data[o + 2] = CLOTH[2] + d; img.data[o + 3] = 255
+    }
+    tc.putImageData(img, 0, 0)
+    ctx.save(); ctx.scale(1 / dpr, 1 / dpr)
+    ctx.fillStyle = ctx.createPattern(tile, 'repeat'); ctx.fillRect(0, 0, c.width, c.height)
+    ctx.restore()
+    let seed = 7
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647
+    for (let i = 0; i < 14; i++) {
+      const x = rnd() * CW, y = rnd() * CH, r = 180 + rnd() * 420
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r)
+      const dark = rnd() > 0.5
+      g.addColorStop(0, dark ? 'rgba(70,40,0,.09)' : 'rgba(255,230,170,.10)')
+      g.addColorStop(1, 'rgba(0,0,0,0)')
+      ctx.fillStyle = g; ctx.fillRect(x - r, y - r, r * 2, r * 2)
+    }
+    // the words, printed on it
+    ctx.textBaseline = 'alphabetic'
+    for (const it of layout.items) {
+      if (it.rule) { ctx.strokeStyle = it.color; ctx.lineWidth = it.w; ctx.beginPath(); ctx.moveTo(it.x, it.y); ctx.lineTo(it.x2, it.y); ctx.stroke(); continue }
+      ctx.font = it.font; ctx.fillStyle = it.color
+      if (it.spacing) { let x = it.x; for (const ch of it.str) { ctx.fillText(ch, x, it.y); x += ctx.measureText(ch).width + it.spacing } } else ctx.fillText(it.str, it.x, it.y)
+    }
+    return { canvas: c, CW, CH }
+  }
+
+  // ---------- the cloth (verlet, 3d, hung from the top row) ----------
+  let W = innerWidth, H = innerHeight, CW = 0, CH = 0, cols = 0, rows = 0, n = 0
+  let px, py, pz, ox, oy, oz, rx, ry, pin, shade, cons = [], uv, idx, links = []
+  let grab = -1, grabX = 0, grabY = 0, grabStartX = 0, grabStartY = 0, grabT = 0, hoverI = -1, hoverT = 0
+  let scrollY = 0, lastScroll = 0, scrollKick = 0
+  let tex, prog, loc, bufPos, bufShade, bufUV, bufIdx, ready = false
+
+  function build () {
+    W = innerWidth; H = innerHeight
+    const layout = typeset(W)
+    const painted = paintTexture(W, layout)
+    CW = painted.CW; CH = painted.CH; links = layout.links
+    doc.style.setProperty('--doc-h', layout.docH + 'px')
+    doc.innerHTML = ''
+    for (const l of links) {
+      const a = document.createElement('a')
+      a.className = 'hit'; a.href = '#'; a.textContent = l.label
+      a.style.left = (l.x - MX) + 'px'; a.style.top = (l.y - MYT) + 'px'; a.style.width = l.w + 'px'; a.style.height = l.h + 'px'
+      doc.appendChild(a)
+    }
+    const cell = W < 600 ? 17 : 26
+    cols = Math.round(CW / cell) + 1; rows = Math.round(CH / cell) + 1; n = cols * rows
+    const sx = CW / (cols - 1), sy = CH / (rows - 1)
+    px = new Float32Array(n); py = new Float32Array(n); pz = new Float32Array(n)
+    ox = new Float32Array(n); oy = new Float32Array(n); oz = new Float32Array(n)
+    rx = new Float32Array(n); ry = new Float32Array(n)
+    pin = new Uint8Array(n); shade = new Float32Array(n); uv = new Float32Array(n * 2)
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      const i = r * cols + c
+      px[i] = ox[i] = rx[i] = c * sx; py[i] = oy[i] = ry[i] = r * sy
+      // it was just hung: a soft wave that settles
+      pz[i] = oz[i] = reduce ? 0 : 18 * Math.sin(r / rows * Math.PI) * Math.sin(c / cols * Math.PI * 2 + 0.6)
+      pin[i] = r === 0 ? 1 : 0
+      uv[i * 2] = c / (cols - 1); uv[i * 2 + 1] = r / (rows - 1)
+    }
+    cons = []
+    const diag = Math.hypot(sx, sy)
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      const i = r * cols + c
+      if (c + 1 < cols) cons.push(i, i + 1, sx)
+      if (r + 1 < rows) cons.push(i, i + cols, sy)
+      if (c + 1 < cols && r + 1 < rows) { cons.push(i, i + cols + 1, diag); cons.push(i + 1, i + cols, diag) }
+    }
+    cons = new Float32Array(cons)
+    const tri = []
+    for (let r = 0; r + 1 < rows; r++) for (let c = 0; c + 1 < cols; c++) {
+      const i = r * cols + c
+      tri.push(i, i + cols, i + 1, i + 1, i + cols, i + cols + 1)
+    }
+    idx = new Uint16Array(tri)
+    uploadStatic(painted.canvas)
+  }
+
+  function uploadStatic (image) {
+    if (!tex) tex = gl.createTexture()
+    gl.bindTexture(gl.TEXTURE_2D, tex)
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false)
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufUV); gl.bufferData(gl.ARRAY_BUFFER, uv, gl.STATIC_DRAW)
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufIdx); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, idx, gl.STATIC_DRAW)
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufPos); gl.bufferData(gl.ARRAY_BUFFER, n * 3 * 4, gl.DYNAMIC_DRAW)
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufShade); gl.bufferData(gl.ARRAY_BUFFER, n * 4, gl.DYNAMIC_DRAW)
+  }
+
+  function initGL () {
+    const vs = `attribute vec3 aPos; attribute vec2 aUV; attribute float aShade;
+      uniform vec2 uView; uniform vec2 uOff; uniform float uP;
+      varying vec2 vUV; varying float vShade;
+      void main(){
+        vec2 s = aPos.xy - uOff; vec2 c = uView * 0.5;
+        float k = uP / (uP - aPos.z);
+        vec2 p = c + (s - c) * k;
+        gl_Position = vec4(p.x / uView.x * 2.0 - 1.0, 1.0 - p.y / uView.y * 2.0, 0.0, 1.0);
+        vUV = aUV; vShade = aShade; }`
+    const fs = `precision mediump float; uniform sampler2D uTex; varying vec2 vUV; varying float vShade;
+      void main(){ vec4 t = texture2D(uTex, vUV); gl_FragColor = vec4(t.rgb * vShade, 1.0); }`
+    const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s }
+    prog = gl.createProgram()
+    gl.attachShader(prog, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, fs))
+    gl.linkProgram(prog); gl.useProgram(prog)
+    loc = { aPos: gl.getAttribLocation(prog, 'aPos'), aUV: gl.getAttribLocation(prog, 'aUV'), aShade: gl.getAttribLocation(prog, 'aShade'),
+      uView: gl.getUniformLocation(prog, 'uView'), uOff: gl.getUniformLocation(prog, 'uOff'), uP: gl.getUniformLocation(prog, 'uP'), uTex: gl.getUniformLocation(prog, 'uTex') }
+    bufPos = gl.createBuffer(); bufShade = gl.createBuffer(); bufUV = gl.createBuffer(); bufIdx = gl.createBuffer()
+    gl.enableVertexAttribArray(loc.aPos); gl.enableVertexAttribArray(loc.aUV); gl.enableVertexAttribArray(loc.aShade)
+    gl.uniform1i(loc.uTex, 0)
+  }
+
+  // heavy canvas on a frame: every point wants its place back, and nothing rings
+  const K = 0.018, DAMP = reduce ? 0.86 : 0.93, P = 1500
+  let t = 0
+  function step () {
+    t += 1 / 60
+    const windOn = !reduce
+    const kick = scrollKick; scrollKick *= 0.6
+    for (let i = 0; i < n; i++) {
+      if (pin[i]) continue
+      let ax = (rx[i] - px[i]) * K, ay = (ry[i] - py[i]) * K, az = -pz[i] * K
+      if (windOn) az += 0.22 * Math.sin(t * 0.8 + px[i] * 0.006) * Math.sin(t * 0.5 + py[i] * 0.0045)
+      if (kick) { ay += kick * 0.12; az += kick * 0.05 * Math.sin(px[i] / CW * Math.PI) }
+      if (hoverI >= 0 && hoverT > 0) {
+        const d = Math.hypot(px[i] - px[hoverI], py[i] - py[hoverI])
+        if (d < 110) az -= hoverT * 1.6 * (1 - d / 110)
+      }
+      const vx = (px[i] - ox[i]) * DAMP, vy = (py[i] - oy[i]) * DAMP, vz = (pz[i] - oz[i]) * DAMP
+      ox[i] = px[i]; oy[i] = py[i]; oz[i] = pz[i]
+      px[i] += vx + ax; py[i] += vy + ay; pz[i] += vz + az
+      if (pz[i] < -40) pz[i] = -40
+    }
+    if (grab >= 0) {
+      const dist = Math.hypot(grabX - grabStartX, grabY - grabStartY)
+      const lift = Math.min(120, 30 + dist * 0.4)
+      px[grab] = grabX + MX; py[grab] = grabY + MYT + scrollY; pz[grab] += (lift - pz[grab]) * 0.25
+      ox[grab] = px[grab]; oy[grab] = py[grab]; oz[grab] = pz[grab]
+    }
+    for (let it = 0; it < 3; it++) {
+      for (let k = 0; k < cons.length; k += 3) {
+        const a = cons[k], b = cons[k + 1], rest = cons[k + 2]
+        const dx = px[b] - px[a], dy = py[b] - py[a], dz = pz[b] - pz[a]
+        const d = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1e-6
+        const diff = (d - rest) / d * 0.5
+        const pa = pin[a] || a === grab, pb = pin[b] || b === grab
+        if (pa && pb) continue
+        const wa = pa ? 0 : pb ? 1 : 0.5, wb = pb ? 0 : pa ? 1 : 0.5
+        const cx = dx * diff, cy = dy * diff, cz = dz * diff
+        px[a] += cx * wa * 2; py[a] += cy * wa * 2; pz[a] += cz * wa * 2
+        px[b] -= cx * wb * 2; py[b] -= cy * wb * 2; pz[b] -= cz * wb * 2
+      }
+    }
+    hoverT *= 0.9
+  }
+
+  function shadeAll () {
+    const Lx = -0.33, Ly = -0.42, Lz = 0.845
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      const i = r * cols + c
+      const l = c > 0 ? i - 1 : i, rr = c + 1 < cols ? i + 1 : i
+      const u = r > 0 ? i - cols : i, d = r + 1 < rows ? i + cols : i
+      const ax = px[rr] - px[l], ay = py[rr] - py[l], az = pz[rr] - pz[l]
+      const bx = px[d] - px[u], by = py[d] - py[u], bz = pz[d] - pz[u]
+      let nx = ay * bz - az * by, ny = az * bx - ax * bz, nz = ax * by - ay * bx
+      const len = Math.sqrt(nx * nx + ny * ny + nz * nz) || 1
+      nx /= len; ny /= len; nz /= len
+      const dot = Math.max(0, nx * Lx + ny * Ly + nz * Lz)
+      shade[i] = 0.6 + 0.52 * dot
+    }
+  }
+
+  function draw () {
+    const dpr = Math.min(devicePixelRatio || 1, 2)
+    const cw = Math.round(W * dpr), ch = Math.round(H * dpr)
+    if (canvas.width !== cw || canvas.height !== ch) { canvas.width = cw; canvas.height = ch; gl.viewport(0, 0, cw, ch) }
+    gl.clearColor(0.306, 0.227, 0.098, 1); gl.clear(gl.COLOR_BUFFER_BIT)
+    const pos = new Float32Array(n * 3)
+    for (let i = 0; i < n; i++) { pos[i * 3] = px[i]; pos[i * 3 + 1] = py[i]; pos[i * 3 + 2] = pz[i] }
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufPos); gl.bufferSubData(gl.ARRAY_BUFFER, 0, pos); gl.vertexAttribPointer(loc.aPos, 3, gl.FLOAT, false, 0, 0)
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufShade); gl.bufferSubData(gl.ARRAY_BUFFER, 0, shade); gl.vertexAttribPointer(loc.aShade, 1, gl.FLOAT, false, 0, 0)
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufUV); gl.vertexAttribPointer(loc.aUV, 2, gl.FLOAT, false, 0, 0)
+    gl.uniform2f(loc.uView, W, H); gl.uniform2f(loc.uOff, MX, MYT + scrollY); gl.uniform1f(loc.uP, P)
+    gl.bindTexture(gl.TEXTURE_2D, tex)
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufIdx)
+    gl.drawElements(gl.TRIANGLES, idx.length, gl.UNSIGNED_SHORT, 0)
+  }
+
+  // nearest cloth point to a screen position, after projection
+  function nearest (sx, sy) {
+    let best = -1, bd = 1e12
+    const cx = W / 2, cy = H / 2
+    for (let i = 0; i < n; i++) {
+      const k = P / (P - pz[i])
+      const x = cx + (px[i] - MX - cx) * k, y = cy + (py[i] - MYT - scrollY - cy) * k
+      const d = (x - sx) * (x - sx) + (y - sy) * (y - sy)
+      if (d < bd) { bd = d; best = i }
+    }
+    return best
+  }
+
+  let last = performance.now(), acc = 0
+  function frame (now) {
+    if (ready) {
+      acc += Math.min(50, now - last); last = now
+      let steps = 0
+      while (acc >= 1000 / 60 && steps < 3) { step(); acc -= 1000 / 60; steps++ }
+      if (steps === 3) acc = 0
+      shadeAll(); draw()
+    } else last = now
+    requestAnimationFrame(frame)
+  }
+
+  // ---------- touch and mouse ----------
+  let moved = false
+  addEventListener('pointerdown', e => {
+    if (e.button !== 0 || e.target.closest('.back')) return
+    const i = nearest(e.clientX, e.clientY)
+    if (i < 0 || pin[i]) return
+    grab = i; grabX = grabStartX = e.clientX; grabY = grabStartY = e.clientY; grabT = now(); moved = false
+    canvas.classList.add('holding')
+    if (e.target === canvas && e.pointerType === 'mouse') canvas.setPointerCapture(e.pointerId)
+  })
+  addEventListener('pointermove', e => {
+    if (grab >= 0 && e.buttons) {
+      grabX = e.clientX; grabY = e.clientY
+      if (Math.hypot(grabX - grabStartX, grabY - grabStartY) > 8) moved = true
+    } else if (e.pointerType === 'mouse' && !reduce) {
+      hoverI = nearest(e.clientX, e.clientY); hoverT = 1
+    }
+  }, { passive: true })
+  const release = () => { grab = -1; canvas.classList.remove('holding') }
+  addEventListener('pointerup', release)
+  addEventListener('pointercancel', release)
+  // a pull is not a click
+  addEventListener('click', e => { if (moved && e.target.closest('a.hit')) { e.preventDefault(); moved = false } }, true)
+  const now = () => performance.now()
+  addEventListener('scroll', () => {
+    scrollY = window.scrollY
+    const dy = scrollY - lastScroll; lastScroll = scrollY
+    if (!reduce) scrollKick = Math.max(-14, Math.min(14, scrollKick + dy * 0.2))
+  }, { passive: true })
+  let lastW = innerWidth
+  addEventListener('resize', () => {
+    H = innerHeight
+    if (innerWidth !== lastW) { lastW = innerWidth; clearTimeout(window.__rb); window.__rb = setTimeout(() => { build() }, 160) }
+  })
+
+  initGL()
+  requestAnimationFrame(frame)
+  const fonts = ['600 60px Fraunces', '500 18px Fraunces', '400 19px Fraunces']
+  Promise.race([Promise.all(fonts.map(f => document.fonts.load(f))), new Promise(r => setTimeout(r, 2500))])
+    .then(() => { build(); scrollY = lastScroll = window.scrollY; ready = true; document.body.dataset.ready = '1' })
+})()
+</script>
+</body>
+</html>

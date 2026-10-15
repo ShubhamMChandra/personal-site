@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Round 2, sketch 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Schibsted+Grotesk:wght@400;600&display=swap">
+<style>
+/* not a page: a night you walk through. you arrive at home (the facts, lit); the rest is out there, each piece a lamp in the distance that turns on when you reach it. drag anywhere. */
+:root {
+  --sky: #161e34;
+  --sky-deep: #0f1526;
+  --bldg: #0f162a;
+  --bldg-2: #131b31;
+  --cream: #f6ead5;
+  --dim: rgba(246, 234, 213, .5);
+  --gold: #f3b94f;
+  --peach: #f6926b;
+  --rose: #e9739e;
+  --mint: #9adbb7;
+  --blue: #8cc0f2;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-ui: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; overflow: hidden; overscroll-behavior: none; background: var(--sky); }
+body { color: var(--cream); font-family: var(--font-display); -webkit-font-smoothing: antialiased; }
+
+.stage { position: fixed; inset: 0; overflow: hidden; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none;
+  background: radial-gradient(120% 90% at 50% 112%, #2e3766 0, #1c2444 38%, var(--sky) 62%, var(--sky-deep) 100%); }
+.stage.dragging { cursor: grabbing; }
+.layer { position: absolute; left: 50%; top: 50%; width: 0; height: 0; will-change: transform; }
+.layer svg.world { position: absolute; overflow: visible; }
+
+/* far: the imposing buildings that felt cozy, with a few windows awake */
+.far rect.b { fill: var(--bldg); }
+.far rect.b2 { fill: var(--bldg-2); }
+.far rect.w { fill: #f6c67c; opacity: .6; }
+.far rect.w.f { animation: flick var(--d, 6s) ease-in-out var(--dl, 0s) infinite alternate; }
+@keyframes flick { from { opacity: .18; } to { opacity: .75; } }
+.star { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #e9dfca; opacity: .55; }
+
+/* mid: the small lights of a street, brighter when they pass near you */
+.light { position: absolute; border-radius: 50%; transform: translate(-50%, -50%) scale(calc(1 + var(--k, 0) * .9));
+  background: radial-gradient(circle, var(--c) 0, color-mix(in srgb, var(--c) 70%, transparent) 38%, transparent 70%);
+  opacity: calc(var(--o, .6) + var(--k, 0) * .5); will-change: transform, opacity; }
+.light.tw { animation: twinkle var(--d, 5s) ease-in-out var(--dl, 0s) infinite alternate; }
+@keyframes twinkle { from { filter: brightness(.75); } to { filter: brightness(1.25); } }
+
+/* near: the words are places in the same space as the lights. no overlay. */
+.island { position: absolute; width: min(31rem, calc(100vw - 44px)); transform: translate(-50%, -50%); padding: 1.2rem 1.4rem; }
+.island .lamp { position: absolute; inset: -34% -22%; z-index: -1; pointer-events: none; overflow: visible; }
+.island .lamp .glow { filter: blur(30px); opacity: calc(.14 + var(--near, 0) * .42); transition: opacity .8s ease; }
+.island .lamp .daub { filter: url(#gouache) blur(10px); opacity: calc(.08 + var(--near, 0) * .3); transition: opacity .8s ease; }
+.island .text { color: var(--dim); transition: color 1.1s ease, text-shadow 1.1s ease; }
+.island.lit .text { color: var(--cream); text-shadow: 0 0 26px rgba(243, 185, 79, .28); }
+.island p { margin: 0; font-size: 1.14rem; line-height: 1.62; font-weight: 400; font-variation-settings: "opsz" 14, "SOFT" 60, "WONK" 0; }
+.island p + p { margin-top: 1.05em; }
+.island .lead { font-size: clamp(1.55rem, 1.2rem + 1.3vw, 2.1rem); line-height: 1.22; font-weight: 500; font-style: italic;
+  font-variation-settings: "opsz" 72, "SOFT" 100, "WONK" 1; text-wrap: balance; }
+
+/* home: everything someone came for, in the first frame */
+.home { width: min(34rem, calc(100vw - 44px)); }
+.home .name { margin: 0; font-size: clamp(2.5rem, 1.8rem + 3.6vw, 4.6rem); line-height: .98; font-weight: 500; letter-spacing: -.01em;
+  font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1; }
+.home .place { margin: .55rem 0 0; font-family: var(--font-ui); font-size: 1rem; color: var(--cream); opacity: .78; }
+.links { display: flex; flex-wrap: wrap; gap: .55rem 1.5rem; margin: 1.5rem 0 0; font-family: var(--font-ui); font-size: 1.04rem; font-weight: 600; }
+.links a, .roles a { color: var(--cream); text-decoration: none; padding: .3rem 0; border-bottom: 1.5px solid rgba(243, 185, 79, .75); transition: border-color .3s, text-shadow .3s; }
+.links a:hover, .links a:focus-visible { border-color: var(--gold); text-shadow: 0 0 18px rgba(243, 185, 79, .6); }
+.roles { list-style: none; margin: 1.7rem 0 0; padding: 1.1rem 0 0; border-top: 1px solid rgba(246, 234, 213, .18); display: grid; gap: .55rem; font-family: var(--font-ui); }
+.roles li { display: grid; grid-template-columns: 1fr auto; gap: .05rem .9rem; align-items: baseline; }
+.roles .org { font-weight: 600; font-size: .98rem; }
+.roles .years { font-size: .86rem; opacity: .66; font-variant-numeric: tabular-nums; }
+.roles .what { grid-column: 1 / -1; font-size: .9rem; opacity: .72; }
+a:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 2px; }
+
+/* fixed chrome: only what must always be reachable */
+.chrome { position: fixed; z-index: 10; font-family: var(--font-ui); font-size: .8rem; }
+.back { top: calc(16px + env(safe-area-inset-top, 0px)); right: max(18px, env(safe-area-inset-right, 0px)); color: var(--cream); opacity: .6; text-decoration: none; padding: .3rem .1rem; }
+.back:hover, .back:focus-visible { opacity: 1; }
+.return { left: max(18px, env(safe-area-inset-left, 0px)); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); appearance: none; border: 0; background: none; color: var(--cream);
+  font: inherit; font-weight: 600; letter-spacing: .01em; padding: .55rem .2rem; cursor: pointer; opacity: 0; transform: translateY(6px); transition: opacity .5s, transform .5s; pointer-events: none;
+  border-bottom: 1.5px solid rgba(243, 185, 79, .75); }
+.return.show { opacity: .9; transform: none; pointer-events: auto; }
+.return:hover, .return:focus-visible { opacity: 1; text-shadow: 0 0 18px rgba(243, 185, 79, .6); }
+
+.grain { position: fixed; inset: -50%; z-index: 9; pointer-events: none; opacity: .34; mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+@media (prefers-reduced-motion: reduce) {
+  .far rect.w.f, .light.tw { animation: none; }
+  .island .text, .island .lamp .glow, .island .lamp .daub, .return { transition: none; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="rough" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency=".012" numOctaves="2" seed="3" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="14" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="gouache" x="-30%" y="-30%" width="160%" height="160%">
+      <feTurbulence type="fractalNoise" baseFrequency=".02" numOctaves="3" seed="11" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="46" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<div class="stage" id="stage">
+  <div class="layer far" id="far"></div>
+  <div class="layer mid" id="mid"></div>
+  <div class="layer near" id="near">
+    <svg class="world" id="trails" aria-hidden="true"></svg>
+
+    <section class="island home lit" data-x="0" data-y="0" aria-label="Shubham Chandra">
+      <svg class="lamp" viewBox="0 0 400 300" preserveAspectRatio="none" aria-hidden="true">
+        <ellipse class="glow" cx="200" cy="150" rx="190" ry="120" fill="var(--gold)"/>
+        <ellipse class="daub" cx="200" cy="150" rx="150" ry="90" fill="var(--peach)"/>
+      </svg>
+      <div class="text">
+        <h1 class="name">Shubham Chandra</h1>
+        <p class="place">Chicago</p>
+        <nav class="links" aria-label="Contact">
+          <a href="#">Email</a>
+          <a href="#">LinkedIn</a>
+          <a href="#">Curriculum vitae</a>
+        </nav>
+        <ul class="roles" aria-label="Before">
+          <li><span class="org">Garner Health</span><span class="years">2021–22</span><span class="what">Head of Business Operations</span></li>
+          <li><span class="org">NJOY</span><span class="years">2018–21</span><span class="what">Head of Strategy, Office of the CEO</span></li>
+          <li><span class="org">L.E.K. Consulting</span><span class="years">2016–18</span><span class="what">Associate</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="island" data-x="1.25" data-y="-0.95" data-c="blue">
+      <svg class="lamp" viewBox="0 0 400 300" preserveAspectRatio="none" aria-hidden="true">
+        <ellipse class="glow" cx="200" cy="150" rx="190" ry="120" fill="var(--blue)"/>
+        <ellipse class="daub" cx="200" cy="150" rx="150" ry="90" fill="var(--mint)"/>
+      </svg>
+      <div class="text">
+        <p class="lead">I do better with things that take a little time to make sense of.</p>
+        <p>I’m drawn to interesting textures, small restaurants that don’t advertise themselves, and travel that doesn’t come with a gift shop. I like being in places that aren’t trying to perform for you. Street level feels honest: you’re walking, noticing, adjusting. In Kerala, that’s a fabric market, not a landmark. Heat, noise, color, bargaining, getting a little turned around and not minding it.</p>
+      </div>
+    </section>
+
+    <section class="island" data-x="-1.3" data-y="0.9" data-c="rose">
+      <svg class="lamp" viewBox="0 0 400 300" preserveAspectRatio="none" aria-hidden="true">
+        <ellipse class="glow" cx="200" cy="150" rx="190" ry="120" fill="var(--rose)"/>
+        <ellipse class="daub" cx="200" cy="150" rx="150" ry="90" fill="var(--gold)"/>
+      </svg>
+      <div class="text">
+        <p>Back home, I pay attention to craft. Clothes are an easy example: weave, weight, hand feel, drape. I’m not interested in labels as a proxy for taste. I’m interested in the work. Cooking is the same impulse. Start with something solid, then tinker until it tastes like mine.</p>
+      </div>
+    </section>
+
+    <section class="island" data-x="1.05" data-y="1.3" data-c="mint">
+      <svg class="lamp" viewBox="0 0 400 300" preserveAspectRatio="none" aria-hidden="true">
+        <ellipse class="glow" cx="200" cy="150" rx="190" ry="120" fill="var(--mint)"/>
+        <ellipse class="daub" cx="200" cy="150" rx="150" ry="90" fill="var(--blue)"/>
+      </svg>
+      <div class="text">
+        <p>I read a lot of sci-fi, especially the kind that starts fun and ends up making you stare at the ceiling for ten minutes. Consciousness, time, huge structures, weird rules.</p>
+      </div>
+    </section>
+  </div>
+</div>
+
+<a class="chrome back" href="../index.html">All sketches</a>
+<button class="chrome return" id="return" type="button">Shubham Chandra</button>
+<div class="grain" aria-hidden="true"></div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const stage = document.getElementById('stage')
+  const far = document.getElementById('far'), mid = document.getElementById('mid'), near = document.getElementById('near')
+  const trails = document.getElementById('trails')
+  const ret = document.getElementById('return')
+  const islands = [...document.querySelectorAll('.island')]
+  const W = () => innerWidth, H = () => innerHeight
+  // one unit: a comfortable walk, scaled to the screen you're holding
+  let unit = Math.min(1100, Math.max(560, Math.max(W(), H()) * 0.8))
+  const bounds = { x: 2.0, y: 1.9 }
+  let rnd = 7
+  const rand = () => { rnd = (rnd * 16807) % 2147483647; return rnd / 2147483647 }
+  const pick = a => a[Math.floor(rand() * a.length)]
+
+  // --- build the far layer: buildings and stars ---
+  const NS = 'http://www.w3.org/2000/svg'
+  const size = s => { const r = unit * 4; s.setAttribute('viewBox', `${-r / 2} ${-r / 2} ${r} ${r}`); s.style.cssText = `left:${-r / 2}px;top:${-r / 2}px;width:${r}px;height:${r}px` }
+  const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('class', 'world'); svg.setAttribute('aria-hidden', 'true'); size(svg); size(trails)
+  const g = document.createElementNS(NS, 'g'); g.setAttribute('filter', 'url(#rough)'); svg.appendChild(g)
+  const windows = document.createElementNS(NS, 'g'); svg.appendChild(windows)
+  const base = unit * 0.42
+  let x = -unit * 1.6
+  while (x < unit * 1.6) {
+    const w = 70 + rand() * 150
+    // a clearing where you arrive: the towers stand back from the words
+    const clear = Math.abs(x + w / 2) < unit * 0.5
+    const h = clear ? 90 + rand() * 90 : 260 + rand() * unit * 0.55
+    const r = document.createElementNS(NS, 'rect')
+    r.setAttribute('x', x); r.setAttribute('y', base - h); r.setAttribute('width', w); r.setAttribute('height', h + 400)
+    r.setAttribute('class', rand() > .55 ? 'b b2' : 'b'); g.appendChild(r)
+    const cols = Math.max(1, Math.floor(w / 26)), rows = Math.floor(h / 34)
+    for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++) {
+      if (rand() > .13) continue
+      const wn = document.createElementNS(NS, 'rect')
+      wn.setAttribute('x', x + 10 + i * 26); wn.setAttribute('y', base - h + 18 + j * 34); wn.setAttribute('width', 7); wn.setAttribute('height', 11)
+      const f = rand() > .5
+      wn.setAttribute('class', f ? 'w f' : 'w')
+      if (f) wn.style.cssText = `--d:${(3 + rand() * 7).toFixed(1)}s;--dl:${(-rand() * 8).toFixed(1)}s`
+      windows.appendChild(wn)
+    }
+    x += w + 6 + rand() * 40
+  }
+  far.appendChild(svg)
+  for (let i = 0; i < 150; i++) {
+    const s = document.createElement('i'); s.className = 'star'
+    s.style.left = ((rand() * 2 - 1) * unit * 1.7).toFixed(0) + 'px'
+    s.style.top = (-unit * 1.1 + rand() * unit * 1.3).toFixed(0) + 'px'
+    s.style.opacity = (.2 + rand() * .5).toFixed(2)
+    far.appendChild(s)
+  }
+
+  // --- mid layer: the street's small lights ---
+  const palette = ['var(--gold)', 'var(--peach)', 'var(--rose)', 'var(--mint)', 'var(--blue)', '#fff1d6']
+  const lights = []
+  for (let i = 0; i < 120; i++) {
+    const el = document.createElement('i')
+    const lx = (rand() * 2 - 1) * unit * 1.9, ly = (rand() * 2.6 - 1.3) * unit
+    const size = 5 + rand() * 18
+    el.className = 'light' + (reduce || rand() > .6 ? '' : ' tw')
+    el.style.cssText = `left:${lx.toFixed(0)}px;top:${ly.toFixed(0)}px;width:${size.toFixed(0)}px;height:${size.toFixed(0)}px;--c:${pick(palette)};--o:${(.35 + rand() * .5).toFixed(2)};--d:${(3 + rand() * 5).toFixed(1)}s;--dl:${(-rand() * 6).toFixed(1)}s`
+    mid.appendChild(el)
+    lights.push({ el, x: lx, y: ly, k: 0 })
+  }
+
+  // --- near layer: place the words, draw the trails from home ---
+  const spots = islands.map(el => {
+    const sx = +el.dataset.x * unit, sy = +el.dataset.y * unit
+    el.style.left = sx + 'px'; el.style.top = sy + 'px'
+    return { el, x: sx, y: sy, lit: el.classList.contains('lit') }
+  })
+  spots.slice(1).forEach(s => {
+    const p = document.createElementNS(NS, 'path')
+    const len = Math.hypot(s.x, s.y), ox = s.x / len * unit * 0.34, oy = s.y / len * unit * 0.3
+    const mx = s.x * 0.55 + (s.y > 0 ? -1 : 1) * unit * 0.18, my = s.y * 0.45 + unit * 0.12
+    p.setAttribute('d', `M ${ox.toFixed(0)} ${oy.toFixed(0)} Q ${mx.toFixed(0)} ${my.toFixed(0)} ${(s.x - ox * .6).toFixed(0)} ${(s.y - oy * .6).toFixed(0)}`)
+    p.setAttribute('fill', 'none'); p.setAttribute('stroke', 'rgba(246,234,213,.6)'); p.setAttribute('stroke-width', '2.6')
+    p.setAttribute('stroke-linecap', 'round'); p.setAttribute('stroke-dasharray', '0 15'); p.setAttribute('filter', 'url(#rough)')
+    trails.appendChild(p)
+  })
+
+  // --- the camera ---
+  let cx = 0, cy = 0, vx = 0, vy = 0
+  let tween = null
+  let px = 0, py = 0, pointerLive = false
+  const clamp = (v, m) => Math.max(-m, Math.min(m, v))
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+  function go (tx, ty, dur = 950) {
+    tx = clamp(tx, unit * bounds.x); ty = clamp(ty, unit * bounds.y)
+    vx = vy = 0
+    if (reduce || dur === 0) { cx = tx; cy = ty; tween = null; return }
+    tween = { fx: cx, fy: cy, tx, ty, t0: performance.now(), dur }
+  }
+
+  let dragging = false, moved = 0, lx0 = 0, ly0 = 0, lt = 0, suppress = false
+  stage.addEventListener('pointerdown', e => {
+    if (e.button !== 0 && e.pointerType === 'mouse') return
+    dragging = true; moved = 0; lx0 = e.clientX; ly0 = e.clientY; lt = performance.now(); vx = vy = 0; tween = null
+    stage.classList.add('dragging'); stage.setPointerCapture(e.pointerId)
+  })
+  stage.addEventListener('pointermove', e => {
+    if (e.pointerType === 'mouse') { px = e.clientX - W() / 2; py = e.clientY - H() / 2; pointerLive = true }
+    if (!dragging) return
+    const dx = e.clientX - lx0, dy = e.clientY - ly0, now = performance.now()
+    moved += Math.abs(dx) + Math.abs(dy)
+    cx = clamp(cx - dx, unit * bounds.x); cy = clamp(cy - dy, unit * bounds.y)
+    const dt = Math.max(8, now - lt)
+    vx = vx * .4 + (-dx / dt * 16) * .6; vy = vy * .4 + (-dy / dt * 16) * .6
+    lx0 = e.clientX; ly0 = e.clientY; lt = now
+  })
+  const end = e => {
+    if (!dragging) return
+    dragging = false; stage.classList.remove('dragging')
+    if (performance.now() - lt > 80 || reduce) vx = vy = 0
+    suppress = moved > 7
+  }
+  stage.addEventListener('pointerup', end); stage.addEventListener('pointercancel', end)
+  stage.addEventListener('click', e => { if (suppress) { e.preventDefault(); e.stopPropagation(); suppress = false } }, true)
+  stage.addEventListener('wheel', e => {
+    e.preventDefault(); tween = null
+    const k = e.deltaMode === 1 ? 16 : 1
+    cx = clamp(cx + e.deltaX * k, unit * bounds.x); cy = clamp(cy + e.deltaY * k, unit * bounds.y)
+  }, { passive: false })
+  addEventListener('keydown', e => {
+    const step = 180
+    const m = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[e.key]
+    if (!m || e.altKey || e.metaKey) return
+    e.preventDefault()
+    const t = tween ? [tween.tx, tween.ty] : [cx, cy]
+    go(t[0] + m[0], t[1] + m[1], 420)
+  })
+  // keyboard focus walks you to the words it landed on
+  addEventListener('focusin', e => {
+    const isl = e.target.closest('.island'); if (!isl) return
+    const s = spots.find(s => s.el === isl); if (s) go(s.x, s.y, 700)
+  })
+  ret.addEventListener('click', () => go(0, 0, 1100))
+  addEventListener('resize', () => {
+    const u = Math.min(1100, Math.max(560, Math.max(W(), H()) * 0.8))
+    const k = u / unit; unit = u
+    spots.forEach(s => { s.x *= k; s.y *= k; s.el.style.left = s.x + 'px'; s.el.style.top = s.y + 'px' })
+    cx *= k; cy *= k
+  })
+
+  // stepping in: you arrive a little off and settle
+  if (!reduce) { cx = -36; cy = 110; go(0, 0, 1700) }
+
+  function frame (now) {
+    if (tween) {
+      const t = Math.min(1, (now - tween.t0) / tween.dur), k = ease(t)
+      cx = tween.fx + (tween.tx - tween.fx) * k; cy = tween.fy + (tween.ty - tween.fy) * k
+      if (t >= 1) tween = null
+    } else if (!dragging && (Math.abs(vx) > .04 || Math.abs(vy) > .04)) {
+      cx = clamp(cx + vx, unit * bounds.x); cy = clamp(cy + vy, unit * bounds.y)
+      vx *= .935; vy *= .935
+    }
+    near.style.transform = `translate3d(${(-cx).toFixed(1)}px, ${(-cy).toFixed(1)}px, 0)`
+    mid.style.transform = `translate3d(${(-cx * .58).toFixed(1)}px, ${(-cy * .58).toFixed(1)}px, 0)`
+    far.style.transform = `translate3d(${(-cx * .28).toFixed(1)}px, ${(-cy * .28 - 40).toFixed(1)}px, 0)`
+
+    // the words turn on when you reach them, and stay on
+    const reach = Math.min(W(), H()) * 0.6
+    for (const s of spots) {
+      const d = Math.hypot(s.x - cx, s.y - cy)
+      s.el.style.setProperty('--near', Math.max(0, 1 - d / (reach * 1.8)).toFixed(3))
+      if (!s.lit && d < reach) { s.lit = true; s.el.classList.add('lit') }
+    }
+    // lights brighten as you pass: your cursor on a desk, the middle of the screen in your hand
+    const qx = pointerLive ? px : 0, qy = pointerLive ? py : 0
+    for (const l of lights) {
+      const sx = l.x - cx * .58, sy = l.y - cy * .58
+      if (Math.abs(sx) > W() || Math.abs(sy) > H()) continue
+      const k = Math.max(0, 1 - Math.hypot(sx - qx, sy - qy) / 230)
+      if (Math.abs(k - l.k) > .01) { l.k = k; l.el.style.setProperty('--k', k.toFixed(2)) }
+    }
+    ret.classList.toggle('show', Math.hypot(cx, cy) > unit * .45)
+    requestAnimationFrame(frame)
+  }
+  requestAnimationFrame(frame)
+})()
+</script>
+</body>
+</html>

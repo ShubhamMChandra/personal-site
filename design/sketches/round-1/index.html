@@ -1,0 +1,305 @@
+<title>Personal Site Sketches</title>
+<style>
+/* layout: a plain, quiet index so the sketches do the talking; newest round first, thumbnails in a wrapping grid */
+:root {
+  --bg: #efeeeb;
+  --fg: #1d1b19;
+  --muted: #6b6660;
+  --line: #d5d1cb;
+  --accent: #a45a22;
+  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #1a1817; --fg: #ece7df; --muted: #9d968d; --line: #34302d; --accent: #e9a53b; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #1a1817; --fg: #ece7df; --muted: #9d968d; --line: #34302d; --accent: #e9a53b; color-scheme: dark; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font); padding-inline: 20px; padding-block: 36px 64px; }
+.wrap { max-width: 52rem; margin-inline: auto; display: grid; gap: 2.6rem; }
+section { display: grid; gap: 1.1rem; }
+h1 { margin: 0; font-size: 1.6rem; font-weight: 650; letter-spacing: -.01em; }
+h2 { margin: 0; font-size: 1.15rem; font-weight: 650; }
+.intro { margin: 0; max-width: 62ch; color: var(--muted); font-size: 1rem; line-height: 1.55; }
+.grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1.3rem 1rem; }
+.grid a { display: grid; gap: .5rem; color: var(--fg); text-decoration: none; }
+.grid img { width: 100%; max-width: 100%; aspect-ratio: 360 / 554; object-fit: cover; border-radius: 6px; border: 1px solid var(--line); background: var(--line); }
+.grid span { font-size: 1.02rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.grid a:hover span, .grid a:focus-visible span { color: var(--accent); }
+.grid a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 8px; }
+.soon { margin: 0; color: var(--muted); font-size: .95rem; }
+.stills { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.6rem 1.2rem; }
+.stills figure { margin: 0; display: grid; gap: .55rem; }
+.stills img { width: 100%; max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); background: var(--line); }
+.stills figcaption { font-size: .98rem; line-height: 1.5; }
+.stills b { font-weight: 650; }
+.ask { margin: 0; padding-top: 1.2rem; border-top: 1px solid var(--line); font-size: 1.05rem; line-height: 1.5; }
+.strips { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.6rem; }
+.strips figure { margin: 0; display: grid; gap: .55rem; }
+.strips img { width: 100%; max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); background: var(--line); }
+.strips .tall { max-width: 34rem; }
+.strips figcaption { font-size: .98rem; line-height: 1.5; }
+.strips b { font-weight: 650; }
+</style>
+
+<div class="wrap">
+  <h1>Sketches</h1>
+
+  <section aria-labelledby="cl">
+    <h2 id="cl">Painted words, a closer look</h2>
+    <p class="intro">Most of the old site’s content is back, trimmed to what still holds and kept inside the conceit. Touch a word for a quick look. The word stays wet afterwards, and light glints across it now and then, because there is more in it. Touch it again and a smaller burst paints out of the same word while the text turns to the closer look; then the word dries. No links or page markers, only paint. Contact has one look, so it never glints. Colophon is now Why?, with your story, and its closer look is how the page is made. The text fits one screen at every size down to a small phone. Under it the painter primes a calm, pale patch, and every line passes the usual contrast bar for reading even against the darkest paint behind it, on desktop and phone.</p>
+    <ol class="grid">
+      <li><a href="painted/15.html"><img src="painted/thumb-15.jpg" alt="Painted words, a closer look: the live page" width="360" height="554"><span>Try it live</span></a></li>
+    </ol>
+    <ul class="strips">
+      <li><figure><img src="painted/stills15/why.jpg" alt="Why?: your story on the left, how the page is made on the right, over a woven teal and mustard painting" width="1450" height="450"><figcaption><b>Why?.</b> Your story, then how it’s made.</figcaption></figure></li>
+      <li><figure class="tall"><img src="painted/stills15/glint.webp" alt="A painted word with a band of light sweeping across it, like light on wet paint" width="504" height="286"><figcaption><b>The wet word.</b> After the first touch, light glints across the word now and then: there is more.</figcaption></figure></li>
+      <li><figure><img src="painted/stills15/me.jpg" alt="Me: the quick look on the left, the closer look on the right" width="1450" height="450"><figcaption><b>Me.</b> Quick look on the left, closer look on the right.</figcaption></figure></li>
+      <li><figure><img src="painted/stills15/work.jpg" alt="Work: the roles at a glance, then each role in a sentence or two" width="1450" height="450"><figcaption><b>Work.</b> Same.</figcaption></figure></li>
+      <li><figure><img src="painted/stills15/references.jpg" alt="References: three names with a line each, then the quotes in full" width="1450" height="450"><figcaption><b>References.</b> Same.</figcaption></figure></li>
+      <li><figure><img src="painted/stills15/contact.jpg" alt="Contact: one look only" width="1450" height="450"><figcaption><b>Contact.</b> One look only, so the word never glints.</figcaption></figure></li>
+      <li><figure><img src="painted/stills15/phone.jpg" alt="Four phone screens: Me quick and close, Work close, References close" width="1590" height="844"><figcaption><b>On a phone.</b> Me quick and close, Work close, References close.</figcaption></figure></li>
+      <li><figure class="tall"><img src="painted/stills15/why-phone.jpg" alt="Why? on a phone: the story, then how it is made" width="790" height="844"><figcaption><b>Why?, on a phone.</b> The story, then how it’s made.</figcaption></figure></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="mo">
+    <h2 id="mo">Painted words, in motion</h2>
+    <p class="intro">The motion is back, on the strokes you approved. A click no longer freezes the page: the word jumps at once, and the plan for the painting is worked out between frames. After the burst out of the word, the rest arrives at an even pace that eases off toward the end, so it no longer stalls in the middle and floods in at the end. Colophon keeps its own timing, so the weave can pass over and under. On a phone, a tap no longer flashes a blue box, and only the word you chose stays lit. It runs at a steady 60 frames a second, checked with a phone-sized screen and a CPU slowed four times. Try it on your phone: tap a word, then another.</p>
+    <ol class="grid">
+      <li><a href="painted/14.html"><img src="painted/thumb-14.jpg" alt="Painted words in motion: the live page" width="360" height="554"><span>Try it live</span></a></li>
+    </ol>
+    <ul class="strips">
+      <li><figure><img src="painted/motion-desktop.webp" alt="Recording on a computer: clicking Contact, then References, then Colophon, each painting out of its word" width="720" height="401"><figcaption><b>On a computer.</b> Contact, then References, then Colophon.</figcaption></figure></li>
+      <li><figure class="tall"><img src="painted/motion-phone.webp" alt="Recording on a phone: tapping Contact, then References, the paint rising out of the word into the text" width="351" height="759"><figcaption><b>On a phone.</b> Contact, then References.</figcaption></figure></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="md">
+    <h2 id="md">Painted words, moods and a woven colophon (stills)</h2>
+    <p class="intro">Each painting now has moods by area, the way a painter works some places hard and leaves others alone. Some areas are left bare, with the grey showing. Some are worked over with a second layer in a neighbouring colour. Some are loose, with longer, freer strokes. Each painting also breaks a rule two or three times, on purpose: a small bundle laid across the current, a patch repainted late in another colour, a few strokes in the complementary colour, or one oversized sweep. Colophon is woven now: teal and sage weft, mustard warp going over and under, and the odd rust thread. Each section is painted three times to check it never repeats.</p>
+    <ul class="strips">
+      <li><figure><img src="painted/stills14/seeds-me.jpg" alt="Me painted three times: three compositions with bare, worked and loose areas" width="1832" height="378"><figcaption><b>Me, three times.</b> Three times from scratch.</figcaption></figure></li>
+      <li><figure><img src="painted/stills14/seeds-references.jpg" alt="References painted three times: three galaxies in pink, violet and blue" width="1832" height="378"><figcaption><b>References, three times.</b> Three times from scratch.</figcaption></figure></li>
+      <li><figure><img src="painted/stills14/seeds-colophon.jpg" alt="Colophon painted three times: three woven cloths in teal, sage and mustard with rust stripes" width="1832" height="378"><figcaption><b>Colophon, three times.</b> Three times from scratch.</figcaption></figure></li>
+      <li><figure class="tall"><img src="painted/stills14/weave-close.png" alt="Close-up of the woven Colophon: mustard warp crossing over teal and sage weft" width="600" height="400"><figcaption><b>The weave, close up.</b> Mustard warp going over and under the weft.</figcaption></figure></li>
+      <li><figure><img src="painted/stills14/me.jpg" alt="Me at three moments" width="2180" height="450"><figcaption><b>Me, a sunburst.</b> Just after, a third of the way, settled.</figcaption></figure></li>
+      <li><figure><img src="painted/stills14/work.jpg" alt="Work at three moments" width="2180" height="450"><figcaption><b>Work, a wake.</b> Same three moments.</figcaption></figure></li>
+      <li><figure><img src="painted/stills14/contact.jpg" alt="Contact at three moments" width="2180" height="450"><figcaption><b>Contact, a fan.</b> Same three moments.</figcaption></figure></li>
+      <li><figure><img src="painted/stills14/references.jpg" alt="References at three moments" width="2180" height="450"><figcaption><b>References, a galaxy.</b> Same three moments.</figcaption></figure></li>
+      <li><figure><img src="painted/stills14/colophon.jpg" alt="Colophon at three moments: the cloth weaving outward from the word" width="2180" height="450"><figcaption><b>Colophon, a weave.</b> Same three moments. On a phone the cloth doesn’t spread fully yet.</figcaption></figure></li>
+      <li><figure class="tall"><img src="painted/stills14/phone-me.jpg" alt="Me on a phone" width="956" height="675"><figcaption><b>Me, on a phone.</b></figcaption></figure></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="br">
+    <h2 id="br">Painted words, a brush that runs out (stills)</h2>
+    <p class="intro">Each current is now one drag of a loaded brush. It starts full: wide, saturated and thick. As it travels it runs dry, so the strokes get thinner and break up, and the grey shows through in skips. Long currents get reloaded partway, picking up a little colour from the paint they came out of. The hand also changes speed in patches. Fast passages are long, thin and straight, slow ones short, thick and rich. Colophon’s weave is coming in the next update.</p>
+    <ul class="strips">
+      <li><figure class="tall"><img src="painted/stills13/closeup-ab.jpg" alt="Close-up of the same currents: on the left every stroke at one pressure; on the right loaded strokes beside thin dry ones" width="1370" height="440"><figcaption><b>Close up.</b> The same currents, before and after: one pressure everywhere on the left; on the right the brush loads, speeds up and runs dry.</figcaption></figure></li>
+      <li><figure><img src="painted/stills13/seeds-me.jpg" alt="Me painted three times from scratch" width="1832" height="378"><figcaption><b>Me, three times.</b> Three times from scratch: the same hand on different days.</figcaption></figure></li>
+      <li><figure><img src="painted/stills13/me.jpg" alt="Me: a gold and orange sunburst out of the word" width="2180" height="450"><figcaption><b>Me, a sunburst.</b> Just after, a third of the way, settled.</figcaption></figure></li>
+      <li><figure><img src="painted/stills13/work.jpg" alt="Work: blue and teal currents curling back to the left" width="2180" height="450"><figcaption><b>Work, a wake.</b> Same three moments.</figcaption></figure></li>
+      <li><figure><img src="painted/stills13/contact.jpg" alt="Contact: reds, pinks and golds out of the word" width="2180" height="450"><figcaption><b>Contact, a fan.</b> Same three moments.</figcaption></figure></li>
+      <li><figure><img src="painted/stills13/references.jpg" alt="References: violet, pink and blue currents drawn into one swirl" width="2180" height="450"><figcaption><b>References, a galaxy.</b> Same three moments.</figcaption></figure></li>
+      <li><figure class="tall"><img src="painted/stills13/phone-me.jpg" alt="Me on a phone: the burst rising from the word into the text above" width="956" height="675"><figcaption><b>Me, on a phone.</b></figcaption></figure></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="fw">
+    <h2 id="fw">Painted words, strokes that flow (stills)</h2>
+    <p class="intro">New strokes, after the painters. Each one bends with its current and carries two or three colours streaked along it. Thick paint catches the light along one edge and casts a thin shadow on the other. Each stroke lands over the tail of the one before, like scales, and its tail goes dry so the grey shows through. Neighbouring strokes share a length and a band of colour, so they move together as one sweep, but their joints are staggered. Darker currents go down first and lighter ones over them. The chosen word now keeps a deep ink with a sliver of ground round its letters, so it reads at a glance while the burst still comes out of it.</p>
+    <ul class="strips">
+      <li><figure class="tall"><img src="painted/stills12/closeup.jpg" alt="Close-up comparison: on the left, the old short dashes like confetti; on the right, the new curved strokes in pink, cream and blue, overlapping like scales" width="1210" height="400"><figcaption><b>Close up.</b> Before on the left, short confetti dashes. After on the right.</figcaption></figure></li>
+      <li><figure><img src="painted/stills12/seeds-me.jpg" alt="Me painted three times from scratch: three different compositions in the same hand" width="1832" height="378"><figcaption><b>Me, three times.</b> Painted three times from scratch, to check it isn’t formulaic: the same hand on three different days.</figcaption></figure></li>
+      <li><figure><img src="painted/stills12/me.jpg" alt="Me: a gold and orange sunburst out of the word" width="2180" height="450"><figcaption><b>Me, a sunburst.</b> Just after, a third of the way, settled.</figcaption></figure></li>
+      <li><figure><img src="painted/stills12/work.jpg" alt="Work: blue and teal currents curling back to the left like a wave" width="2180" height="450"><figcaption><b>Work, a wake.</b> Same three moments.</figcaption></figure></li>
+      <li><figure><img src="painted/stills12/contact.jpg" alt="Contact: a fan of reds, pinks and golds out of the word" width="2180" height="450"><figcaption><b>Contact, a fan.</b> Same three moments.</figcaption></figure></li>
+      <li><figure><img src="painted/stills12/references.jpg" alt="References: violet, pink and blue currents drawn round into one great swirl" width="2180" height="450"><figcaption><b>References, a galaxy.</b> Same three moments.</figcaption></figure></li>
+      <li><figure><img src="painted/stills12/colophon.jpg" alt="Colophon: teal, sage and mustard currents crossing" width="2180" height="450"><figcaption><b>Colophon, a weave.</b> The weave is still being worked on.</figcaption></figure></li>
+      <li><figure class="tall"><img src="painted/stills12/phone-me.jpg" alt="Me on a phone: the burst rising from the word into the text above" width="956" height="675"><figcaption><b>Me, on a phone.</b></figcaption></figure></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="ms">
+    <h2 id="ms">How the painters lay a stroke</h2>
+    <p class="intro">Close-ups from public-domain scans, from Turner to Sargent, to study texture and flow. Van Gogh’s strokes each carry two or three colours, streaked along their length by the bristles. Their thick paint catches the light on one ridge, and they bend and pack into bundles that move together. Monet’s late water lilies and Sorolla drag dry paint over darker paint, so the colour breaks up and the tails go dry. Cézanne, Signac and Cross lay flat patches and dots: lovely, but closer to what our strokes do now, which is why they don’t flow.</p>
+    <ul class="strips">
+      <li><figure><img src="painted/masters/crops-0.jpg" alt="Close-ups: Van Gogh’s Starry Night and Wheat Field with Cypresses, Turner’s Snow Storm, Monet’s Impression Sunrise and Water Lilies, Renoir’s Two Sisters" width="1880" height="930"><figcaption><b>Van Gogh, Turner, Monet, Renoir.</b></figcaption></figure></li>
+      <li><figure><img src="painted/masters/crops-1.jpg" alt="Close-ups: Cézanne’s Mont Sainte-Victoire, Signac’s Gasometers at Clichy, Cross’s Evening Air, Sorolla’s Strolling along the Seashore, Sargent’s Rio dei Mendicanti" width="1880" height="930"><figcaption><b>Cézanne, Signac, Cross, Sorolla, Sargent.</b></figcaption></figure></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="fb">
+    <h2 id="fb">Painted words, five bursts (stills)</h2>
+    <p class="intro">The sections now take their names and copy from the old site: Work, Me, Contact, References, Colophon. Me holds what was Now, Places, Craft and Reading. Each section bursts its own way, and each has a blended palette, three neighbouring colours plus one complementary note used sparingly, the way Painter’s fill had it. Each row: just after the click, a third of the way in, settled.</p>
+    <ul class="strips">
+      <li><figure><img src="painted/stills10/me.jpg" alt="Me: a gold and orange sunburst out of the word, flecked with blue, filling the left side" width="2180" height="450"><figcaption><b>Me, a sunburst.</b> Rays straight out of the word all round, golds and oranges with flecks of blue.</figcaption></figure></li>
+      <li><figure><img src="painted/stills10/work.jpg" alt="Work: blue and teal streaks streaming back to the left from the word" width="2180" height="450"><figcaption><b>Work, a wake.</b> Long streaks streaming back through the years, blues and teals with a note of gold.</figcaption></figure></li>
+      <li><figure><img src="painted/stills10/contact.jpg" alt="Contact: a fan of reds, pinks and golds reaching left from the word" width="2180" height="450"><figcaption><b>Contact, a fan.</b> A fan reaching out toward you, vermilion, rose and gold with a note of teal.</figcaption></figure></li>
+      <li><figure><img src="painted/stills10/references.jpg" alt="References: violet, blue and rose currents drawn round into one great swirl" width="2180" height="450"><figcaption><b>References, a galaxy.</b> Everything drawn round into one great swirl, violet, blue and rose with a note of yellow.</figcaption></figure></li>
+      <li><figure><img src="painted/stills10/colophon.jpg" alt="Colophon: teal, sage and mustard currents crossing from the word" width="2180" height="450"><figcaption><b>Colophon, a weave.</b> Two currents crossing, for how the thing is made, teal, sage and mustard with a note of rust.</figcaption></figure></li>
+      <li><figure class="tall"><img src="painted/stills10/phone-me.jpg" alt="Me on a phone: the sunburst rising from the word into the text above" width="956" height="675"><figcaption><b>Me, on a phone.</b></figcaption></figure></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="fl">
+    <h2 id="fl">Painted words, from the letters (stills)</h2>
+    <p class="intro">Stills for now, so revisions go faster. Each row is one click, at three moments: just after, about a third of the way in, and settled. The paint now starts inside the word. Some of the strokes that make up the letters run out of them as currents, flung outward and then caught by the drift. Every later current is laid beside one already there, so the whole left side grows out of the word. About the first third comes straight from the letters. The word keeps a deeper shade of its colour so it still reads through its own burst. The strokes along a current no longer sit end to end: some overlap, some leave a gap, each sits a little off the line, and most are pressed and lifted rather than round at both ends.</p>
+    <ul class="strips">
+      <li><figure><img src="painted/stills9/desktop-places.jpg" alt="Places, three moments: a burst of reds out of the word, currents spreading left, the left side filled with red and pink swirls" width="2180" height="450"><figcaption><b>Places.</b> Just after, a third of the way, settled.</figcaption></figure></li>
+      <li><figure><img src="painted/stills9/desktop-now.jpg" alt="Now, three moments: a gold burst out of the word, gold currents spreading, the left side filled with gold and pale swirls" width="2180" height="450"><figcaption><b>Now.</b> Same three moments.</figcaption></figure></li>
+      <li><figure><img src="painted/stills9/desktop-craft.jpg" alt="Craft, three moments: a green burst out of the word, a current curling left, the left side filled with greens and teals" width="2180" height="450"><figcaption><b>Craft.</b> Same three moments.</figcaption></figure></li>
+      <li><figure class="tall"><img src="painted/stills9/phone-places.jpg" alt="Places on a phone, three moments: a burst out of the word below, rising into the text above" width="956" height="675"><figcaption><b>Places, on a phone.</b> The words sit below, and the burst rises into the text.</figcaption></figure></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="pw">
+    <h2 id="pw">Painted words</h2>
+    <p class="intro">Your idea: one screen, no scrolling. Text on the left; the parts of your life on the right, written in round 1's brushstrokes. Come near a word and its strokes deepen into colour; click it and a swirl of strokes curls out of the word and paints the left side in its colours while the text changes. Each click paints over the last. On a phone the words sit below and the swirl rises into the text above. Best tried on a computer first.</p>
+    <p class="intro"><b>Painter’s sky</b>, the newest. The words are now built from the ground: near each word the grey strokes gather, grow smaller and darker and turn to follow the letters, until they are the letters. Each word has its own colours. The fill is slower, about six seconds, and is rebuilt from how Van Gogh and generative painters work: strokes laid end to end in rows along currents, many swirls of very different sizes, some closed rings and some spirals, a seam where the flow breaks, a patch or two left unpainted, sometimes one oversized run, and a new sky every click. The colour now flows over the grey across a wide, ragged edge.</p>
+    <p class="intro"><b>Painter’s fill</b>, the version before: the spiral’s way of taking over the whole left side, but varied like Starry Night, with swirls of different sizes and turns, lighter hearts, a wandering current between them, and colour in bands with grey worked through. It fills the way a painter works: a few long gestures first, then areas blocked in here and there, then the light and the bright notes last. On the quieter round 1 ground.</p>
+    <p class="intro">Two quieter takes on how the colour arrives. Both bring the ground back toward round 1, grey with a little muted colour toward the edges, keep the paint off your text, and fade the old colour as the new arrives. <b>A, currents:</b> colour leaves the word as streams that meander, widen like rivers and sometimes curl into an eddy; once settled, a faint pulse of light keeps flowing down them. <b>B, gust:</b> a flurry of strokes tumbles and flutters out of the word and settles into drifts; once settled they sway, and every few seconds a small gust lifts a few and sets them down.</p>
+    <ol class="grid">
+      <li><a href="painted/8.html"><img src="painted/thumb-8.jpg" alt="Painted words, a painter’s sky" width="360" height="554"><span>Painter’s sky</span></a></li>
+      <li><a href="painted/5.html"><img src="painted/thumb-5.jpg" alt="Painted words, a painter’s fill" width="360" height="554"><span>Painter’s fill</span></a></li>
+      <li><a href="painted/2.html"><img src="painted/thumb-2.jpg" alt="Painted words, currents" width="360" height="554"><span>A, currents</span></a></li>
+      <li><a href="painted/3.html"><img src="painted/thumb-3.jpg" alt="Painted words, gust" width="360" height="554"><span>B, gust</span></a></li>
+      <li><a href="painted/1.html"><img src="painted/thumb-1.jpg" alt="Painted words, the first spiral" width="360" height="554"><span>First, spiral</span></a></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="r5b">
+    <h2 id="r5b">Round 1, sketch 5, strokes by hand</h2>
+    <p class="intro">The original round 1 sketch 5, with one change: every stroke has its own shape. Some press in and taper, some swell, edges wander, heads land round or cut at a slant, and some tails split dry. Same colours, layout, touch and motion as before.</p>
+    <ol class="grid">
+      <li><a href="5b.html"><img src="thumb-5b.jpg" alt="Round 1 sketch 5 with hand-shaped strokes" width="360" height="554"><span>5, by hand</span></a></li>
+      <li><a href="5.html"><img src="thumb-5.jpg" alt="Round 1 sketch 5, the original" width="360" height="554"><span>5, original</span></a></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="sh">
+    <h2 id="sh">Strokes by hand</h2>
+    <p class="intro">Every stroke is its own now: some press in and taper, some swell, a few grow; edges wander; heads are round or cut at a slant; a third of the tails split dry. Following the visionary agent, the paint lies flat on the glass, with no rim of light and no shadow of its own, and thins as the brush empties; only the plane below carries the depth. Marks lie a little messier. The plane is waxed canvas, #968b76, with deeper stone and round 1's grey beside it.</p>
+    <ol class="grid">
+      <li><a href="together/8.html"><img src="together/thumb-8.jpg" alt="Strokes by hand, on waxed canvas" width="360" height="554"><span>Strokes by hand</span></a></li>
+    </ol>
+    <ul class="stills">
+      <li><figure><img src="together/planes8.jpg" alt="The same painting on waxed canvas, deeper stone and round 1 grey" width="1234" height="914"><figcaption><b>Planes.</b> Waxed canvas, deeper stone, round 1 grey.</figcaption></figure></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="rm">
+    <h2 id="rm">Round 1's marks, on glass</h2>
+    <p class="intro">Why A and B didn't feel like paint: their marks were short, straight capsules with a big shadow below, so they read as grains hovering over a table. This one uses round 1 sketch 5's own mark, a short curved drag with round ends, a thin edge and a ridge of light, and the depth to the plane below is only a whisper. Below it, the same painting over six plane colours.</p>
+    <ol class="grid">
+      <li><a href="together/7.html"><img src="together/thumb-7.jpg" alt="Round 1's marks on glass" width="360" height="554"><span>Round 1's marks</span></a></li>
+    </ol>
+    <ul class="stills">
+      <li><figure><img src="together/planes.jpg" alt="The same painting over six plane colours: round 1 grey, pale plaster, deeper stone, cool slate, sage stone and night" width="2452" height="914"><figcaption><b>Plane colours.</b> Round 1 grey, pale plaster, deeper stone, cool slate, sage stone, night.</figcaption></figure></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="rf">
+    <h2 id="rf">Paint on a pane, refined</h2>
+    <p class="intro">Two takes on the visionary agent's notes and your margin idea. Both have more air so the plane below shows, no swirls, quiet under your words by leaving strokes out, bright colour drifting at the side margins and fading to grey toward the middle, and no screen-door texture. <b>A</b> keeps the current hugging your words. <b>B</b> is closer to round 1 itself: thinner, freer strokes, your words on the bare plane, the plane further below, and round 1's typefaces.</p>
+    <ol class="grid">
+      <li><a href="together/5.html"><img src="together/thumb-5.jpg" alt="A, quiet middle" width="360" height="554"><span>A, quiet middle</span></a></li>
+      <li><a href="together/6.html"><img src="together/thumb-6.jpg" alt="B, round 1 on glass" width="360" height="554"><span>B, round 1 on glass</span></a></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="ct">
+    <h2 id="ct">Coming together</h2>
+    <p class="intro">From your words: some beautiful things, but you don’t get the full picture, and as you move through, it assembles. Each one starts cluttered on purpose. Scrolling puts it together where you are reading. A finger, a cursor or a tap does it faster. If you just stay, it comes together slowly on its own. What you have passed stays put together.</p>
+    <ol class="grid">
+      <li><a href="together/4.html"><img src="together/thumb-4.jpg" alt="Paint on a pane: round 1's brushstrokes painted on clear glass, casting soft shadows on a grey plane below" width="360" height="554"><span>Paint on a pane</span></a></li>
+      <li><a href="together/3.html"><img src="together/thumb-3.jpg" alt="Paint on glass: hand-cut panes at different depths, short brushstrokes painted on each" width="360" height="554"><span>Paint on glass</span></a></li>
+      <li><a href="together/2.html"><img src="together/thumb-2.jpg" alt="Paint and glass: grey brushstrokes with coloured glass strokes hovering above" width="360" height="554"><span>Paint and glass</span></a></li>
+      <li><a href="together/1.html"><img src="together/thumb-1.jpg" alt="Paint: brushstrokes coming together" width="360" height="554"><span>Paint</span></a></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="pv">
+    <h2 id="pv">Paint and glass, five ways</h2>
+    <p class="intro">The same core in each: grey brushwork that settles as you move through, and glass strokes hovering above that gather. Each one carries something else you have liked. <b>Dusk.</b> The same page after dark: warm lamplight round the words, sodium-amber glass, one cool note. <b>Leaves.</b> The glass gathers into a ring beside each passage, yellow above deepening to red, after the leaves still. <b>Ikat.</b> Cotton-pale paint; glass in indigo, madder and turmeric crosses into a woven band, from the Kerala market and your dye colours. <b>Highlight.</b> The glass settles under the words you have reached, like the colour arriving under the words in round 2, sketch 2. <b>Concrete.</b> Cool, flat, board-marked greys like the Barbican, with one warm column of glass beside each passage, a lit window in a cold building.</p>
+    <ol class="grid">
+      <li><a href="together/v1.html"><img src="together/thumb-v1.jpg" alt="Paint and glass, dusk" width="360" height="554"><span>Dusk</span></a></li>
+      <li><a href="together/v2.html"><img src="together/thumb-v2.jpg" alt="Paint and glass, leaves" width="360" height="554"><span>Leaves</span></a></li>
+      <li><a href="together/v3.html"><img src="together/thumb-v3.jpg" alt="Paint and glass, ikat" width="360" height="554"><span>Ikat</span></a></li>
+      <li><a href="together/v4.html"><img src="together/thumb-v4.jpg" alt="Paint and glass, highlight" width="360" height="554"><span>Highlight</span></a></li>
+      <li><a href="together/v5.html"><img src="together/thumb-v5.jpg" alt="Paint and glass, concrete" width="360" height="554"><span>Concrete</span></a></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="st">
+    <h2 id="st">Three more, as stills</h2>
+    <p class="intro">Quicker to make, so you can react before any of them is built to move. Each shows the same phone screen before and after you move through.</p>
+    <ul class="stills">
+      <li><figure><img src="together/stills/thread.jpg" alt="Thread, before and after: scattered slivers of dyed thread, then an ikat band of diamonds" width="1200" height="1313"><figcaption><b>Thread.</b> Each thread was dyed in pieces before weaving. They hang at different heights until you pass, then slide into register and the pattern appears.</figcaption></figure></li>
+      <li><figure><img src="together/stills/sand.jpg" alt="Sand, before and after: drifts of sand on a dark plate, then a sand figure of a ring round a flower" width="1200" height="1313"><figcaption><b>Sand.</b> Sand dusted on a dark plate. Moving through makes the plate hum, and the sand gathers on the lines that stay still.</figcaption></figure></li>
+      <li><figure><img src="together/stills/leaves.jpg" alt="Leaves, before and after: fallen leaves strewn on dark stone, then laid into a ring graded yellow to red round a hole" width="1200" height="1313"><figcaption><b>Leaves.</b> Leaves where they fell. As you pass, they are laid by hand into a ring, yellow at the rim and deep red at the lip of a hole. After Andy Goldsworthy.</figcaption></figure></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="gr">
+    <h2 id="gr">Glass, rebuilt</h2>
+    <p class="intro">Round 2’s sliding glass, rebuilt as one idea: the pieces drift apart while you scroll and gather round whatever you are reading when you stop. Built before your note on assembling, so it works the other way round.</p>
+    <ol class="grid">
+      <li><a href="glass/1.html"><img src="glass/thumb-1.jpg" alt="Glass that gathers when you stop" width="360" height="554"><span>Glass</span></a></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="c1">
+    <h2 id="c1">All of it at once</h2>
+    <p class="intro">One sketch built to hold every principle so far: complete at rest, generous at a glance, rewarding as you interact without asking you to, something that comes together, and the dye colours you liked.</p>
+    <ol class="grid">
+      <li><a href="combined/1.html"><img src="combined/thumb-1.jpg" alt="The combined sketch" width="360" height="554"><span>Combined</span></a></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="r4">
+    <h2 id="r4">Round 4</h2>
+    <p class="intro">Judged against your line: it takes time to get something, attention to detail helps, and the thing will be beautiful if you stop to notice. Shown one at a time as each is ready.</p>
+    <ol class="grid">
+      <li><a href="round-4/1.html"><img src="round-4/thumb-1.jpg" alt="Round 4, sketch 1" width="360" height="554"><span>1</span></a></li>
+      <li><a href="round-4/2.html"><img src="round-4/thumb-2.jpg" alt="Round 4, sketch 2" width="360" height="554"><span>2</span></a></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="r3">
+    <h2 id="r3">Round 3</h2>
+    <p class="intro">Each one is a single idea, with everything on the page serving it. 1 zooms into the full stop at the end of each sentence. 3 puts a panel of glass together as you read. 2 was the fogged window, scrapped. 4 and 5 are your visionary agent's own ideas.</p>
+    <ol class="grid">
+      <li><a href="round-3/1.html"><img src="round-3/thumb-1.jpg" alt="Round 3, sketch 1" width="360" height="554"><span>1</span></a></li>
+      <li><a href="round-3/3.html"><img src="round-3/thumb-3.jpg" alt="Round 3, sketch 3" width="360" height="554"><span>3</span></a></li>
+      <li><a href="round-3/4.html"><img src="round-3/thumb-4.jpg" alt="Round 3, sketch 4" width="360" height="554"><span>4</span></a></li>
+      <li><a href="round-3/5.html"><img src="round-3/thumb-5.jpg" alt="Round 3, sketch 5" width="360" height="554"><span>5</span></a></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="r2">
+    <h2 id="r2">Round 2</h2>
+    <p class="intro">Built from your picks in round 1. Each one still has something to touch, drag, scroll or tap, and none of them says what. 5 and 6 throw out the usual format on purpose. 7 comes from your mentor's note. Type, grain and words are placeholders again, except where a sketch breaks the format.</p>
+    <ol class="grid">
+      <li><a href="round-2/1.html"><img src="round-2/thumb-1.jpg" alt="Round 2, sketch 1" width="360" height="554"><span>1</span></a></li>
+      <li><a href="round-2/2.html"><img src="round-2/thumb-2.jpg" alt="Round 2, sketch 2" width="360" height="554"><span>2</span></a></li>
+      <li><a href="round-2/3.html"><img src="round-2/thumb-3.jpg" alt="Round 2, sketch 3" width="360" height="554"><span>3</span></a></li>
+      <li><a href="round-2/4.html"><img src="round-2/thumb-4.jpg" alt="Round 2, sketch 4" width="360" height="554"><span>4</span></a></li>
+      <li><a href="round-2/5.html"><img src="round-2/thumb-5.jpg" alt="Round 2, sketch 5" width="360" height="554"><span>5</span></a></li>
+      <li><a href="round-2/6.html"><img src="round-2/thumb-6.jpg" alt="Round 2, sketch 6" width="360" height="554"><span>6</span></a></li>
+      <li><a href="round-2/7.html"><img src="round-2/thumb-7.jpg" alt="Round 2, sketch 7" width="360" height="554"><span>7</span></a></li>
+    </ol>
+      </section>
+
+  <section aria-labelledby="r1">
+    <h2 id="r1">Round 1</h2>
+    <p class="intro">Your picks were 3 and 5.</p>
+    <ol class="grid">
+      <li><a href="1.html"><img src="thumb-1.jpg" alt="Round 1, sketch 1" width="360" height="554"><span>1</span></a></li>
+      <li><a href="2.html"><img src="thumb-2.jpg" alt="Round 1, sketch 2" width="360" height="554"><span>2</span></a></li>
+      <li><a href="3.html"><img src="thumb-3.jpg" alt="Round 1, sketch 3" width="360" height="554"><span>3</span></a></li>
+      <li><a href="4.html"><img src="thumb-4.jpg" alt="Round 1, sketch 4" width="360" height="554"><span>4</span></a></li>
+      <li><a href="5.html"><img src="thumb-5.jpg" alt="Round 1, sketch 5" width="360" height="554"><span>5</span></a></li>
+      <li><a href="6.html"><img src="thumb-6.jpg" alt="Round 1, sketch 6" width="360" height="554"><span>6</span></a></li>
+    </ol>
+  </section>
+</div>

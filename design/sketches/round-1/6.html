@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sketch 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap">
+<style>
+/* depth as structure: nested frames step down from the page into a pool of colour.
+   lean to look in. tap inside and something small falls a long way. */
+:root {
+  --ground: #bfb3a0;
+  --ink: #2b2420;
+  --ink-soft: #564b42;
+  --amber: #c27a1c;
+  --font-ui: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-text: "Source Serif 4", Georgia, "Times New Roman", serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { background: var(--ground); }
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  position: relative;
+}
+#deep { position: absolute; top: 0; left: 0; width: 100%; height: 100svh; z-index: 0; display: block; touch-action: pan-y; }
+.top {
+  position: absolute; z-index: 2; left: 0; right: 0; top: 0;
+  padding: calc(26px + env(safe-area-inset-top, 0px)) max(22px, env(safe-area-inset-right, 0px)) 0 max(22px, env(safe-area-inset-left, 0px));
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;
+  pointer-events: none;
+}
+.top a { pointer-events: auto; }
+header { display: grid; gap: .25rem; }
+.name { margin: 0; font-family: var(--font-ui); font-weight: 650; font-size: clamp(1.8rem, 1.3rem + 1.8vw, 2.5rem); letter-spacing: -.014em; line-height: 1.04; }
+.place { margin: 0; font-family: var(--font-ui); color: var(--ink-soft); font-size: .95rem; }
+.back { font-family: var(--font-ui); font-size: .8rem; color: var(--ink-soft); text-decoration: none; white-space: nowrap; }
+.back:hover, .back:focus-visible { color: var(--ink); }
+.hint { position: absolute; z-index: 2; pointer-events: none; display: grid; gap: .2rem; width: 11rem; font-family: var(--font-ui); font-style: italic; font-size: .82rem; line-height: 1.35; color: var(--ink); opacity: .8; }
+.hint svg { width: 64px; height: 44px; overflow: visible; }
+.hint path { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.page {
+  position: relative; z-index: 2;
+  max-width: 32rem;
+  margin-left: max(22px, env(safe-area-inset-left, 0px));
+  margin-right: max(22px, env(safe-area-inset-right, 0px));
+  padding-top: calc(100svh + 28px);
+  padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  display: grid; gap: 2.6rem;
+}
+@media (min-width: 900px) {
+  #deep { left: auto; right: 0; width: 56vw; }
+  .top { left: 7vw; right: auto; width: 33vw; padding-left: 0; }
+  .page { margin-left: 7vw; padding-top: 190px; max-width: min(32rem, 37vw - 28px); }
+  .hint { width: 12rem; }
+}
+.roles { margin: 0; padding: 0; list-style: none; display: grid; gap: .55rem; font-family: var(--font-ui); font-size: .92rem; }
+.roles li { display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: baseline; }
+.roles .what { color: var(--ink-soft); }
+.roles .where { font-weight: 600; }
+.roles .when { color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.prose { display: grid; gap: 1.1em; font-size: 1.12rem; line-height: 1.62; font-optical-sizing: auto; }
+.prose p { margin: 0; }
+.prose .lead { font-size: 1.3rem; line-height: 1.42; font-weight: 500; }
+.prose h2 { margin: 0 0 .2em; font-family: var(--font-ui); font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.links { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; font-family: var(--font-ui); font-size: .95rem; }
+.links a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--amber); text-underline-offset: .22em; text-decoration-thickness: 2px; }
+.links a:hover, .links a:focus-visible { color: var(--amber); }
+.grain { position: fixed; inset: -50%; z-index: 4; pointer-events: none; opacity: .5; mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+</style>
+</head>
+<body>
+<canvas id="deep" aria-hidden="true"></canvas>
+
+<div class="top">
+  <header>
+    <h1 class="name">Shubham Chandra</h1>
+    <p class="place">Chicago</p>
+  </header>
+  <a class="back" href="index.html">All sketches</a>
+</div>
+
+<div class="hint" id="hint" aria-hidden="true">
+  <svg viewBox="0 0 64 44"><path d="M4 6 C 14 4, 30 10, 42 22 S 56 36, 60 38 M 50 38 L 60 38 L 58 29"/></svg>
+  <span>tap inside. it goes a long way.</span>
+</div>
+
+<main class="page" id="page">
+  <ul class="roles">
+    <li><span><span class="where">Garner Health</span> <span class="what">Head of Business Operations</span></span><span class="when">2021–22</span></li>
+    <li><span><span class="where">NJOY</span> <span class="what">Head of Strategy, Office of the CEO</span></span><span class="when">2018–21</span></li>
+    <li><span><span class="where">L.E.K. Consulting</span> <span class="what">Associate</span></span><span class="when">2016–18</span></li>
+  </ul>
+
+  <section class="prose">
+    <h2>Beyond work</h2>
+    <p class="lead">I do better with things that take a little time to make sense of.</p>
+    <p>I’m drawn to interesting textures, small restaurants that don’t advertise themselves, and travel that doesn’t come with a gift shop. I like being in places that aren’t trying to perform for you. Street level feels honest: you’re walking, noticing, adjusting. In Kerala, that’s a fabric market, not a landmark. Heat, noise, color, bargaining, getting a little turned around and not minding it. I like the feeling of earning your way into a place.</p>
+    <p>Back home, I pay attention to craft. Clothes are an easy example: weave, weight, hand feel, drape. I’m not interested in labels as a proxy for taste. I’m interested in the work. Cooking is the same impulse. Start with something solid, then tinker until it tastes like mine.</p>
+    <p>I read a lot of sci-fi, especially the kind that starts fun and ends up making you stare at the ceiling for ten minutes. Consciousness, time, huge structures, weird rules. I like direct people and sharp conversation. I can be meticulous about what I care about and pretty relaxed about everything else.</p>
+  </section>
+
+  <nav class="links" aria-label="Contact">
+    <a href="#">Email</a>
+    <a href="#">LinkedIn</a>
+    <a href="#">Curriculum vitae</a>
+  </nav>
+</main>
+<div class="grain" aria-hidden="true"></div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const canvas = document.getElementById('deep')
+  const ctx = canvas.getContext('2d')
+  const hint = document.getElementById('hint')
+  const dpr = Math.min(2, window.devicePixelRatio || 1)
+
+  // from the page's own ground, down through sand and ochre and clay, to a pool of teal
+  const RAMP = ['#bfb3a0', '#c3ac88', '#bb8d5c', '#a76d4b', '#8a5c4c', '#655651', '#48565a', '#2e635f', '#227068', '#3d9a89']
+  const N = 15, RATIO = .745
+  let W = 0, H = 0, left = 0, vp = { x: 0, y: 0 }, lean = { x: 0, y: 0 }, want = { x: 0, y: 0 }
+  let corners = [], drops = [], rings = [], glow = 0, flicker = new Float32Array(N + 1)
+
+  const hex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]
+  const RGB = RAMP.map(hex)
+  const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t)
+  const css = (c, al = 1) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${al})`
+  const ramp = t => { const p = t * (RGB.length - 1), i = Math.min(RGB.length - 2, p | 0); return mix(RGB[i], RGB[i + 1], p - i) }
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+
+  function layout () {
+    const r = canvas.getBoundingClientRect()
+    W = r.width; H = r.height; left = r.left
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr)
+    const wide = window.innerWidth >= 900
+    vp = { x: wide ? W * .55 : W * .5, y: wide ? H * .56 : H * .62 }
+    // the frames are cut a little unevenly; nothing here was machined
+    corners = []
+    for (let i = 0; i <= N; i++) corners.push([0, 1, 2, 3].map(() => (Math.random() - .5) * 2.4))
+    const hx = wide ? Math.max(24, W * .05) : 20, hy = wide ? H - 96 : H - 86
+    hint.style.left = Math.round(left + hx) + 'px'; hint.style.top = Math.round(hy - 22) + 'px'
+  }
+
+  function frameRect (i, cx, cy) {
+    // each edge walks toward the vanishing point; deeper frames are nearer to it
+    const k = i === 0 ? 0 : 1 - .965 * Math.pow(RATIO, i - 1)
+    const c = corners[i]
+    return {
+      l: cx * k + c[0], t: cy * k + c[1],
+      r: W - (W - cx) * k + c[2], b: H - (H - cy) * k + c[3]
+    }
+  }
+
+  function draw (t) {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    ctx.clearRect(0, 0, W, H)
+    const cx = vp.x + lean.x, cy = vp.y + lean.y
+    for (let i = 0; i <= N; i++) {
+      const f = frameRect(i, cx, cy)
+      let col = ramp(i / N)
+      if (i === N) col = mix(col, [120, 200, 180], Math.min(1, glow * .9))
+      if (flicker[i] > 0) col = mix(col, [255, 225, 170], flicker[i] * .28)
+      ctx.fillStyle = css(col)
+      ctx.fillRect(f.l, f.t, f.r - f.l, f.b - f.t)
+      if (i > 0) {
+        // a ledge: the step down catches a little shade on top, a little light below
+        ctx.strokeStyle = 'rgba(40,28,20,.22)'; ctx.lineWidth = 1
+        ctx.strokeRect(f.l + .5, f.t + .5, f.r - f.l - 1, f.b - f.t - 1)
+        ctx.strokeStyle = 'rgba(255,240,215,.14)'
+        ctx.strokeRect(f.l + 1.5, f.t + 1.5, f.r - f.l - 3, f.b - f.t - 3)
+      }
+      if (flicker[i] > 0) flicker[i] *= .9
+    }
+    // things that were dropped, on their way down
+    const now = t
+    drops = drops.filter(d => now - d.t0 < d.dur + .1)
+    for (const d of drops) {
+      const p = Math.min(1, (now - d.t0) / d.dur)
+      const e = Math.pow(p, 1.55)
+      const x = d.x + (cx - d.x) * e, y = d.y + (cy - d.y) * e
+      const s = 1 - e * .92
+      // as it passes each ledge, that ledge warms for a moment
+      const depth = Math.log(Math.max(1e-4, 1 - e)) / Math.log(RATIO)
+      const idx = Math.min(N, depth | 0)
+      if (idx > d.lastIdx) { for (let j = d.lastIdx + 1; j <= idx; j++) flicker[j] = Math.max(flicker[j], .9); d.lastIdx = idx }
+      ctx.fillStyle = css([233, 162, 59], .95)
+      ctx.beginPath(); ctx.arc(x, y, 6.5 * s + .6, 0, Math.PI * 2); ctx.fill()
+      if (p >= 1 && !d.landed) { d.landed = true; glow = 1; rings.push({ t0: now, x: cx, y: cy }) }
+    }
+    rings = rings.filter(r => now - r.t0 < 2.2)
+    for (const r of rings) {
+      const p = (now - r.t0) / 2.2
+      for (let k = 0; k < 2; k++) {
+        const q = Math.max(0, p - k * .18)
+        if (q <= 0) continue
+        const rad = 4 + q * q * 180
+        ctx.strokeStyle = css([150, 220, 200], (1 - q) * .55)
+        ctx.lineWidth = 1.5
+        ctx.beginPath(); ctx.ellipse(cx, cy, rad, rad * .62, 0, 0, Math.PI * 2); ctx.stroke()
+      }
+    }
+    if (glow > 0) glow *= .985
+  }
+
+  function loop (ms) {
+    const t = ms / 1000
+    if (!reduce) {
+      // a slow lean of its own, like looking in from one side and then the other
+      const ix = Math.sin(t * .21) * 7 + Math.sin(t * .067) * 5
+      const iy = Math.cos(t * .17) * 5
+      lean.x += (want.x + ix - lean.x) * .035
+      lean.y += (want.y + iy - lean.y) * .035
+    } else { lean.x = want.x; lean.y = want.y }
+    draw(t)
+    requestAnimationFrame(loop)
+  }
+
+  // lean with the pointer; on a phone, with the scroll
+  window.addEventListener('pointermove', e => {
+    if (e.pointerType === 'touch') return
+    const nx = (e.clientX / window.innerWidth - .5) * 2, ny = (e.clientY / window.innerHeight - .5) * 2
+    want.x = nx * 34; want.y = ny * 26
+  }, { passive: true })
+  window.addEventListener('scroll', () => { if (window.innerWidth < 900) want.y = -Math.min(40, window.scrollY * .12) }, { passive: true })
+
+  // a tap, not a scroll and not a link: something small falls
+  let down = null
+  canvas.addEventListener('pointerdown', e => { down = { x: e.clientX, y: e.clientY, t: performance.now() } })
+  canvas.addEventListener('pointerup', e => {
+    if (!down) return
+    const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y)
+    const held = performance.now() - down.t
+    down = null
+    if (moved > 8 || held > 500) return
+    const r = canvas.getBoundingClientRect()
+    const x = e.clientX - r.left, y = e.clientY - r.top
+    const t0 = performance.now() / 1000
+    if (reduce) { drops.push({ x: vp.x + lean.x, y: vp.y + lean.y, t0, dur: .001, lastIdx: N }); return }
+    const dur = 2.4 + Math.hypot(x - vp.x, y - vp.y) / 600
+    drops.push({ x, y, t0, dur, lastIdx: -1 })
+  })
+  canvas.addEventListener('pointercancel', () => { down = null })
+
+  let rt
+  let lastW = document.documentElement.clientWidth
+  window.addEventListener('resize', () => { const w = document.documentElement.clientWidth; if (w === lastW) return; lastW = w; clearTimeout(rt); rt = setTimeout(layout, 160) })
+  layout()
+  requestAnimationFrame(loop)
+})()
+</script>
+</body>
+</html>

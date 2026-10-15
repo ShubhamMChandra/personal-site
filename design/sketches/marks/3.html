@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Glass brushstrokes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Schibsted+Grotesk:wght@400..700&display=swap">
+<style>
+/* layout: a muted grey page with a scattering of see-through glass brushstrokes; each part of his life is a word with a fragment of its pattern beside it; opening a part lays its marks round its words */
+:root {
+  --ground: #cbc6bd;
+  --ink: #221c17;
+  --ink-soft: #574e45;
+  --link: #9c3f1b;
+  --font-text: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-ui: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { overflow-x: clip; }
+html, body { margin: 0; background: var(--ground); color: var(--ink); }
+body { position: relative; min-height: 100vh; font-family: var(--font-ui); -webkit-font-smoothing: antialiased; }
+.stage { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; }
+.plaster { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .55; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='4' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .78  0 0 0 0 .75  0 0 0 0 .7  0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"); }
+.light { position: absolute; z-index: 1; width: 900px; height: 900px; margin: -450px 0 0 -450px; pointer-events: none; mix-blend-mode: screen;
+  background: radial-gradient(closest-side, rgba(255, 238, 205, .78), rgba(255, 232, 196, .32) 45%, rgba(255, 230, 190, 0)); }
+canvas.layer { position: absolute; left: 0; top: 0; pointer-events: none; }
+#cast { z-index: 2; filter: blur(10px); mix-blend-mode: multiply; opacity: .75; }
+#glass { z-index: 3; mix-blend-mode: multiply; }
+#shine { z-index: 4; mix-blend-mode: screen; }
+.page { position: relative; z-index: 5; max-width: 40rem; margin-inline: auto;
+  padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px));
+  padding-block: calc(60px + env(safe-area-inset-top, 0px)) calc(28vh + env(safe-area-inset-bottom, 0px)); }
+.who { display: grid; gap: .9rem; margin-bottom: 2.6rem; }
+.name { margin: 0; font-family: var(--font-text); font-variation-settings: "SOFT" 100, "WONK" 1; font-weight: 500; font-size: clamp(2.5rem, 1.6rem + 3.6vw, 4rem); line-height: .98; letter-spacing: -.015em; }
+.now { margin: 0; font-size: 1.02rem; line-height: 1.45; color: var(--ink-soft); max-width: 24rem; }
+.links { display: flex; gap: 1.4rem; font-size: 1rem; }
+.links a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--link); text-decoration-thickness: 1.5px; text-underline-offset: .28em; }
+.parts { list-style: none; margin: 0; padding: 0; display: grid; }
+.word { all: unset; cursor: pointer; display: flex; align-items: center; width: 100%; min-height: 4.1rem; font-family: var(--font-text); font-variation-settings: "SOFT" 100; font-size: 1.75rem; line-height: 1; }
+.word .frag { flex: 1; align-self: stretch; }
+.word:focus-visible { outline: 2px solid var(--link); outline-offset: 4px; border-radius: 4px; }
+.drawer { display: none; padding-block: 64px 70px; }
+.part.open .drawer { display: block; }
+.drawer p { margin: 0 auto; max-width: 14.5rem; font-family: var(--font-text); font-variation-settings: "SOFT" 100; font-size: 1.04rem; line-height: 1.55; }
+@media (min-width: 900px) { .drawer p { max-width: 24rem; font-size: 1.15rem; } .drawer { padding-block: 92px 100px; } }
+.grain { position: fixed; inset: -50%; z-index: 9; pointer-events: none; opacity: .4; mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+</style>
+</head>
+<body>
+<div class="stage" aria-hidden="true">
+<div class="plaster"></div>
+<div class="light"></div>
+<canvas class="layer" id="cast"></canvas>
+<canvas class="layer" id="glass"></canvas>
+<canvas class="layer" id="shine"></canvas>
+</div>
+<main class="page">
+  <header class="who">
+    <h1 class="name">Shubham Chandra</h1>
+    <p class="now">Go-to-market strategy and engineering at Digital Realty. Chicago.</p>
+    <p class="links"><a href="#">Email</a><a href="#">LinkedIn</a><a href="#">CV</a></p>
+  </header>
+  <ul class="parts">
+    <li class="part" data-part="places"><button class="word" aria-expanded="false"><span class="w">Places</span><span class="frag"></span></button><div class="drawer"><p>Small restaurants that don’t advertise. Travel without a gift shop. In Kerala, the fabric market, not the landmark.</p></div></li>
+    <li class="part" data-part="cloth"><button class="word" aria-expanded="false"><span class="w">Cloth</span><span class="frag"></span></button><div class="drawer"><p>Clothes are the easy example of craft: weave, weight, hand feel, drape.</p></div></li>
+    <li class="part" data-part="cooking"><button class="word" aria-expanded="false"><span class="w">Cooking</span><span class="frag"></span></button><div class="drawer"><p>Start with something solid, then tinker until it tastes like mine.</p></div></li>
+    <li class="part" data-part="reading"><button class="word" aria-expanded="false"><span class="w">Reading</span><span class="frag"></span></button><div class="drawer"><p>Sci-fi, mostly. The kind that starts fun and ends with me staring at the ceiling for ten minutes.</p></div></li>
+    <li class="part" data-part="before"><button class="word" aria-expanded="false"><span class="w">Before</span><span class="frag"></span></button><div class="drawer"><p>Garner Health, business operations, 2021–22. NJOY, strategy in the office of the CEO, 2018–21. L.E.K. Consulting, 2016–18.</p></div></li>
+  </ul>
+</main>
+<div class="grain" aria-hidden="true"></div>
+
+<script>
+document.fonts.ready.then(() => {
+  const NS = 'http://www.w3.org/2000/svg'
+  const state = (location.hash || '#rest').slice(1)
+  const open = state === 'all' ? ['places', 'cloth', 'cooking', 'reading', 'before'] : state === 'one' ? ['cooking'] : []
+  document.querySelectorAll('.part').forEach(li => { if (open.includes(li.dataset.part)) { li.classList.add('open'); li.querySelector('.word').setAttribute('aria-expanded', 'true') } })
+
+  let seed = 15
+  const R = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296 }
+  const rnd = (a, b) => a + R() * (b - a)
+
+  // each part has its own glass, loaded on the brush two tones at once, and its own way of being laid
+  const PARTS = {
+    places: { inks: [['#2c8460', '#93c48c'], ['#d9a23a', '#f3d68c']], style: 'line', n: 50 },
+    cloth: { inks: [['#2346a8', '#7d98e6'], ['#b02838', '#e88a86']], style: 'weave', n: 54 },
+    cooking: { inks: [['#e08a16', '#f8cf6a'], ['#c4521f', '#eba26f']], style: 'spiral', n: 58 },
+    reading: { inks: [['#6f3383', '#b885c9'], ['#4f74c8', '#a9c0f2']], style: 'ring', n: 62 },
+    before: { inks: [['#bb5226', '#eba06e'], ['#4a744d', '#a2c494']], style: 'courses', n: 40 }
+  }
+  const W = document.documentElement.clientWidth, DOC = document.documentElement.scrollHeight
+  const wide = W >= 900, S = wide ? 1.3 : 1
+  const D = Math.min(2, Math.sqrt(9e6 / (W * DOC)))
+  const sy = scrollY
+  const rect = el => { const r = el.getBoundingClientRect(); return { x0: r.left, y0: r.top + sy, x1: r.right, y1: r.bottom + sy } }
+  const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16))
+  const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t)
+  const rgba = (c, al) => `rgba(${c.map(v => Math.round(Math.max(0, Math.min(255, v)))).join(',')},${al})`
+
+  // a closed curve, walked at an even pace: N places, each with the way the curve is heading
+  function along (f, N, offset = 0) {
+    const M = 700, pts = []
+    for (let i = 0; i <= M; i++) pts.push(f(i / M * Math.PI * 2))
+    const cum = [0]
+    for (let i = 1; i <= M; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]))
+    const P = cum[M], out = []
+    for (let k = 0; k < N; k++) {
+      const d = ((k + offset) / N % 1) * P
+      let j = 1; while (j < M && cum[j] < d) j++
+      const p = pts[j - 1], q = pts[j], t = (d - cum[j - 1]) / ((cum[j] - cum[j - 1]) || 1)
+      out.push({ x: p[0] + (q[0] - p[0]) * t, y: p[1] + (q[1] - p[1]) * t, a: Math.atan2(q[1] - p[1], q[0] - p[0]) })
+    }
+    return out
+  }
+  const sq = (cx, cy, a, b) => t => { const c = Math.cos(t), s = Math.sin(t); return [cx + a * Math.sign(c) * Math.abs(c) ** 0.5, cy + b * Math.sign(s) * Math.abs(s) ** 0.5] }
+  const L = (lo, hi) => rnd(lo, hi) * S
+
+  // how each part's strokes are laid round its words: a painted border, laid stroke by stroke
+  function laid (style, box, N, inks) {
+    const cx = (box.x0 + box.x1) / 2, cy = (box.y0 + box.y1) / 2, a = (box.x1 - box.x0) / 2, b = (box.y1 - box.y0) / 2
+    const out = []
+    if (style === 'line') {
+      // one painted path, walked round twice so it has body, wandering a little
+      for (const [off, lat] of [[0, -4], [0.5, 5]]) {
+        along(t => { const p = sq(cx, cy, a + 34, b + 34)(t); const wob = 9 * Math.sin(t * 5 + 1) + lat; return [p[0] + Math.cos(t) * wob, p[1] + Math.sin(t) * wob] }, N / 2, off)
+          .forEach((p, i) => out.push({ ...p, a: p.a + rnd(-0.06, 0.06), ink: inks[i % 7 === 3 ? 1 : 0], len: L(62, 84), wid: L(18, 24), dry: rnd(0.4, 0.8) }))
+      }
+    } else if (style === 'weave') {
+      // broad strokes crossing both ways, like a twill: where the colours cross they deepen
+      along(sq(cx, cy, a + 34, b + 34), N / 2).forEach((p, i) => out.push({ x: p.x, y: p.y, a: p.a + 0.42, ink: inks[i % 2], len: L(44, 56), wid: L(15, 19), dry: rnd(0.3, 0.6) }))
+      along(sq(cx, cy, a + 52, b + 52), N / 2, 0.5).forEach((p, i) => out.push({ x: p.x, y: p.y, a: p.a - 0.42, ink: inks[(i + 1) % 2], len: L(44, 56), wid: L(15, 19), dry: rnd(0.3, 0.6) }))
+    } else if (style === 'spiral') {
+      // stirred: one and a half turns, closing in on the words
+      for (let i = 0; i < N; i++) {
+        const u = i / N, t = -Math.PI / 2 + u * Math.PI * 3.1, pad = 66 - u * 42
+        const p = sq(cx, cy, a + pad, b + pad)(t), q = sq(cx, cy, a + pad, b + pad)(t + 0.01)
+        out.push({ x: p[0], y: p[1], a: Math.atan2(q[1] - p[1], q[0] - p[0]), ink: u < 0.55 ? inks[0] : inks[1], len: L(58, 80), wid: L(17, 23), dry: rnd(0.4, 0.8) })
+      }
+    } else if (style === 'ring') {
+      // a halo of strokes pulled outward from the words, deeper close in
+      const inner = Math.round(N * 0.5)
+      along(sq(cx, cy, a + 18, b + 18), inner).forEach(p => { const n = p.a - Math.PI / 2, l = L(38, 48); out.push({ x: p.x + Math.cos(n) * l / 2, y: p.y + Math.sin(n) * l / 2, a: n, ink: inks[0], len: l, wid: L(14, 18), dry: rnd(0.5, 0.9) }) })
+      along(sq(cx, cy, a + 46, b + 46), N - inner, 0.5).forEach(p => { const n = p.a - Math.PI / 2, l = L(44, 58); out.push({ x: p.x + Math.cos(n) * l / 2, y: p.y + Math.sin(n) * l / 2, a: n, ink: inks[1], len: l, wid: L(14, 18), dry: rnd(0.5, 0.9) }) })
+    } else if (style === 'courses') {
+      // laid flat in courses, like bricks, above and below; stood up at the sides
+      const rows = [[box.y0 - 50, 0], [box.y0 - 28, 0.5], [box.y1 + 28, 0], [box.y1 + 50, 0.5]]
+      const per = Math.floor((N - 8) / 4), step = (box.x1 - box.x0 + 56) / per
+      rows.forEach(([y, off], r) => { for (let k = 0; k < per; k++) out.push({ x: box.x0 - 28 + (k + off + 0.5) * step, y: y + rnd(-1.5, 1.5), a: rnd(-0.04, 0.04), ink: inks[r % 2], len: step * 1.18, wid: L(18, 22), dry: rnd(0.2, 0.5) }) })
+      for (let k = 0; k < 8; k++) { const left = k < 4, j = k % 4; out.push({ x: left ? box.x0 - 34 : box.x1 + 34, y: box.y0 - 8 + (j + 0.5) / 4 * (box.y1 - box.y0 + 16), a: Math.PI / 2, ink: inks[j % 2], len: (box.y1 - box.y0 + 16) / 4 * 1.2, wid: L(18, 22), dry: rnd(0.2, 0.5) }) }
+    }
+    return out
+  }
+  // a fragment: the first few strokes of the pattern, laid beside the word
+  function fragment (style, box, inks) {
+    const x = box.x0 + 22, cy = (box.y0 + box.y1) / 2, out = []
+    const f = (o) => out.push(Object.assign({ dry: rnd(0.4, 0.8) }, o))
+    if (style === 'line') for (let i = 0; i < 5; i++) f({ x: x + 18 + i * 30, y: cy + Math.sin(i * 0.9) * 7, a: Math.cos(i * 0.9) * 0.45, ink: inks[i === 3 ? 1 : 0], len: L(44, 52), wid: L(14, 17) })
+    if (style === 'weave') for (let i = 0; i < 6; i++) f({ x: x + 22 + Math.floor(i / 2) * 30, y: cy, a: i % 2 ? -0.7 : 0.7, ink: inks[i % 2], len: L(40, 46), wid: L(12, 15) })
+    if (style === 'spiral') for (let i = 0; i < 6; i++) { const t = -1.4 + i * 0.7, r = 36 - i * 2.6; f({ x: x + 50 + Math.cos(t) * r, y: cy + Math.sin(t) * r * 0.62, a: t + Math.PI / 2, ink: inks[i < 3 ? 0 : 1], len: L(38, 46), wid: L(13, 16) }) }
+    if (style === 'ring') for (let i = 0; i < 7; i++) { const t = -Math.PI / 2 + (i - 3) * 0.33, l = L(32, 40); f({ x: x + 56 + Math.cos(t) * (18 + l / 2), y: cy + 26 + Math.sin(t) * (18 + l / 2), a: t, ink: inks[i % 2], len: l, wid: L(12, 15) }) }
+    if (style === 'courses') for (let i = 0; i < 6; i++) f({ x: x + 22 + (i % 3) * 38 + (i < 3 ? 0 : 19), y: cy + (i < 3 ? -8 : 9), a: 0, ink: inks[i < 3 ? 0 : 1], len: L(42, 46), wid: L(14, 16), dry: rnd(0.2, 0.4) })
+    return out
+  }
+
+  // where nothing is laid yet: strokes lying loose over the open grey, never on the words
+  const blocked = [...document.querySelectorAll('.who > *, .w, .part.open .drawer p')].map(rect)
+  const isBlocked = (x, y) => blocked.some(r => x > r.x0 - 24 && x < r.x1 + 24 && y > r.y0 - 20 && y < r.y1 + 20)
+  const frags = [], marks = []
+  document.querySelectorAll('.part').forEach(li => {
+    const part = PARTS[li.dataset.part]
+    if (li.classList.contains('open')) {
+      laid(part.style, rect(li.querySelector('.drawer p')), part.n, part.inks).forEach(m => marks.push(m))
+    } else {
+      const fr = rect(li.querySelector('.frag'))
+      fragment(part.style, fr, part.inks).forEach(m => marks.push(m))
+      frags.push(fr)
+      for (let k = 0; k < (wide ? 13 : 9); k++) marks.push({ loose: true, ink: part.inks[k % 3 === 2 ? 1 : 0] })
+    }
+  })
+  const list = rect(document.querySelector('.parts'))
+  const fragBlocked = (x, y) => (wide ? x > list.x0 - 30 && x < list.x0 + 480 : true) && y > list.y0 - 26 && y < list.y1 + 26
+  for (const m of marks) {
+    if (!m.loose) continue
+    let x, y, tries = 0
+    do { x = rnd(10, W - 10); y = rnd(24, DOC * 0.95); tries++ } while ((isBlocked(x, y) || fragBlocked(x, y)) && tries < 120)
+    Object.assign(m, { x, y, a: rnd(0, Math.PI * 2), len: L(70, 104), wid: L(20, 30), dry: rnd(0.4, 0.9) })
+  }
+
+  // one stroke, painted with care: a loaded brush lands, swells, lifts; its bristles carry two tones
+  // across its width, the colour pools at its edges, and it runs dry toward the tail
+  function paint (m) {
+    const len = m.len, wid = m.wid, pad = wid * 0.5 + 8
+    const cw = Math.ceil((len + pad * 2) * D), ch = Math.ceil((wid * 1.9 + pad * 2) * D)
+    const body = document.createElement('canvas'); body.width = cw; body.height = ch
+    const sheen = document.createElement('canvas'); sheen.width = cw; sheen.height = ch
+    const g = body.getContext('2d'), h = sheen.getContext('2d')
+    for (const c of [g, h]) { c.scale(D, D); c.translate(pad, ch / D / 2); c.lineCap = 'round' }
+    const deep = hex(m.ink[0]), lite = hex(m.ink[1])
+    const k = rnd(-0.08, 0.08), s2 = rnd(-0.035, 0.035), peak = rnd(0.22, 0.4)
+    const mid = u => k * len * 4 * u * (1 - u) + s2 * len * Math.sin(Math.PI * 2 * u)
+    const half = u => wid / 2 * (u < 0.14 ? 0.72 + 0.28 * Math.sin(Math.PI / 2 * u / 0.14) : u < 0.62 ? 1 - 0.06 * (u - 0.14) : 0.97 - 0.5 * Math.pow((u - 0.62) / 0.38, 1.3))
+    const P = (u, v) => [u * len, mid(u) + v * half(u)]
+    // a thin wash first, so the glass has no holes
+    g.beginPath()
+    for (let i = 0; i <= 24; i++) { const [x, y] = P(i / 24, -0.92); i ? g.lineTo(x, y) : g.moveTo(x, y) }
+    for (let i = 24; i >= 0; i--) { const [x, y] = P(i / 24, 0.92); g.lineTo(x, y) }
+    g.closePath()
+    const wash = g.createLinearGradient(0, 0, len, 0)
+    wash.addColorStop(0, rgba(mix(deep, lite, 0.35), 0.34)); wash.addColorStop(1, rgba(mix(deep, lite, 0.5), 0.1))
+    g.fillStyle = wash; g.fill()
+    // then the bristles
+    const nb = Math.round(wid * 2.3)
+    for (let b = 0; b < nb; b++) {
+      const v = -1 + 2 * (b + rnd(0.15, 0.85)) / nb, edge = Math.abs(v)
+      const u0 = 0.01 + 0.06 * edge * edge * edge + rnd(0, 0.012)
+      const u1 = 1 - m.dry * Math.pow(R(), 1.2) * (0.06 + 0.3 * edge)
+      const col = mix(deep, lite, Math.min(1, Math.max(0, (v + 1) / 2 + rnd(-0.12, 0.12))))
+      const al = (0.3 + 0.2 * R()) * (edge > 0.8 ? 1.45 : 1)
+      g.lineWidth = wid / nb * rnd(1.4, 2.1)
+      // the bristle may skip where the brush runs dry
+      let ua = u0
+      while (ua < u1) {
+        const gap = ua > 0.5 && R() < m.dry * (0.35 + 0.6 * (ua - 0.5))
+        const ub = Math.min(u1, ua + (ua > 0.5 ? rnd(0.06, 0.2) : rnd(0.2, 0.45)))
+        if (!gap) {
+          const gr = g.createLinearGradient(ua * len, 0, ub * len, 0)
+          gr.addColorStop(0, rgba(col, al * (1 - 0.5 * ua))); gr.addColorStop(1, rgba(col, al * (1 - 0.5 * ub) * (ub >= u1 - 0.001 ? 0.4 : 1)))
+          g.strokeStyle = gr
+          g.beginPath()
+          for (let i = 0; i <= 10; i++) { const u = ua + (ub - ua) * i / 10; const [x, y] = P(u, v + 0.03 * Math.sin(u * 17 + b)); i ? g.lineTo(x, y) : g.moveTo(x, y) }
+          g.stroke()
+        }
+        ua = ub + (gap ? rnd(0.02, 0.06) : 0)
+      }
+    }
+    // where the light catches the ridge of paint
+    for (let i = 0; i < 4; i++) {
+      const v = rnd(-0.7, -0.15), ua = rnd(0.04, 0.2), ub = rnd(0.45, 0.8)
+      const gr = h.createLinearGradient(ua * len, 0, ub * len, 0)
+      gr.addColorStop(0, 'rgba(255,250,240,.0)'); gr.addColorStop(0.3, `rgba(255,250,240,${rnd(0.25, 0.45).toFixed(2)})`); gr.addColorStop(1, 'rgba(255,250,240,0)')
+      h.strokeStyle = gr; h.lineWidth = rnd(0.6, 1.3)
+      h.beginPath(); for (let j = 0; j <= 10; j++) { const u = ua + (ub - ua) * j / 10; const [x, y] = P(u, v); j ? h.lineTo(x, y) : h.moveTo(x, y) } h.stroke()
+    }
+    return { body, sheen, ax: pad * D, ay: ch / 2 }
+  }
+
+  // lay everything down: the shadows on the grey, the glass, and its sheen
+  const light = state === 'all' ? { x: W * 0.72, y: DOC * 0.38 } : { x: W * 0.78, y: 120 }
+  const Lt = document.querySelector('.light'); Lt.style.left = light.x + 'px'; Lt.style.top = light.y + 'px'
+  const layer = (id, d) => { const c = document.getElementById(id); c.width = Math.round(W * d); c.height = Math.round(DOC * d); c.style.width = W + 'px'; c.style.height = DOC + 'px'; const x = c.getContext('2d'); x.scale(d, d); return x }
+  const cx = layer('cast', 0.5), gx = layer('glass', D), hx = layer('shine', D)
+  gx.globalCompositeOperation = 'multiply'
+  const reach = Math.max(W, 700) * 0.9
+  for (const m of marks) {
+    const sp = paint(m)
+    const I = Math.max(0, 1 - Math.hypot(m.x - light.x, m.y - light.y) / reach)
+    const put = (c, img, x, y, sc, al) => { c.save(); c.globalAlpha = al; c.translate(x, y); c.rotate(m.a); c.scale(sc, sc); c.drawImage(img, -sp.ax / D, -sp.ay / D, img.width / D, img.height / D); c.restore() }
+    put(cx, sp.body, m.x + (m.x - light.x) * 0.05, m.y + (m.y - light.y) * 0.05 + 10, 1.06, 0.55 + 0.35 * I)
+    put(gx, sp.body, m.x, m.y, 1, 1)
+    put(hx, sp.sheen, m.x, m.y, 1, 0.45 + 0.55 * I)
+  }
+  document.body.dataset.ready = '1'
+})
+</script>
+</body>
+</html>

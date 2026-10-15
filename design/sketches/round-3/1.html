@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Round 3, sketch 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap">
+<style>
+/* layout: one sentence at a time; each sentence ends in a coloured full stop, and zooming into it opens the next part of his life */
+:root {
+  --ink: #221e1a;
+  --font-ui: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-text: "Source Serif 4", Georgia, "Times New Roman", serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: #e8e1d5; }
+body { font-family: var(--font-ui); -webkit-font-smoothing: antialiased; }
+.stage { position: fixed; inset: 0; overflow: hidden; }
+.layer { position: absolute; inset: 0; display: grid; align-content: center; padding: 0 max(28px, env(safe-area-inset-left, 0px)); transform-origin: 0 0; visibility: hidden; will-change: transform; }
+.layer.on { visibility: visible; }
+.say { margin: 0 auto; max-width: 21em; width: 100%; font-family: var(--font-text); font-weight: 450; font-size: clamp(1.6rem, 1.05rem + 2.4vw, 2.9rem); line-height: 1.3; letter-spacing: -.008em; text-wrap: pretty; }
+.say small { display: block; margin-top: .9em; font-family: var(--font-ui); font-size: .42em; letter-spacing: .02em; line-height: 1.5; opacity: .8; }
+.roles { display: grid; gap: .5em; }
+.roles span { display: block; }
+.dot { display: inline-block; width: .2em; height: .2em; margin-left: .03em; border-radius: 50%; background: var(--next); vertical-align: baseline; cursor: pointer; position: relative; box-shadow: 0 0 0 0 var(--next); }
+.dot::after { content: ""; position: absolute; inset: -.5em; border-radius: 50%; }
+.dot.hint { animation: hint 2.4s ease-in-out infinite; }
+@keyframes hint { 50% { transform: scale(1.7); } }
+.links { display: flex; flex-wrap: wrap; gap: .5em 1.2em; margin-top: 1em; font-family: var(--font-ui); font-size: .55em; }
+.links a { color: inherit; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: .25em; }
+.bar { position: fixed; left: 0; right: 0; top: 0; z-index: 5; display: flex; justify-content: space-between; gap: 1rem; padding: calc(18px + env(safe-area-inset-top, 0px)) max(22px, env(safe-area-inset-right, 0px)) 0 max(22px, env(safe-area-inset-left, 0px)); font-size: .85rem; color: var(--ink); transition: color .4s ease; }
+.bar b { font-weight: 600; }
+.bar span { opacity: .7; }
+.bar nav { display: flex; gap: .9rem; white-space: nowrap; }
+@media (max-width: 420px) { .bar { font-size: .78rem; } }
+.bar a { color: inherit; text-decoration: none; opacity: .75; }
+.bar a:hover, .bar a:focus-visible { opacity: 1; text-decoration: underline; }
+a:focus-visible, .dot:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; border-radius: 3px; }
+.grain { position: fixed; inset: -50%; z-index: 6; pointer-events: none; opacity: .45; mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+@media (prefers-reduced-motion: reduce) { .dot.hint { animation: none; } .layer { transition: opacity .5s ease; } }
+</style>
+</head>
+<body>
+<div class="bar">
+  <div><b>Shubham Chandra</b> <span>Chicago</span></div>
+  <nav><a href="#" data-go="4">Work</a><a href="#" data-go="5">Email</a><a href="../index.html">All sketches</a></nav>
+</div>
+<div class="stage" id="stage">
+  <section class="layer" style="background:#e8e1d5;color:#221e1a">
+    <p class="say">I do better with things that take a little time to make sense of<i class="dot hint" role="button" tabindex="0" aria-label="Go deeper"></i></p>
+  </section>
+  <section class="layer" style="background:#e9a23b;color:#2a1a0b">
+    <p class="say">I pay attention to craft. Clothes are an easy example: weave, weight, hand feel, drape. Cooking is the same impulse: start with something solid, then tinker until it tastes like mine<i class="dot" role="button" tabindex="0" aria-label="Go deeper"></i></p>
+  </section>
+  <section class="layer" style="background:#1e6a65;color:#f3ece0">
+    <p class="say">I like places that aren’t trying to perform for you. In Kerala, that’s a fabric market, not a landmark: heat, noise, color, bargaining, getting a little turned around and not minding it<i class="dot" role="button" tabindex="0" aria-label="Go deeper"></i></p>
+  </section>
+  <section class="layer" style="background:#23264c;color:#ece6f2">
+    <p class="say">I read a lot of sci-fi, the kind that starts fun and ends up making you stare at the ceiling for ten minutes<i class="dot" role="button" tabindex="0" aria-label="Go deeper"></i></p>
+  </section>
+  <section class="layer" style="background:#b3522b;color:#fbefe4">
+    <p class="say roles"><span>Garner Health, head of business operations, 2021–22.</span><span>NJOY, head of strategy in the CEO’s office, 2018–21.</span><span>L.E.K. Consulting, associate, 2016–18<i class="dot" role="button" tabindex="0" aria-label="Go deeper"></i></span></p>
+  </section>
+  <section class="layer" style="background:#f2ebdf;color:#221e1a">
+    <div class="say">Write to me.
+      <div class="links"><a href="#">Email</a><a href="#">LinkedIn</a><a href="#">Curriculum vitae</a></div>
+    </div>
+  </section>
+</div>
+<div class="grain" aria-hidden="true"></div>
+
+<script>
+(() => {
+  const layers = [...document.querySelectorAll('.layer')]
+  const N = layers.length
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const bar = document.querySelector('.bar')
+  // each layer's full stop takes the colour of the layer it opens into
+  layers.forEach((l, i) => { const d = l.querySelector('.dot'); if (d && layers[i + 1]) d.style.setProperty('--next', layers[i + 1].style.background) })
+  const SEG = 1.7 // screens of scrolling per step
+  const DWELL = 0.32 // share of each step spent still, for reading
+  let W, H, C, portals = []
+  function measure () {
+    W = innerWidth; H = innerHeight; C = [W / 2, H / 2]
+    document.body.style.height = (H * (1 + SEG * (N - 1))).toFixed(0) + 'px'
+    layers.forEach(l => { l.style.transform = 'none'; l.style.clipPath = 'none'; l.classList.add('on') })
+    portals = layers.map(l => {
+      const d = l.querySelector('.dot'); if (!d) return null
+      const r = d.getBoundingClientRect()
+      const size = Math.max(4, r.width)
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2, size, F: Math.hypot(W, H) * 1.08 / size }
+    })
+    layers.forEach(l => l.classList.remove('on'))
+    draw(true)
+  }
+  const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+  let last = -1
+  function draw (force) {
+    const z = Math.min(N - 1, Math.max(0, scrollY / (H * SEG)))
+    if (!force && z === last) return
+    last = z
+    const i = Math.min(N - 2, Math.floor(z))
+    let t = z - i
+    t = t <= DWELL ? 0 : (t - DWELL) / (1 - DWELL)
+    if (z >= N - 1) { t = 1 }
+    layers.forEach((l, k) => l.classList.toggle('on', k === i || k === i + 1))
+    const cur = layers[i], nxt = layers[i + 1], p = portals[i]
+    if (reduce) {
+      cur.style.transform = 'none'; nxt.style.transform = 'none'; nxt.style.clipPath = 'none'
+      cur.style.opacity = String(1 - t); nxt.style.opacity = String(t)
+    } else {
+      const S = Math.pow(p.F, ease(t))
+      const k = ease(t)
+      const px = p.x + (C[0] - p.x) * k, py = p.y + (C[1] - p.y) * k
+      cur.style.transform = `translate(${px}px, ${py}px) scale(${S}) translate(${-p.x}px, ${-p.y}px)`
+      const s2 = S / p.F
+      nxt.style.transform = `translate(${px}px, ${py}px) scale(${s2}) translate(${-C[0]}px, ${-C[1]}px)`
+      nxt.style.clipPath = `circle(${(p.size / 2 * p.F).toFixed(1)}px at ${C[0]}px ${C[1]}px)`
+      cur.style.opacity = '1'; nxt.style.opacity = '1'
+    }
+    if (t >= 1) cur.classList.remove('on')
+    const showing = t >= 0.5 ? nxt : cur
+    bar.style.color = getComputedStyle(showing).color
+  }
+  addEventListener('scroll', () => requestAnimationFrame(() => draw(false)), { passive: true })
+  addEventListener('resize', () => { clearTimeout(measure.t); measure.t = setTimeout(measure, 120) })
+
+  // tapping a full stop goes one step deeper, slowly
+  function goTo (step) {
+    const target = Math.min(step, N - 1) * H * SEG
+    if (reduce) { scrollTo(0, target); return }
+    const from = scrollY, d = target - from, t0 = performance.now(), dur = Math.min(2400, 900 + Math.abs(d) / H * 400)
+    const tick = now => { const k = Math.min(1, (now - t0) / dur); scrollTo(0, from + d * ease(k)); if (k < 1) requestAnimationFrame(tick) }
+    requestAnimationFrame(tick)
+  }
+  document.querySelectorAll('.dot').forEach(d => {
+    const go = () => { const i = layers.indexOf(d.closest('.layer')); goTo(i + 1) }
+    d.addEventListener('click', go)
+    d.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go() } })
+  })
+  document.querySelectorAll('[data-go]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); goTo(Number(a.dataset.go)) }))
+
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure); else measure()
+  measure()
+})()
+</script>
+</body>
+</html>

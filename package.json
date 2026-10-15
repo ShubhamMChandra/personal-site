@@ -17,10 +17,12 @@
     "audit:responsive": "node scripts/audit/responsive.mjs",
     "audit:mobile-diagnosis": "node scripts/audit/mobile-diagnosis.mjs",
     "audit:all": "node scripts/audit/all.mjs",
+    "audit:design-verify": "node scripts/audit/verify-design.mjs",
     "backstop:reference": "node node_modules/backstopjs/cli/index.js reference --config=backstop.json",
     "backstop:test": "node node_modules/backstopjs/cli/index.js test --config=backstop.json",
     "backstop:approve": "node node_modules/backstopjs/cli/index.js approve --config=backstop.json",
-    "percy:test": "node scripts/percy-snapshots.mjs"
+    "percy:test": "node scripts/percy-snapshots.mjs",
+    "moodboard:sync": "node scripts/moodboard/sync.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",

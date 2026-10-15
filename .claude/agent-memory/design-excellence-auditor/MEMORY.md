@@ -34,7 +34,7 @@
 Book covers: `--book-work` (#952626), `--book-about` (#2a4d8c), `--book-contact` (#34684a), `--book-references` (#4a3060), `--book-mystery` (#553d62)
 
 ### Spacing Scale (8px base grid)
-`--space-xs` 0.5rem (8px) · `--space-sm` 1rem (16px) · `--space-md` 1.5rem (24px) · `--space-lg` 2.5rem (40px) · `--space-xl` 4rem (64px)
+`--space-2xs` 0.25rem (4px) · `--space-xs` 0.5rem (8px) · `--space-sm` 1rem (16px) · `--space-md` 1.5rem (24px) · `--space-lg` 2.5rem (40px) · `--space-xl` 4rem (64px)
 
 ### Typography Families
 - `--font-serif`: Cormorant Garamond, Georgia, serif
@@ -42,7 +42,7 @@ Book covers: `--book-work` (#952626), `--book-about` (#2a4d8c), `--book-contact`
 - `--font-mono`: Space Mono, monospace
 
 ### Timing & Easing
-`--duration-fast` 0.2s · `--duration-medium` 0.4s · `--duration-slow` 0.8s · `--duration-book` 1.2s
+`--duration-fast` 0.2s · `--duration-page-turn` 0.35s · `--duration-medium` 0.4s · `--duration-slow` 0.8s · `--duration-book` 1.2s · `--duration-ambient` 4s
 `--ease-out-expo` (snappy) · `--ease-out-back` (bouncy) · `--ease-in-out` (smooth)
 
 ## Page Layout Math (critical for whitespace)
@@ -52,18 +52,28 @@ Book covers: `--book-work` (#952626), `--book-about` (#2a4d8c), `--book-contact`
 - Body text at 1.05rem gives ~55-65 chars/line at 400px (ideal)
 
 ## Page Depth Cues (current values)
-- **Spine shadows**: `rgba(0,0,0,0.22)` broad + `rgba(0,0,0,0.12)` tight crease
+- **Spine shadows**: inset 6px at 0.35 opacity (both sides) + top shadow at 0.2
+- **Page inner shadows**: inset 35px 0 45px -12px at 0.25 + inset 5px 0 10px at 0.14
 - **Page rotation**: `rotateY(±5deg)` at perspective 1200px (reduced from 1800px for stronger V)
 - **Light falloff**: Gradient from #f8f4ec → #ebe5da toward spine (per page)
+- **Paper texture**: SVG feTurbulence noise at opacity 0.05, mix-blend-mode: multiply
+- **Ambient light**: radial gradient at 0.15 center → 0.08 mid, warm amber (255,190,130)
 - Mobile: all disabled (transform: none, single page)
 
 ## Established Interaction Treatments
 - **Book hover**: translateY(-12px) + drop-shadow, ease-out-back bounce
 - **Book focus**: 2px solid var(--accent), 4px offset
 - **Links on pages**: dotted border-bottom → solid + accent-maroon on hover
-- **TOC entries**: translateX(2px) + title color → accent-maroon on hover
-- **Page curls**: scale(1.1) + directional rotation (-3deg left, +3deg right)
-- **Nav buttons**: squared off (border-radius: 2px), consistent focus rings
+- **TOC entries**: translateX(2px) hover / translateX(4px) active + title color → accent-maroon
+- **Page curls**: scale(1.2) hover + directional rotation (-5deg left, +5deg right); scale(1.5) during turn
+- **Page turn**: rotateY(+/-25deg), brightness(0.97), scale(1.01); counter-page shifts to +/-8deg
+- **Book shadow**: shifts -5px/+5px during turns via :has() on .open-book
+- **Nav buttons**: squared off (border-radius: 2px), consistent focus rings, scale(0.97) active
+- **Content crossfade**: 30px translateX slide on page turn out/in
+
+## Known Dead Code (non-breaking)
+- `.page-right.is-turning-next ~ .page-left` (line ~3465): `~` cannot select preceding siblings; :has() fallback works
+- Base `.page-curl:hover` (line ~1935): always overridden by `.page-left/.page-right .page-curl:hover`
 
 ## Layout Constraints
 - `.page-content` max-width: 440px (optimal reading width)

@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Round 2, sketch 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap">
+<style>
+/* layout: a daylight page; shards of coloured glass at different depths slide over each other as you scroll; your finger is the light */
+:root {
+  --ground: #ded8ce;
+  --ink: #221f1b;
+  --ink-soft: #6a635b;
+  --link: #b4471f;
+  --font-ui: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-text: "Source Serif 4", Georgia, "Times New Roman", serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { background: var(--ground); }
+body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--font-ui); -webkit-font-smoothing: antialiased; touch-action: pan-y; }
+.layer { position: fixed; inset: 0; width: 100%; height: 100%; overflow: visible; }
+#cast { z-index: 0; filter: blur(14px); mix-blend-mode: multiply; pointer-events: none; }
+.sun { position: fixed; left: 0; top: 0; z-index: 1; width: 1000px; height: 1000px; margin: -500px 0 0 -500px; pointer-events: none; mix-blend-mode: screen; will-change: transform;
+  background: radial-gradient(circle, rgba(255,248,230,.5) 0, rgba(255,240,210,.22) 20%, rgba(255,240,210,.06) 40%, rgba(255,240,210,0) 60%); }
+#glass { z-index: 2; mix-blend-mode: multiply; }
+#glass path { cursor: pointer; }
+#shine { z-index: 3; pointer-events: none; mix-blend-mode: screen; }
+.wrap { position: relative; z-index: 4; padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px)); pointer-events: none; }
+.wrap a { pointer-events: auto; }
+.hero { min-height: 82svh; display: flex; flex-direction: column; justify-content: space-between; gap: 2rem; padding-block: calc(26px + env(safe-area-inset-top, 0px)) 2.4rem; }
+.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+.name { margin: 0; font-weight: 600; font-size: clamp(1.7rem, 1.25rem + 1.8vw, 2.4rem); letter-spacing: -.012em; line-height: 1.05; }
+.place { margin: .35rem 0 0; color: var(--ink-soft); font-size: .95rem; }
+.back { font-size: .8rem; color: var(--ink-soft); text-decoration: none; padding: .2rem 0; }
+.back:hover, .back:focus-visible { color: var(--ink); }
+.lead { margin: 0; max-width: 20ch; font-family: var(--font-text); font-weight: 500; font-size: clamp(1.55rem, 1.1rem + 2.2vw, 2.6rem); line-height: 1.2; letter-spacing: -.005em; text-wrap: balance; }
+.content { padding-block: 3rem calc(6rem + env(safe-area-inset-bottom, 0px)); }
+.inner { max-width: 35rem; margin-inline: auto; display: grid; gap: 3.4rem; }
+.prose { display: grid; gap: 1.15em; font-family: var(--font-text); font-size: 1.12rem; line-height: 1.66; }
+.prose p { margin: 0; }
+h2 { margin: 0 0 1rem; font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.roles { list-style: none; margin: 0; padding: 0; display: grid; gap: .85rem; }
+.roles li { display: grid; grid-template-columns: 1fr auto; gap: .1rem 1rem; align-items: baseline; }
+.roles .org { font-weight: 600; font-size: 1.02rem; }
+.roles .years { color: var(--ink-soft); font-size: .9rem; font-variant-numeric: tabular-nums; }
+.roles .what { grid-column: 1 / -1; color: var(--ink-soft); font-size: .92rem; }
+footer { display: flex; flex-wrap: wrap; gap: .6rem 1.6rem; font-size: 1.05rem; }
+footer a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--link); text-decoration-thickness: 1.5px; text-underline-offset: .28em; }
+footer a:hover, footer a:focus-visible { color: var(--link); }
+a:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; border-radius: 2px; }
+.grain { position: fixed; inset: -50%; z-index: 6; pointer-events: none; opacity: .5; mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+@media (max-width: 520px) { .prose { font-size: 1.07rem; } }
+</style>
+</head>
+<body>
+<svg class="layer" id="cast" aria-hidden="true"></svg>
+<div class="sun" aria-hidden="true"></div>
+<svg class="layer" id="glass" aria-hidden="true"></svg>
+<svg class="layer" id="shine" aria-hidden="true">
+  <defs>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".85"/>
+      <stop offset=".35" stop-color="#fff" stop-opacity=".18"/>
+      <stop offset=".6" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="top">
+      <header>
+        <h1 class="name">Shubham Chandra</h1>
+        <p class="place">Chicago</p>
+      </header>
+      <a class="back" href="../index.html">All sketches</a>
+    </div>
+    <p class="lead">I do better with things that take a little time to make sense of.</p>
+  </section>
+  <div class="content">
+    <div class="inner">
+      <main class="prose">
+        <p data-anchor>I’m drawn to interesting textures, small restaurants that don’t advertise themselves, and travel that doesn’t come with a gift shop. I like being in places that aren’t trying to perform for you. Street level feels honest: you’re walking, noticing, adjusting. In Kerala, that’s a fabric market, not a landmark.</p>
+        <p data-anchor>Back home, I pay attention to craft. Clothes are an easy example: weave, weight, hand feel, drape. I’m not interested in labels as a proxy for taste. I’m interested in the work. Cooking is the same impulse. Start with something solid, then tinker until it tastes like mine.</p>
+        <p data-anchor>I read a lot of sci-fi, especially the kind that starts fun and ends up making you stare at the ceiling for ten minutes. Consciousness, time, huge structures, weird rules.</p>
+      </main>
+      <section aria-labelledby="before" data-anchor>
+        <h2 id="before">Before</h2>
+        <ul class="roles">
+          <li><span class="org">Garner Health</span><span class="years">2021–22</span><span class="what">Head of Business Operations</span></li>
+          <li><span class="org">NJOY</span><span class="years">2018–21</span><span class="what">Head of Strategy, Office of the CEO</span></li>
+          <li><span class="org">L.E.K. Consulting</span><span class="years">2016–18</span><span class="what">Associate</span></li>
+        </ul>
+      </section>
+      <footer data-anchor>
+        <a href="#">Email</a>
+        <a href="#">LinkedIn</a>
+        <a href="#">Curriculum vitae</a>
+      </footer>
+    </div>
+  </div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+
+<script>
+(() => {
+  const NS = 'http://www.w3.org/2000/svg'
+  const svgCast = document.getElementById('cast'), svgGlass = document.getElementById('glass'), svgShine = document.getElementById('shine')
+  const sun = document.querySelector('.sun')
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  const colours = { amber: '#e8921a', cobalt: '#2347b0', emerald: '#1c785a', ruby: '#b3233a', rose: '#d65d78', teal: '#25909a' }
+  let seed = 2009
+  const R = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296 }
+
+  // a shard: a few straight breaks around a rough centre, never a regular shape
+  function shard (size) {
+    const n = 5 + Math.floor(R() * 3), angles = []
+    for (let i = 0; i < n; i++) angles.push((i + R() * 0.7) / n * Math.PI * 2)
+    const stretch = 0.6 + R() * 0.8
+    const pts = angles.map(a => { const r = size * (0.62 + R() * 0.38); return [Math.cos(a) * r * stretch, Math.sin(a) * r / stretch] })
+    return 'M' + pts.map(([x, y]) => x.toFixed(1) + ' ' + y.toFixed(1)).join('L') + 'Z'
+  }
+
+  let W = 0, H = 0
+  const pieces = []
+  function add (fx, docY, size, colour, z, rot, opacity) {
+    const d = shard(size)
+    const mk = (svg, attrs) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); for (const k in attrs) p.setAttribute(k, attrs[k]); svg.appendChild(p); return p }
+    const piece = { fx, docY, z, rot, ph: R() * 6.28, a: 0, v: 0, flash: 0 }
+    piece.cast = mk(svgCast, { fill: colour })
+    piece.body = mk(svgGlass, { fill: colour, 'fill-opacity': opacity })
+    piece.sheen = mk(svgShine, { fill: 'url(#sheen)' })
+    piece.edge = mk(svgShine, { fill: 'none', stroke: '#fff', 'stroke-opacity': '.55', 'stroke-width': '1.2', 'stroke-linejoin': 'round', 'vector-effect': 'non-scaling-stroke' })
+    piece.body.addEventListener('pointerdown', () => { piece.v += reduce ? 0 : (R() < 0.5 ? -1 : 1) * 3; piece.flash = 1 })
+    pieces.push(piece)
+  }
+
+  function build () {
+    W = innerWidth; H = innerHeight
+    for (const s of [svgCast, svgGlass]) s.textContent = ''
+    svgShine.querySelectorAll('path').forEach(p => p.remove())
+    pieces.length = 0
+    seed = 2009
+    const narrow = W < 700
+    const unit = Math.min(W, 900)
+    // the first screen: a cluster of large pieces overlapping, so the glass-on-glass reads straight away
+    const hero = narrow
+      ? [[0.78, 0.2, 0.3, 'cobalt', 1.18, -12], [0.56, 0.3, 0.26, 'amber', 0.86, 18], [0.9, 0.4, 0.22, 'ruby', 1.32, 6], [0.66, 0.46, 0.2, 'emerald', 0.72, -24], [0.38, 0.17, 0.12, 'rose', 1.45, 30]]
+      : [[0.7, 0.3, 0.24, 'cobalt', 1.18, -12], [0.58, 0.46, 0.22, 'amber', 0.86, 18], [0.84, 0.52, 0.2, 'ruby', 1.3, 6], [0.74, 0.7, 0.16, 'emerald', 0.72, -24], [0.92, 0.2, 0.12, 'rose', 1.45, 30], [0.5, 0.2, 0.1, 'teal', 1.1, 12]]
+    for (const [fx, fy, s, c, z, r] of hero) add(fx, fy * H, s * unit, colours[c], z, r, 0.66)
+    // further down: pieces at the edges of each block, at their own depths, so they pass each other as you scroll
+    const names = ['amber', 'cobalt', 'emerald', 'ruby', 'teal', 'rose']
+    document.querySelectorAll('[data-anchor]').forEach((el, i) => {
+      const y = el.getBoundingClientRect().top + scrollY
+      const left = narrow ? -0.04 - R() * 0.06 : 0.1 + R() * 0.08
+      const right = narrow ? 1.02 + R() * 0.06 : 0.86 + R() * 0.08
+      add(i % 2 ? left : right, y + R() * 60, (0.12 + R() * 0.1) * unit, colours[names[i % names.length]], 0.7 + R() * 0.7, R() * 60 - 30, 0.62)
+      add(i % 2 ? right : left, y + 120 + R() * 120, (0.08 + R() * 0.08) * unit, colours[names[(i + 3) % names.length]], 0.7 + R() * 0.7, R() * 60 - 30, 0.58)
+    })
+  }
+  build()
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 150) })
+
+  const light = { x: innerWidth * 0.66, y: innerHeight * 0.12 }, target = { ...light }
+  let lastInput = -1e9, pressing = false
+  addEventListener('pointermove', e => { if (e.pointerType === 'mouse' || pressing) { target.x = e.clientX; target.y = e.clientY; lastInput = performance.now() } }, { passive: true })
+  addEventListener('pointerdown', e => { pressing = true; target.x = e.clientX; target.y = e.clientY; lastInput = performance.now() }, { passive: true })
+  addEventListener('pointerup', () => { pressing = false }); addEventListener('pointercancel', () => { pressing = false })
+
+  let prev = performance.now()
+  function frame (now) {
+    const dt = Math.min(48, now - prev) / 16.67; prev = now
+    const t = now / 1000
+    if (!reduce && now - lastInput > 4500) { target.x = W * (0.2 + 0.7 * (0.5 + 0.5 * Math.sin(t * 0.08))); target.y = H * (0.08 + 0.18 * (0.5 + 0.5 * Math.cos(t * 0.13))) }
+    const ease = reduce ? 1 : 1 - Math.pow(0.94, dt)
+    light.x += (target.x - light.x) * ease; light.y += (target.y - light.y) * ease
+    sun.style.transform = `translate(${light.x.toFixed(1)}px, ${light.y.toFixed(1)}px)`
+    const reach = Math.max(W, H) * 0.7
+    for (const p of pieces) {
+      const sy = p.docY - scrollY
+      const y = sy + (sy - H * 0.5) * (p.z - 1)
+      if (y < -400 || y > H + 400) { p.body.setAttribute('visibility', 'hidden'); p.cast.setAttribute('visibility', 'hidden'); p.sheen.setAttribute('visibility', 'hidden'); p.edge.setAttribute('visibility', 'hidden'); continue }
+      for (const el of [p.body, p.cast, p.sheen, p.edge]) el.removeAttribute('visibility')
+      if (!reduce) { p.v += -p.a * 0.07 * dt; p.v *= Math.pow(0.88, dt); p.a += p.v * dt }
+      p.flash *= Math.pow(0.93, dt)
+      const drift = reduce ? 0 : Math.sin(t * 0.25 + p.ph) * 3
+      const x = p.fx * W + drift
+      const rot = p.rot + (sy - H * 0.5) * 0.012 * (p.z - 1) + p.a
+      const tf = `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${rot.toFixed(2)})`
+      p.body.setAttribute('transform', tf); p.sheen.setAttribute('transform', tf); p.edge.setAttribute('transform', tf)
+      const I = Math.max(0, 1 - Math.hypot(x - light.x, y - light.y) / reach)
+      p.sheen.setAttribute('opacity', Math.min(1, I * I * 0.55 + p.flash * 0.6).toFixed(3))
+      p.edge.setAttribute('stroke-opacity', (0.35 + 0.5 * I).toFixed(3))
+      const ox = (x - light.x) * 0.2, oy = (y - light.y) * 0.2 + 14
+      p.cast.setAttribute('transform', `translate(${(x + ox).toFixed(1)} ${(y + oy).toFixed(1)}) rotate(${rot.toFixed(2)}) scale(1.1)`)
+      p.cast.setAttribute('opacity', (0.1 + 0.42 * I).toFixed(3))
+    }
+    requestAnimationFrame(frame)
+  }
+  requestAnimationFrame(frame)
+})()
+</script>
+</body>
+</html>

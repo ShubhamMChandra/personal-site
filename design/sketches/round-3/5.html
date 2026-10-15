@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sketch 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<style>
+/* one idea: the page rewards stopping. wherever you stop reading, a vine grows beside it, for as long as you stay. */
+:root {
+  --ground: #e6e1d8;
+  --ink: #2a2420;
+  --ink-soft: #776d62;
+  --accent: #c8522f;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { background: var(--ground); }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: Newsreader, Georgia, "Times New Roman", serif;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  padding-left: max(50px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+  padding-block: calc(40px + env(safe-area-inset-top, 0px)) calc(96px + env(safe-area-inset-bottom, 0px));
+}
+.page { position: relative; max-width: 34rem; margin-inline: auto; display: grid; gap: 2.6rem; }
+.plot { position: relative; }
+.plot > * { margin: 0; }
+.name { font-weight: 500; font-size: clamp(36px, 3.4vw + 1rem, 54px); line-height: 1.02; letter-spacing: -.01em; }
+.place { margin-top: .5rem; color: var(--ink-soft); font-size: 1.12rem; }
+.links { margin-top: 1.4rem; display: flex; flex-wrap: wrap; gap: .3rem 1.4rem; font-size: 1.12rem; }
+.links a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1.3px; text-underline-offset: .26em; }
+.links a:hover, .links a:focus-visible { color: var(--accent); }
+.lead { font-size: clamp(22px, 1.6vw + .8rem, 27px); line-height: 1.3; font-weight: 500; text-wrap: balance; }
+.prose { font-size: clamp(17px, .5vw + .9rem, 19px); line-height: 1.6; }
+.before { font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); font-weight: 600; margin-bottom: 1rem; }
+.roles { list-style: none; padding: 0; margin: 0; display: grid; gap: .9rem; }
+.roles li { display: grid; grid-template-columns: 1fr auto; gap: .1rem 1rem; align-items: baseline; }
+.roles .org { font-weight: 600; font-size: 1.12rem; }
+.roles .years { color: var(--ink-soft); font-size: 1rem; font-variant-numeric: tabular-nums; }
+.roles .what { grid-column: 1 / -1; color: var(--ink-soft); font-size: 1rem; }
+.end { display: flex; flex-wrap: wrap; gap: .3rem 1.4rem; font-size: 1.12rem; }
+.end a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1.3px; text-underline-offset: .26em; }
+.end a:hover, .end a:focus-visible { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+.back { position: fixed; top: calc(14px + env(safe-area-inset-top, 0px)); right: calc(16px + env(safe-area-inset-right, 0px));
+  z-index: 3; font-size: .82rem; color: var(--ink-soft); text-decoration: none; padding: 3px 8px; border-radius: 999px; background: rgba(230,225,216,.9); }
+.back:hover, .back:focus-visible { color: var(--ink); }
+#garden { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+@media (min-width: 900px) { body { padding-left: 24px; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="plot">
+    <h1 class="name">Shubham Chandra</h1>
+    <p class="place">Chicago</p>
+    <p class="links"><a href="#">Email</a><a href="#">LinkedIn</a><a href="#">Curriculum vitae</a></p>
+  </header>
+
+  <section class="plot">
+    <p class="lead">I do better with things that take a little time to make sense of.</p>
+  </section>
+
+  <section class="plot prose">
+    <p>I’m drawn to interesting textures, small restaurants that don’t advertise themselves, and travel that doesn’t come with a gift shop. I like being in places that aren’t trying to perform for you. Street level feels honest: you’re walking, noticing, adjusting. In Kerala, that’s a fabric market, not a landmark. Heat, noise, color, bargaining, getting a little turned around and not minding it.</p>
+  </section>
+
+  <section class="plot prose">
+    <p>Back home, I pay attention to craft. Clothes are an easy example: weave, weight, hand feel, drape. I’m not interested in labels as a proxy for taste. I’m interested in the work. Cooking is the same impulse. Start with something solid, then tinker until it tastes like mine.</p>
+  </section>
+
+  <section class="plot prose">
+    <p>I read a lot of sci-fi, especially the kind that starts fun and ends up making you stare at the ceiling for ten minutes. Consciousness, time, huge structures, weird rules.</p>
+  </section>
+
+  <section class="plot" aria-labelledby="before">
+    <h2 class="before" id="before">Before</h2>
+    <ul class="roles">
+      <li><span class="org">Garner Health</span><span class="years">2021–22</span><span class="what">Head of Business Operations</span></li>
+      <li><span class="org">NJOY</span><span class="years">2018–21</span><span class="what">Head of Strategy, Office of the CEO</span></li>
+      <li><span class="org">L.E.K. Consulting</span><span class="years">2016–18</span><span class="what">Associate</span></li>
+    </ul>
+  </section>
+
+  <footer class="plot">
+    <p class="end"><a href="#">Email</a><a href="#">LinkedIn</a><a href="#">Curriculum vitae</a></p>
+  </footer>
+</div>
+<a class="back" href="../index.html">All sketches</a>
+<canvas id="garden" aria-hidden="true"></canvas>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const canvas = document.getElementById('garden')
+  const ctx = canvas.getContext('2d')
+  const plots = [...document.querySelectorAll('.plot')]
+  const INK = '#2a2420', LEAF = '#3d7a46', LEAF_DARK = '#2d5c35', BUD = '#c8522f'
+
+  // ---------- a plant, drawn once from a seed, grown later ----------
+  function rng (seed) { let s = seed >>> 0 || 1; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296 }
+  function makePlant (seed, height, big) {
+    const r = rng(seed)
+    const N = 28, step = height / N
+    const segs = [], leaves = []
+    let x = 0, y = 0, h = -Math.PI / 2 + (r() - 0.5) * 0.3
+    const lean = (r() - 0.5) * 0.12
+    for (let i = 0; i < N; i++) {
+      h += (r() - 0.5) * 0.5 + lean
+      h += (-Math.PI / 2 - h) * 0.22          // it wants to climb
+      h += (-x) * 0.0025                      // and to stay by the margin
+      const nx = x + Math.cos(h) * step * (0.85 + r() * 0.3), ny = y + Math.sin(h) * step * (0.85 + r() * 0.3)
+      segs.push({ x0: x, y0: y, x1: nx, y1: ny, w: 1.9 - 1.1 * i / N, t: i / N })
+      x = nx; y = ny
+      if (i >= 3 && (i - 3) % 3 === 0 && i < N - 2) {
+        const side = ((i - 3) / 3) % 2 === 0 ? -1 : 1
+        // leaves that lean into the words stay short
+        const len = (big ? 20 : 13) * (0.8 + r() * 0.5) * (1 - 0.35 * i / N) * (side > 0 && !big ? 0.7 : 1)
+        const ang = h + side * (0.9 + r() * 0.5)
+        leaves.push({ x, y, ang, len, t: i / N + 0.03, curl: (r() - 0.5) * 0.6 })
+      }
+    }
+    // one short side shoot, leaning out into the margin
+    const b = segs[Math.floor(N * (0.35 + r() * 0.25))]
+    let bx = b.x1, by = b.y1, bh = -Math.PI / 2 - (0.9 + r() * 0.4)
+    const branch = []
+    for (let i = 0; i < 7; i++) {
+      bh += (r() - 0.5) * 0.4; bh += (-Math.PI / 2 - bh) * 0.12
+      const bs = step * (big ? 0.75 : 0.5)
+      const nx = bx + Math.cos(bh) * bs, ny = by + Math.sin(bh) * bs
+      branch.push({ x0: bx, y0: by, x1: nx, y1: ny, w: 1.2 - 0.6 * i / 7, t: b.t + 0.02 + i * 0.03 })
+      bx = nx; by = ny
+    }
+    leaves.push({ x: bx, y: by, ang: bh - 0.5, len: (big ? 15 : 10), t: b.t + 0.25, curl: 0.2 })
+    leaves.push({ x: branch[3].x1, y: branch[3].y1, ang: bh + 1.1, len: (big ? 13 : 9), t: b.t + 0.17, curl: -0.2 })
+    return { segs: segs.concat(branch), leaves, bud: { x, y, h, t: 0.94 }, g: 0 }
+  }
+
+  const ease = v => v < 0 ? 0 : v > 1 ? 1 : 1 - Math.pow(1 - v, 3)
+
+  function drawPlant (p, ox, oy, g) {
+    ctx.save(); ctx.translate(ox, oy)
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = INK
+    for (const s of p.segs) {
+      if (s.t > g) continue
+      const k = Math.min(1, (g - s.t) / 0.036)
+      ctx.lineWidth = s.w
+      ctx.beginPath(); ctx.moveTo(s.x0, s.y0); ctx.lineTo(s.x0 + (s.x1 - s.x0) * k, s.y0 + (s.y1 - s.y0) * k); ctx.stroke()
+    }
+    for (const l of p.leaves) {
+      const k = ease((g - l.t) / 0.12)
+      if (k <= 0) continue
+      const len = l.len * k, w = len * 0.42
+      ctx.save(); ctx.translate(l.x, l.y); ctx.rotate(l.ang)
+      ctx.beginPath(); ctx.moveTo(0, 0)
+      ctx.quadraticCurveTo(len * 0.45, -w + l.curl * w, len, l.curl * 2)
+      ctx.quadraticCurveTo(len * 0.5, w + l.curl * w, 0, 0)
+      ctx.fillStyle = LEAF; ctx.fill()
+      ctx.lineWidth = 0.9; ctx.strokeStyle = LEAF_DARK; ctx.stroke()
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(len * 0.5, l.curl * w * 0.5, len * 0.85, l.curl * 1.6); ctx.lineWidth = 0.7; ctx.stroke()
+      ctx.restore()
+    }
+    const bk = ease((g - p.bud.t) / 0.06)
+    if (bk > 0) {
+      ctx.save(); ctx.translate(p.bud.x, p.bud.y); ctx.rotate(p.bud.h + Math.PI / 2)
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(4.2 * bk, -5 * bk, 0, -11 * bk); ctx.quadraticCurveTo(-4.2 * bk, -5 * bk, 0, 0)
+      ctx.fillStyle = BUD; ctx.fill(); ctx.lineWidth = 0.8; ctx.strokeStyle = INK; ctx.stroke()
+      ctx.restore()
+    }
+    ctx.restore()
+  }
+
+  // ---------- which plot you have stopped at ----------
+  let plants = []
+  function plant () {
+    const big = innerWidth >= 900
+    plants = plots.map((el, i) => {
+      const h = Math.min(el.offsetHeight + 10, big ? 260 : 190)
+      return { el, p: makePlant(97 + i * 131, h, big), g: 0 }
+    })
+  }
+  let still = false, stillSince = 0, lastScroll = scrollY, pointerY = -1, lastPointer = 0, active = -1
+  const chooseActive = () => {
+    // on arrival, the first thing you stop at is the name
+    if (scrollY < 40 && pointerY < 0) return 0
+    const mid = innerHeight * 0.42
+    let best = -1, bd = 1e9
+    plants.forEach((pl, i) => {
+      const r = pl.el.getBoundingClientRect()
+      if (pointerY >= 0 && pointerY >= r.top - 12 && pointerY <= r.bottom + 12) { best = i; bd = -1; return }
+      if (bd < 0) return
+      const c = (r.top + r.bottom) / 2
+      const d = Math.abs(c - mid)
+      if (r.bottom > 0 && r.top < innerHeight && d < bd) { bd = d; best = i }
+    })
+    return best
+  }
+
+  let last = performance.now(), dirty = true
+  function frame (now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now
+    if (scrollY !== lastScroll) { lastScroll = scrollY; stillSince = now; dirty = true }
+    if (now - lastPointer < 10) stillSince = now
+    still = now - stillSince > 350
+    if (still) {
+      const i = chooseActive()
+      if (i !== active) { active = i }
+      if (active >= 0 && plants[active].g < 1) {
+        // the first one, by the name, comes quickly; the rest take time
+        const rate = active === 0 ? 0.4 : 0.15
+        plants[active].g = reduce ? 1 : Math.min(1, plants[active].g + dt * rate)
+        dirty = true
+      }
+    }
+    if (dirty) { draw(); dirty = false }
+    requestAnimationFrame(frame)
+  }
+  function draw () {
+    const dpr = Math.min(devicePixelRatio || 1, 2)
+    const W = innerWidth, H = innerHeight
+    if (canvas.width !== Math.round(W * dpr) || canvas.height !== Math.round(H * dpr)) { canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr) }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    ctx.clearRect(0, 0, W, H)
+    for (const pl of plants) {
+      if (pl.g <= 0) continue
+      const r = pl.el.getBoundingClientRect()
+      if (r.bottom < -300 || r.top > H + 300) continue
+      // it grows up from the foot of the paragraph, in the margin beside it
+      drawPlant(pl.p, r.left - (innerWidth >= 900 ? 30 : 23), r.bottom + 2, pl.g)
+    }
+  }
+
+  addEventListener('scroll', () => { dirty = true }, { passive: true })
+  addEventListener('pointermove', e => { if (e.pointerType === 'mouse') { pointerY = e.clientY; lastPointer = performance.now() } }, { passive: true })
+  addEventListener('pointerleave', () => { pointerY = -1 })
+  addEventListener('resize', () => { clearTimeout(window.__rp); window.__rp = setTimeout(() => { const keep = plants.map(p => p.g); plant(); plants.forEach((p, i) => { p.g = keep[i] || 0 }); dirty = true }, 150) })
+
+  const start = () => { plant(); stillSince = performance.now() - 100; requestAnimationFrame(frame); document.body.dataset.ready = '1' }
+  Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 2500))]).then(start)
+})()
+</script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Still, leaves</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Schibsted+Grotesk:wght@400..700&display=swap">
+<style>
+/* layout: a still. Fallen leaves on wet dark stone; as you move through, they are laid by hand into a ring, graded yellow to deep red, round a hole */
+:root { --stone: #24221f; --ink: #f1e8d8; --ink-soft: #b5aa99; --link: #e2a03e; color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--stone); color: var(--ink); overflow: hidden; }
+body { font-family: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
+.page { position: relative; padding: 64px 28px 0; display: grid; gap: 1.15rem; }
+.name { margin: 0; font-family: "Fraunces", Georgia, serif; font-variation-settings: "SOFT" 100, "WONK" 1; font-weight: 500; font-size: 2.6rem; line-height: .98; letter-spacing: -.015em; }
+.place { margin: .45rem 0 0; color: var(--ink-soft); }
+.lead { margin: 0; font-family: "Fraunces", Georgia, serif; font-variation-settings: "SOFT" 100; font-size: 1.36rem; line-height: 1.32; }
+.links { display: flex; gap: 1.4rem; font-size: 1rem; }
+.links a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--link); text-decoration-thickness: 1.5px; text-underline-offset: .28em; }
+.gap { height: 340px; }
+.prose { margin: 0; font-family: "Fraunces", Georgia, serif; font-variation-settings: "SOFT" 100; font-size: 1.08rem; line-height: 1.64; }
+.words { position: relative; display: grid; gap: 1.15rem; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="page">
+  <div class="words" data-quiet><header><h1 class="name">Shubham Chandra</h1><p class="place">Chicago</p></header>
+  <p class="lead">I do better with things that take a little time to make sense of.</p>
+  <div class="links"><a href="#">Email</a><a href="#">LinkedIn</a><a href="#">Curriculum vitae</a></div></div>
+  <div class="gap"></div>
+  <p class="prose" data-quiet>I’m drawn to interesting textures, small restaurants that don’t advertise themselves, and travel that doesn’t come with a gift shop.</p>
+</div>
+<script>
+document.fonts.ready.then(() => {
+  const cv = document.getElementById('c'), ctx = cv.getContext('2d')
+  const W = innerWidth, H = innerHeight, D = 2
+  cv.width = W * D; cv.height = H * D
+  const after = location.hash === '#after'
+  let seed = 1987
+  const R = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296 }
+  const rnd = (a, b) => a + R() * (b - a)
+  const hash = (i, j) => { let h = Math.imul(i, 374761393) + Math.imul(j, 668265263) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296 }
+  const sm = t => t * t * (3 - 2 * t)
+  const vn = (x, y) => { const i = Math.floor(x), j = Math.floor(y), fx = sm(x - i), fy = sm(y - j), a = hash(i, j), b = hash(i + 1, j), c = hash(i, j + 1), d = hash(i + 1, j + 1); return a + (b - a) * fx + (c - a) * fy + (a - b - c + d) * fx * fy }
+  const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t)
+  const rgba = (c, a = 1) => `rgba(${c.map(Math.round).join(',')},${a})`
+
+  // wet dark stone, mottled, with a sheen where it's wettest
+  const img = ctx.createImageData(W * D, H * D), px = img.data
+  for (let y = 0; y < H * D; y++) {
+    for (let x = 0; x < W * D; x++) {
+      const o = (y * W * D + x) * 4
+      const m = 0.8 + 0.3 * vn(x / 90, y / 90) + 0.12 * vn(x / 14, y / 14) + 0.06 * hash(x, y)
+      const wet = 1 + 0.25 * Math.max(0, vn(x / 260 + 5, y / 260 + 2) - 0.55) * 3
+      px[o] = 36 * m * wet; px[o + 1] = 34 * m * wet; px[o + 2] = 31 * m * wet; px[o + 3] = 255
+    }
+  }
+  ctx.putImageData(img, 0, 0)
+  ctx.scale(D, D)
+
+  const quiet = [...document.querySelectorAll('[data-quiet]')].map(el => el.getBoundingClientRect())
+  const inQuiet = (x, y) => quiet.some(r => x > r.left - 14 && x < r.right + 14 && y > r.top - 14 && y < r.bottom + 14)
+  const g = document.querySelector('.gap').getBoundingClientRect()
+  const cx = W / 2, cy = (g.top + g.bottom) / 2, r0 = 54, r1 = 160
+
+  const GRADE = [[232, 198, 76], [226, 167, 58], [217, 138, 46], [207, 106, 42], [184, 64, 42], [142, 43, 40]]
+  const grade = t => { const f = Math.min(0.999, Math.max(0, t)) * (GRADE.length - 1), i = Math.floor(f); return mix(GRADE[i], GRADE[i + 1], f - i) }
+
+  // one leaf: rowan-ish, pointed, toothed, with a midrib, veins, a blemish or two
+  function leaf (x, y, ang, L, Wd, col) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(ang)
+    const pts = []
+    for (let i = 0; i <= 22; i++) { const t = i / 22; const tooth = 1 + 0.07 * ((i % 2) ? 1 : -1) * Math.sin(Math.PI * t); pts.push([t * L, Wd / 2 * Math.pow(Math.sin(Math.PI * Math.pow(t, 0.85)), 0.9) * (1 - 0.12 * t) * tooth]) }
+    const path = (dx, dy, k = 1) => { ctx.beginPath(); ctx.moveTo(dx, dy); for (const [a, b] of pts) ctx.lineTo(a * k + dx, -b * k + dy); for (let i = pts.length - 1; i >= 0; i--) ctx.lineTo(pts[i][0] * k + dx, pts[i][1] * k + dy); ctx.closePath() }
+    // a soft shadow on the wet stone
+    path(1.6, 2.4, 1.02); ctx.fillStyle = 'rgba(8,6,5,.42)'; ctx.fill()
+    path(0.8, 1.2, 1.01); ctx.fillStyle = 'rgba(8,6,5,.3)'; ctx.fill()
+    path(0, 0)
+    const gr = ctx.createLinearGradient(0, -Wd / 2, 0, Wd / 2)
+    gr.addColorStop(0, rgba(mix(col, [40, 20, 10], 0.28))); gr.addColorStop(0.5, rgba(mix(col, [255, 240, 200], 0.1))); gr.addColorStop(1, rgba(mix(col, [40, 20, 10], 0.35)))
+    ctx.fillStyle = gr; ctx.fill()
+    ctx.save(); ctx.clip()
+    ctx.strokeStyle = rgba(mix(col, [255, 236, 190], 0.35), 0.8); ctx.lineWidth = 0.8
+    ctx.beginPath(); ctx.moveTo(-3, 0); ctx.lineTo(L * 0.96, 0); ctx.stroke()
+    ctx.lineWidth = 0.45; ctx.strokeStyle = rgba(mix(col, [255, 236, 190], 0.25), 0.55)
+    for (let v = 1; v <= 6; v++) { const t = v / 7.5; ctx.beginPath(); ctx.moveTo(t * L, 0); ctx.lineTo(t * L + Wd * 0.38, -Wd * 0.42); ctx.moveTo(t * L, 0); ctx.lineTo(t * L + Wd * 0.38, Wd * 0.42); ctx.stroke() }
+    for (let s = 0; s < 3; s++) { if (R() < 0.5) { ctx.fillStyle = rgba(mix(col, [50, 25, 15], 0.6), 0.35); ctx.beginPath(); ctx.arc(rnd(0.2, 0.8) * L, rnd(-0.25, 0.25) * Wd, rnd(0.6, 1.6), 0, 6.3); ctx.fill() } }
+    // the wet shine along one side
+    ctx.fillStyle = 'rgba(255,248,230,.12)'; ctx.beginPath(); ctx.ellipse(L * 0.45, -Wd * 0.18, L * 0.3, Wd * 0.1, 0, 0, 6.3); ctx.fill()
+    ctx.restore()
+    ctx.strokeStyle = rgba(mix(col, [60, 30, 15], 0.5), 0.9); ctx.lineWidth = 0.9; ctx.beginPath(); ctx.moveTo(-6, 0.4); ctx.lineTo(0, 0); ctx.stroke()
+    ctx.restore()
+  }
+
+  // the same four hundred leaves in both
+  // laid as petals, tips out, each ring tucked over the bases of the one outside it
+  const leaves = []
+  const rings = [146, 130, 114, 98, 82, 67]
+  rings.forEach((rad, r) => {
+    const n = Math.round(2 * Math.PI * rad / 9.5)
+    for (let k = 0; k < n; k++) leaves.push({ rad, ring: r, th: (k + (r % 2) * 0.5) / n * Math.PI * 2 + rnd(-0.025, 0.025), L: rnd(28, 34), Wd: rnd(12, 15) })
+  })
+  const ORDER = []
+  if (after) {
+    // laid from the outside in, graded from yellow at the rim to deep red at the lip of the hole
+    for (const l of leaves) {
+      const t = l.ring / (rings.length - 1)
+      const col = mix(grade(t * 0.98 + rnd(-0.05, 0.05)), [0, 0, 0], rnd(0, 0.06))
+      const base = l.rad - l.L * 0.42
+      leaf(cx + Math.cos(l.th) * base, cy + Math.sin(l.th) * base, l.th + rnd(-0.05, 0.05), l.L, l.Wd, col)
+    }
+    // and the hole: a pit of dark with a soft lip, laid over the innermost bases
+    const hg = ctx.createRadialGradient(cx, cy, 0, cx, cy, r0 + 10)
+    hg.addColorStop(0, 'rgba(3,2,2,1)'); hg.addColorStop(0.8, 'rgba(4,3,3,1)'); hg.addColorStop(1, 'rgba(4,3,3,0)')
+    ctx.fillStyle = hg; ctx.beginPath(); ctx.arc(cx, cy, r0 + 10, 0, 6.3); ctx.fill()
+  } else {
+    // fallen where they fell: any colour, any way up, a few browned
+    for (const l of leaves) {
+      let x, y, tries = 0
+      do { x = rnd(-10, W + 10); y = rnd(g.top - 150, g.bottom + 130); tries++ } while (inQuiet(x, y) && tries < 30)
+      if (inQuiet(x, y)) continue
+      const t = R()
+      const col = R() < 0.14 ? mix([128, 98, 58], [160, 150, 78], R()) : grade(t)
+      leaf(x, y, rnd(0, Math.PI * 2), l.L, l.Wd, col)
+    }
+  }
+  document.body.dataset.ready = '1'
+})
+</script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Round 4, sketch 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Schibsted+Grotesk:wght@400..700&display=swap">
+<style>
+/* layout: one sentence at a time on a painted ground; each sentence ends in a tiny hand-drawn thing, and zooming into it shows its detail, then the next part of his life inside it */
+:root {
+  --font-text: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-ui: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: #efe8dc; }
+body { font-family: var(--font-ui); -webkit-font-smoothing: antialiased; }
+.stage { position: fixed; inset: 0; overflow: hidden; }
+.layer { position: absolute; width: var(--D, 150vmax); height: var(--D, 150vmax); left: calc(50% - var(--D, 150vmax) / 2); top: calc(50% - var(--D, 150vmax) / 2); display: grid; place-content: center; visibility: hidden; will-change: transform, opacity; }
+.layer.on { visibility: visible; }
+.layer canvas.wash { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.say { position: relative; margin: 0 auto; width: min(19em, calc(100vw - 56px)); font-family: var(--font-text); font-variation-settings: "SOFT" 100, "WONK" 1; font-weight: 400; font-size: clamp(1.65rem, 1.05rem + 2.5vw, 3rem); line-height: 1.28; letter-spacing: -.005em; text-wrap: pretty; }
+.say .line { display: block; }
+.say .line + .line { margin-top: .45em; }
+.thing { display: inline-block; width: .56em; height: .56em; margin-left: .06em; vertical-align: -.02em; cursor: pointer; overflow: visible; }
+.thing.breathe { animation: breathe 2.8s ease-in-out infinite; transform-origin: 50% 50%; transform-box: fill-box; }
+@keyframes breathe { 50% { transform: scale(1.18) rotate(8deg); } }
+.links { display: flex; flex-wrap: wrap; gap: .5em 1.2em; margin-top: .9em; font-family: var(--font-ui); font-size: .5em; }
+.links a { color: inherit; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: .25em; }
+.bar { position: fixed; left: 0; right: 0; top: 0; z-index: 5; display: flex; justify-content: space-between; gap: 1rem; padding: calc(18px + env(safe-area-inset-top, 0px)) max(22px, env(safe-area-inset-right, 0px)) 0 max(22px, env(safe-area-inset-left, 0px)); font-size: .85rem; color: #241e19; transition: color .4s ease; }
+.bar b { font-weight: 600; }
+.bar span { opacity: .7; }
+.bar nav { display: flex; gap: .9rem; white-space: nowrap; }
+.bar a { color: inherit; text-decoration: none; opacity: .75; }
+.bar a:hover, .bar a:focus-visible { opacity: 1; text-decoration: underline; }
+a:focus-visible, .thing:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; border-radius: 3px; }
+@media (max-width: 420px) { .bar { font-size: .78rem; } }
+@media (prefers-reduced-motion: reduce) { .thing.breathe { animation: none; } }
+</style>
+</head>
+<body>
+<div class="bar">
+  <div><b>Shubham Chandra</b> <span>Chicago</span></div>
+  <nav><a href="#" data-go="4">Work</a><a href="#" data-go="5">Email</a><a href="../index.html">All sketches</a></nav>
+</div>
+
+<div class="stage" id="stage">
+  <section class="layer" data-ground="#efe8dc" data-ink="#241e19">
+    <p class="say">I do better with things that take a little time to make sense of<svg class="thing breathe" viewBox="0 0 100 100" role="button" tabindex="0" aria-label="Look closer">
+      <!-- a button, sewn on by hand -->
+      <circle cx="50" cy="50" r="46" fill="#34497a"/>
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#25345a" stroke-width="3"/>
+      <circle cx="50.5" cy="49.5" r="35" fill="none" stroke="#25345a" stroke-width="2.4" opacity=".8"/>
+      <path d="M22 30 A34 34 0 0 1 46 17" fill="none" stroke="#6c86bd" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+      <circle cx="39.5" cy="40" r="5.4" fill="#1a2441"/><circle cx="60.5" cy="39.5" r="5.4" fill="#1a2441"/>
+      <circle cx="40" cy="60.5" r="5.4" fill="#1a2441"/><circle cx="60" cy="60" r="5.4" fill="#1a2441"/>
+      <path d="M40 40.5 C 48 49, 52 51.5, 60 60" fill="none" stroke="#efe4cc" stroke-width="3.6" stroke-linecap="round"/>
+      <path d="M60.5 40 C 53 47.5, 47.5 53, 40 60.5" fill="none" stroke="#e8dcc0" stroke-width="3.6" stroke-linecap="round"/>
+      <path d="M41 39 C 49 47.5, 51 50, 59.5 59" fill="none" stroke="#fff6e2" stroke-width="1" stroke-linecap="round" opacity=".7"/>
+    </svg></p>
+  </section>
+
+  <section class="layer" data-ground="#2d3e66" data-ink="#f1e9da">
+    <p class="say">I pay attention to craft. Clothes are an easy example: weave, weight, hand feel, drape. Cooking is the same impulse: start with something solid, then tinker until it tastes like mine<svg class="thing" viewBox="0 0 100 100" role="button" tabindex="0" aria-label="Look closer">
+      <!-- a marigold -->
+      <g fill="#d8621a"><ellipse cx="50" cy="14" rx="9" ry="12"/><ellipse cx="50" cy="14" rx="9" ry="12" transform="rotate(30 50 50)"/><ellipse cx="50" cy="14" rx="9" ry="12" transform="rotate(60 50 50)"/><ellipse cx="50" cy="14" rx="9" ry="12" transform="rotate(90 50 50)"/><ellipse cx="50" cy="14" rx="9" ry="12" transform="rotate(120 50 50)"/><ellipse cx="50" cy="14" rx="9" ry="12" transform="rotate(150 50 50)"/><ellipse cx="50" cy="14" rx="9" ry="12" transform="rotate(180 50 50)"/><ellipse cx="50" cy="14" rx="9" ry="12" transform="rotate(210 50 50)"/><ellipse cx="50" cy="14" rx="9" ry="12" transform="rotate(240 50 50)"/><ellipse cx="50" cy="14" rx="9" ry="12" transform="rotate(270 50 50)"/><ellipse cx="50" cy="14" rx="9" ry="12" transform="rotate(300 50 50)"/><ellipse cx="50" cy="14" rx="9" ry="12" transform="rotate(330 50 50)"/></g>
+      <g fill="#ef8a26"><ellipse cx="50" cy="24" rx="8" ry="10" transform="rotate(15 50 50)"/><ellipse cx="50" cy="24" rx="8" ry="10" transform="rotate(47 50 50)"/><ellipse cx="50" cy="24" rx="8" ry="10" transform="rotate(79 50 50)"/><ellipse cx="50" cy="24" rx="8" ry="10" transform="rotate(111 50 50)"/><ellipse cx="50" cy="24" rx="8" ry="10" transform="rotate(143 50 50)"/><ellipse cx="50" cy="24" rx="8" ry="10" transform="rotate(175 50 50)"/><ellipse cx="50" cy="24" rx="8" ry="10" transform="rotate(207 50 50)"/><ellipse cx="50" cy="24" rx="8" ry="10" transform="rotate(239 50 50)"/><ellipse cx="50" cy="24" rx="8" ry="10" transform="rotate(271 50 50)"/><ellipse cx="50" cy="24" rx="8" ry="10" transform="rotate(303 50 50)"/><ellipse cx="50" cy="24" rx="8" ry="10" transform="rotate(335 50 50)"/></g>
+      <g fill="#f6a633"><ellipse cx="50" cy="33" rx="7" ry="8" transform="rotate(5 50 50)"/><ellipse cx="50" cy="33" rx="7" ry="8" transform="rotate(50 50 50)"/><ellipse cx="50" cy="33" rx="7" ry="8" transform="rotate(95 50 50)"/><ellipse cx="50" cy="33" rx="7" ry="8" transform="rotate(140 50 50)"/><ellipse cx="50" cy="33" rx="7" ry="8" transform="rotate(185 50 50)"/><ellipse cx="50" cy="33" rx="7" ry="8" transform="rotate(230 50 50)"/><ellipse cx="50" cy="33" rx="7" ry="8" transform="rotate(275 50 50)"/><ellipse cx="50" cy="33" rx="7" ry="8" transform="rotate(320 50 50)"/></g>
+      <circle cx="50" cy="50" r="11" fill="#a8471a"/><circle cx="47" cy="47" r="2" fill="#f3b24a"/><circle cx="53" cy="49" r="1.8" fill="#f3b24a"/><circle cx="49" cy="54" r="1.6" fill="#f3b24a"/>
+    </svg></p>
+  </section>
+
+  <section class="layer" data-ground="#1f6a50" data-ink="#f3ecdd">
+    <p class="say">I like places that aren’t trying to perform for you. In Kerala, that’s a fabric market, not a landmark: heat, noise, color, bargaining, getting a little turned around and not minding it<svg class="thing" viewBox="0 0 100 100" role="button" tabindex="0" aria-label="Look closer">
+      <!-- a glass marble -->
+      <defs>
+        <radialGradient id="mglass" cx="38%" cy="34%" r="70%"><stop offset="0" stop-color="#eaf3f2"/><stop offset=".45" stop-color="#9cc9c6"/><stop offset="1" stop-color="#2f6f73"/></radialGradient>
+        <clipPath id="mclip"><circle cx="50" cy="50" r="44"/></clipPath>
+      </defs>
+      <circle cx="50" cy="50" r="44" fill="url(#mglass)"/>
+      <g clip-path="url(#mclip)">
+        <path d="M14 62 C 30 40, 46 70, 60 46 S 84 30, 92 44 C 80 56, 66 74, 50 64 S 24 74, 14 62 Z" fill="#e2672c" opacity=".92"/>
+        <path d="M20 66 C 34 50, 48 76, 62 54 S 82 42, 88 50" fill="none" stroke="#f6b04a" stroke-width="3" stroke-linecap="round" opacity=".9"/>
+        <path d="M18 40 C 34 32, 50 44, 66 34" fill="none" stroke="#2c4f9e" stroke-width="4" stroke-linecap="round" opacity=".55"/>
+      </g>
+      <circle cx="50" cy="50" r="44" fill="none" stroke="#24585b" stroke-width="2.5" opacity=".8"/>
+      <ellipse cx="35" cy="30" rx="11" ry="7" fill="#ffffff" opacity=".75" transform="rotate(-30 35 30)"/>
+      <circle cx="64" cy="70" r="3" fill="#ffffff" opacity=".45"/>
+    </svg></p>
+  </section>
+
+  <section class="layer" data-ground="#272550" data-ink="#ece6f4">
+    <p class="say">I read a lot of sci-fi, the kind that starts fun and ends up making you stare at the ceiling for ten minutes<svg class="thing" viewBox="0 0 100 100" role="button" tabindex="0" aria-label="Look closer">
+      <!-- a smooth pebble -->
+      <defs><radialGradient id="pstone" cx="40%" cy="35%" r="75%"><stop offset="0" stop-color="#b9b1a5"/><stop offset=".6" stop-color="#8b8378"/><stop offset="1" stop-color="#5f584f"/></radialGradient>
+      <clipPath id="pclip"><path d="M50 6 C 72 5, 92 20, 95 44 C 98 68, 80 92, 52 94 C 26 96, 5 80, 5 54 C 4 30, 24 7, 50 6 Z"/></clipPath></defs>
+      <path d="M50 6 C 72 5, 92 20, 95 44 C 98 68, 80 92, 52 94 C 26 96, 5 80, 5 54 C 4 30, 24 7, 50 6 Z" fill="url(#pstone)"/>
+      <g clip-path="url(#pclip)">
+        <path d="M-4 62 C 20 54, 44 66, 64 52 S 92 40, 104 46" fill="none" stroke="#efe8dc" stroke-width="5" stroke-linecap="round" opacity=".75"/>
+        <g fill="#4d473f" opacity=".55"><circle cx="30" cy="34" r="1.6"/><circle cx="62" cy="28" r="1.2"/><circle cx="74" cy="66" r="1.8"/><circle cx="40" cy="76" r="1.3"/><circle cx="22" cy="58" r="1"/><circle cx="56" cy="82" r="1.1"/><circle cx="84" cy="42" r="1.2"/></g>
+        <g fill="#d8d0c3" opacity=".6"><circle cx="46" cy="40" r="1.1"/><circle cx="68" cy="78" r="1"/><circle cx="28" cy="70" r="1.2"/></g>
+      </g>
+      <ellipse cx="36" cy="26" rx="14" ry="6" fill="#ffffff" opacity=".28" transform="rotate(-20 36 26)"/>
+    </svg></p>
+  </section>
+
+  <section class="layer" data-ground="#b4552e" data-ink="#fcf0e4">
+    <p class="say"><span class="line">Garner Health, head of business operations, 2021–22.</span><span class="line">NJOY, head of strategy in the CEO’s office, 2018–21.</span><span class="line">L.E.K. Consulting, associate, 2016–18<svg class="thing" viewBox="0 0 100 100" role="button" tabindex="0" aria-label="Look closer">
+      <!-- a wax seal -->
+      <path d="M50 3 C 64 2, 72 9, 82 14 C 94 22, 97 34, 96 47 C 98 60, 93 74, 83 84 C 72 95, 58 98, 46 97 C 33 98, 20 92, 12 82 C 3 71, 2 58, 4 46 C 3 32, 10 19, 21 12 C 30 5, 40 4, 50 3 Z" fill="#9e2229"/>
+      <circle cx="50" cy="50" r="31" fill="#b32c33"/>
+      <circle cx="50" cy="50" r="31" fill="none" stroke="#7e1a20" stroke-width="3"/>
+      <path d="M59 36 C 54 31, 42 31, 41 39 C 40 47, 60 48, 59 58 C 58 67, 44 68, 39 62" fill="none" stroke="#7e1a20" stroke-width="5.5" stroke-linecap="round"/>
+      <path d="M58.5 35 C 54 30.5, 43 30.5, 42 38.5" fill="none" stroke="#d65a60" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+    </svg></span></p>
+  </section>
+
+  <section class="layer" data-ground="#f3ecdf" data-ink="#241e19">
+    <div class="say">Write to me.
+      <div class="links"><a href="#">Email</a><a href="#">LinkedIn</a><a href="#">Curriculum vitae</a></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+  const layers = [...document.querySelectorAll('.layer')]
+  const N = layers.length
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const bar = document.querySelector('.bar')
+  const SEG = 1.25, DWELL = 0.34
+  let seed = 11
+  const R = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296 }
+  const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16))
+  const shade = (c, k) => c.map(v => Math.max(0, Math.min(255, Math.round(v * k))))
+
+  // a painted ground for each layer: a wash with blooms, darker wet edges and paper grain
+  function paint (layer) {
+    let cv = layer.querySelector('canvas.wash')
+    if (!cv) { cv = document.createElement('canvas'); cv.className = 'wash'; layer.prepend(cv) }
+    const W = layer.offsetWidth, H = layer.offsetHeight, dpr = 1
+    cv.width = W * dpr; cv.height = H * dpr
+    const x = cv.getContext('2d'), base = hex(layer.dataset.ground)
+    x.fillStyle = layer.dataset.ground; x.fillRect(0, 0, W, H)
+    for (let i = 0; i < 26; i++) {
+      const k = 0.86 + R() * 0.26, c = shade(base, k), cx = R() * W, cy = R() * H, r = (0.2 + R() * 0.5) * Math.max(W, H)
+      const g = x.createRadialGradient(cx, cy, 0, cx, cy, r)
+      g.addColorStop(0, `rgba(${c},.22)`); g.addColorStop(0.7, `rgba(${c},.12)`); g.addColorStop(1, `rgba(${c},0)`)
+      x.fillStyle = g; x.fillRect(0, 0, W, H)
+    }
+    for (let i = 0; i < 7; i++) {
+      const c = shade(base, 0.82), cx = R() * W, cy = R() * H, r = (0.12 + R() * 0.3) * Math.max(W, H)
+      x.strokeStyle = `rgba(${c},.18)`; x.lineWidth = 2 + R() * 3; x.beginPath()
+      for (let a = 0; a <= 6.3; a += 0.12) { const rr = r * (1 + 0.08 * Math.sin(a * 3 + i) + 0.04 * Math.sin(a * 7 + i * 2)); a ? x.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr) : x.moveTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr) }
+      x.closePath(); x.stroke()
+    }
+    for (let i = 0; i < W * H / 90; i++) { x.fillStyle = R() < 0.5 ? 'rgba(255,255,255,.05)' : 'rgba(0,0,0,.05)'; x.fillRect(R() * W, R() * H, 1, 1) }
+  }
+
+  let W, H, C, portals = []
+  function measure () {
+    W = innerWidth; H = innerHeight; C = [W / 2, H / 2]
+    const D = Math.ceil(Math.hypot(W, H) * 1.18)
+    document.documentElement.style.setProperty('--D', D + 'px')
+    // every layer is a square bigger than the screen, so the next one can open as a circle; transforms work in screen coordinates
+    layers.forEach(l => { l.style.transformOrigin = `${(D - W) / 2}px ${(D - H) / 2}px` })
+    document.body.style.height = (H * (1 + SEG * (N - 1))).toFixed(0) + 'px'
+    seed = 11
+    layers.forEach(l => { l.style.color = l.dataset.ink; paint(l); l.style.transform = 'none'; l.style.clipPath = 'none'; l.style.opacity = '1'; l.classList.add('on') })
+    portals = layers.map(l => {
+      const d = l.querySelector('.thing'); if (!d) return null
+      const r = d.getBoundingClientRect(), size = Math.max(6, r.width)
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2, size, F: Math.hypot(W, H) * 1.1 / (size * 0.78), el: d }
+    })
+    layers.forEach(l => l.classList.remove('on'))
+    draw()
+  }
+  const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+  const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t) }
+  function draw () {
+    const z = Math.min(N - 1, Math.max(0, scrollY / (H * SEG)))
+    const i = Math.min(N - 2, Math.floor(z))
+    let t = z - i
+    t = t <= DWELL ? 0 : (t - DWELL) / (1 - DWELL)
+    if (z >= N - 1) t = 1
+    layers.forEach((l, k) => l.classList.toggle('on', k === i || (k === i + 1 && t > 0)))
+    const cur = layers[i], nxt = layers[i + 1], p = portals[i]
+    if (reduce) {
+      cur.style.transform = 'none'; nxt.style.transform = 'none'; nxt.style.clipPath = 'none'
+      cur.style.opacity = String(1 - t); nxt.style.opacity = String(t)
+    } else {
+      const k = ease(t), S = Math.pow(p.F, k)
+      const px = p.x + (C[0] - p.x) * k, py = p.y + (C[1] - p.y) * k
+      cur.style.opacity = '1'
+      cur.style.transform = `translate(${px}px, ${py}px) scale(${S}) translate(${-p.x}px, ${-p.y}px)`
+      // the little thing turns a little as you come in close, so you see more of it
+      p.el.style.transform = t > 0 ? `rotate(${(k * 40).toFixed(1)}deg)` : ''; p.el.style.transformOrigin = '50% 50%'; p.el.style.transformBox = 'fill-box'
+      nxt.style.transform = `translate(${px}px, ${py}px) scale(${S / p.F}) translate(${-C[0]}px, ${-C[1]}px)`
+      nxt.style.clipPath = `circle(${(p.size / 2 * 0.78 * p.F).toFixed(1)}px at 50% 50%)`
+      nxt.style.opacity = smooth(0.5, 0.82, k).toFixed(3)
+    }
+    // the little thing at rest breathes, to ask for a tap; while you dive into it, it turns instead
+    portals.forEach((q, k) => { if (q) q.el.classList.toggle('breathe', !reduce && k === i && t === 0) })
+    if (t >= 1) cur.classList.remove('on')
+    bar.style.color = (t >= 0.75 ? nxt : cur).dataset.ink
+  }
+  addEventListener('scroll', () => requestAnimationFrame(draw), { passive: true })
+  addEventListener('resize', () => { clearTimeout(measure.t); measure.t = setTimeout(measure, 150) })
+
+  // tapping the little thing goes one step deeper, slowly
+  function goTo (step) {
+    const target = Math.min(step, N - 1) * H * SEG
+    if (reduce) { scrollTo(0, target); return }
+    const from = scrollY, d = target - from, t0 = performance.now(), dur = Math.min(2600, 1100 + Math.abs(d) / H * 380)
+    const tick = now => { const q = Math.min(1, (now - t0) / dur); scrollTo(0, from + d * ease(q)); if (q < 1) requestAnimationFrame(tick) }
+    requestAnimationFrame(tick)
+  }
+  document.querySelectorAll('.thing').forEach(th => {
+    const go = () => goTo(layers.indexOf(th.closest('.layer')) + 1)
+    th.addEventListener('click', go)
+    th.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go() } })
+  })
+  document.querySelectorAll('[data-go]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); goTo(Number(a.dataset.go)) }))
+
+  measure()
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure)
+})()
+</script>
+</body>
+</html>

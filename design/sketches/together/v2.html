@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Together, leaves</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Schibsted+Grotesk:wght@400..700&display=swap">
+<style>
+/* layout: one column of his words on pale, knife-flat paint; round it a field of warm grey brushstrokes that settles as you move through; above it, strokes of coloured glass hover, cast their colour on the paint, and gather into a ribbon beside each passage */
+:root {
+  --linen: #a39b92;
+  --ink: #211b15;
+  --ink-soft: #5a4f42;
+  --link: #9c3f1b;
+  --chip: rgba(244, 237, 223, .92);
+  --font-text: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-ui: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { overflow-x: clip; }
+html, body { margin: 0; background-color: var(--linen); color: var(--ink); }
+body { position: relative; font-family: var(--font-ui); -webkit-font-smoothing: antialiased;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255, 250, 240, .09) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(70, 50, 30, .08) 0 1px, transparent 1px 3px); }
+#paint { position: absolute; left: 0; top: 0; z-index: 0; pointer-events: none; }
+.light { position: fixed; left: 0; top: 0; z-index: 0; width: 1000px; height: 1000px; margin: -500px 0 0 -500px; pointer-events: none; mix-blend-mode: screen; will-change: transform;
+  background: radial-gradient(closest-side, rgba(255, 241, 216, .5), rgba(255, 236, 206, .18) 50%, rgba(255, 236, 206, 0)); }
+.glass { position: absolute; left: 0; top: 0; width: 100%; overflow: hidden; pointer-events: none; }
+.glass img { position: absolute; left: 0; top: 0; will-change: transform; transform-origin: 0 0; }
+.glass .gs { mix-blend-mode: multiply; }
+.glass .gb { mix-blend-mode: hard-light; }
+.glass .gh { mix-blend-mode: screen; }
+.page { position: relative; z-index: 1; max-width: 33rem; margin-inline: auto;
+  padding-left: max(28px, env(safe-area-inset-left, 0px)); padding-right: max(28px, env(safe-area-inset-right, 0px));
+  padding-block: calc(64px + env(safe-area-inset-top, 0px)) calc(40vh + env(safe-area-inset-bottom, 0px));
+  display: grid; gap: max(30vh, 230px); }
+.block { display: grid; gap: 1.2rem; }
+.name { margin: 0; font-family: var(--font-text); font-variation-settings: "SOFT" 100, "WONK" 1; font-weight: 500; font-size: clamp(2.5rem, 1.5rem + 4vw, 4.2rem); line-height: .98; letter-spacing: -.015em; }
+.place { margin: .45rem 0 0; color: var(--ink-soft); font-size: 1rem; }
+.lead { margin: 0; font-family: var(--font-text); font-variation-settings: "SOFT" 100; font-size: clamp(1.35rem, 1.05rem + 1.1vw, 1.8rem); line-height: 1.32; text-wrap: balance; }
+.links { display: flex; flex-wrap: wrap; gap: .6rem 1.5rem; font-size: 1.02rem; }
+.links a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--link); text-decoration-thickness: 1.5px; text-underline-offset: .28em; }
+.links a:hover, .links a:focus-visible { color: var(--link); }
+.prose { margin: 0; font-family: var(--font-text); font-variation-settings: "SOFT" 100; font-size: 1.16rem; line-height: 1.64; }
+h2 { margin: 0; font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.roles { list-style: none; margin: 0; padding: 0; display: grid; gap: .85rem; }
+.roles li { display: grid; grid-template-columns: 1fr auto; gap: .1rem 1rem; align-items: baseline; }
+.roles .org { font-weight: 600; }
+.roles .years, .roles .what { color: var(--ink-soft); font-size: .92rem; font-variant-numeric: tabular-nums; }
+.roles .what { grid-column: 1 / -1; }
+.back { position: fixed; z-index: 4; top: calc(14px + env(safe-area-inset-top, 0px)); right: max(14px, env(safe-area-inset-right, 0px)); font-size: .78rem; color: var(--ink-soft); text-decoration: none; background: var(--chip); padding: .32rem .7rem; border-radius: 999px; }
+a:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; border-radius: 2px; }
+.grain { position: fixed; inset: -50%; z-index: 5; pointer-events: none; opacity: .4; mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+@media (max-width: 520px) { .prose { font-size: 1.08rem; } }
+</style>
+</head>
+<body>
+<canvas id="paint" aria-hidden="true"></canvas>
+<div class="light" aria-hidden="true"></div>
+<div class="glass" aria-hidden="true"></div>
+<a class="back" href="../index.html">All sketches</a>
+<main class="page">
+  <section class="block" data-block>
+    <header><h1 class="name">Shubham Chandra</h1><p class="place">Chicago</p></header>
+    <p class="lead">I do better with things that take a little time to make sense of.</p>
+    <div class="links"><a href="#">Email</a><a href="#">LinkedIn</a><a href="#">Curriculum vitae</a></div>
+  </section>
+  <p class="prose" data-block>I’m drawn to interesting textures, small restaurants that don’t advertise themselves, and travel that doesn’t come with a gift shop. I like being in places that aren’t trying to perform for you. In Kerala, that’s a fabric market, not a landmark.</p>
+  <p class="prose" data-block>Back home, I pay attention to craft. Clothes are an easy example: weave, weight, hand feel, drape. Cooking is the same impulse. Start with something solid, then tinker until it tastes like mine.</p>
+  <p class="prose" data-block>I read a lot of sci-fi, especially the kind that starts fun and ends up making you stare at the ceiling for ten minutes.</p>
+  <section class="block" data-block>
+    <h2>Before</h2>
+    <ul class="roles">
+      <li><span class="org">Garner Health</span><span class="years">2021–22</span><span class="what">Head of Business Operations</span></li>
+      <li><span class="org">NJOY</span><span class="years">2018–21</span><span class="what">Head of Strategy, Office of the CEO</span></li>
+      <li><span class="org">L.E.K. Consulting</span><span class="years">2016–18</span><span class="what">Associate</span></li>
+    </ul>
+    <div class="links"><a href="#">Email</a><a href="#">LinkedIn</a><a href="#">Curriculum vitae</a></div>
+  </section>
+</main>
+<div class="grain" aria-hidden="true"></div>
+
+<script>
+(() => {
+  const canvas = document.getElementById('paint')
+  const ctx = canvas.getContext('2d')
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const blocks = [...document.querySelectorAll('[data-block]')]
+
+  let seed = 1
+  const R = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296 }
+  const rnd = (a, b) => a + R() * (b - a)
+  const pick = arr => arr[Math.floor(R() * arr.length)]
+  const hex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]
+  const toHex = c => '#' + c.map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('')
+  const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t)
+  const rgba = (c, a) => `rgba(${c.map(Math.round).join(',')},${a})`
+  const hash = (i, j) => { let h = Math.imul(i, 374761393) + Math.imul(j, 668265263) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296 }
+  const sm = t => t * t * (3 - 2 * t)
+  function vnoise (x, y) {
+    const i = Math.floor(x), j = Math.floor(y), fx = sm(x - i), fy = sm(y - j)
+    const a = hash(i, j), b = hash(i + 1, j), c = hash(i, j + 1), d = hash(i + 1, j + 1)
+    return a + (b - a) * fx + (c - a) * fy + (a - b - c + d) * fx * fy
+  }
+
+  // his dyes, as oil paint
+  // round 1's palette: a field of warm greys laid by hand, darker in its currents, lighter near the words, a little colour in it
+  const GREY = ['#7a6f66', '#8f8880', '#9b938a', '#a8a097', '#a99a84', '#b3aba1', '#b3a48b', '#bfb6aa', '#cdc2b2']
+  const ACCENT = ['#e2a136', '#d4532f', '#dc6a84', '#3a63b4', '#2f8d84', '#eac34a', '#7a5bb0', '#e27a3a']
+  const PALE = ['#d6cdc0', '#d0c7ba', '#dad2c6', '#cbc2b5', '#d3c9bb']
+  const MUD = [122, 110, 98]
+
+  // every stroke is one of a few hand-made brush marks, painted once in each colour
+  const SL = 40, SW = 11, SP = 7, CW = SL + SP * 2, CH = SW + SP * 2, VAR = 6, ACOLS = 16
+  const colours = [], colourId = new Map()
+  const id = h => { if (!colourId.has(h)) { colourId.set(h, colours.length); colours.push(h) } return colourId.get(h) }
+  const muddy = h => toHex(mix(hex(h), MUD, 0.24))
+  for (const h of [...GREY, ...ACCENT]) { id(h); id(muddy(h)) }
+  for (const h of PALE) id(h)
+  const SDPR = 2
+  const atlas = document.createElement('canvas')
+  atlas.width = ACOLS * CW * SDPR; atlas.height = Math.ceil(colours.length * VAR / ACOLS) * CH * SDPR
+  const actx = atlas.getContext('2d')
+
+  function paintSprite (h, v, ox, oy) {
+    const c = hex(h), a = actx
+    seed = 500 + v * 31
+    const N = 24, k = [-0.09, -0.045, 0, 0.045, 0.08, -0.02][v], taper = rnd(0.3, 0.5)
+    const wob = Array.from({ length: N + 1 }, () => rnd(-0.13, 0.13))
+    const cy = SP + SW / 2
+    const half = u => SW / 2 * Math.pow(Math.sin(Math.PI * (0.015 + 0.97 * u)), 0.2) * (1 - taper * u * u)
+    const mid = u => cy + k * SL * 4 * u * (1 - u)
+    const pts = []
+    for (let i = 0; i <= N; i++) { const u = i / N; pts.push([SP + u * SL, mid(u) - half(u) * (1 + wob[i])]) }
+    for (let i = N; i >= 0; i--) { const u = i / N; pts.push([SP + u * SL, mid(u) + half(u) * (1 - wob[i] * 0.6)]) }
+    const shape = (dx, dy) => { a.beginPath(); pts.forEach(([x, y], i) => i ? a.lineTo(x + dx, y + dy) : a.moveTo(x + dx, y + dy)); a.closePath() }
+    const lane = (l, u0, u1, n) => { a.beginPath(); for (let i = 0; i <= n; i++) { const u = u0 + (u1 - u0) * i / n; const x = SP + u * SL, y = mid(u) + l * half(u); i ? a.lineTo(x, y) : a.moveTo(x, y) } }
+    a.setTransform(SDPR, 0, 0, SDPR, ox * SDPR, oy * SDPR)
+    // the paint stands up off the canvas: a soft dark edge below and to the right
+    shape(0.8, 1.4); a.fillStyle = rgba(mix(c, [38, 26, 18], 0.55), 0.34); a.fill()
+    shape(0, 0); a.fillStyle = rgba(c, 1); a.fill()
+    seed = 900 + v * 53 + colourId.get(h) * 7
+    a.save(); shape(0, 0); a.clip()
+    // bristles drag lighter and darker paint along the stroke
+    const nb = 10 + Math.floor(R() * 5)
+    for (let b = 0; b < nb; b++) {
+      const tone = R() < 0.55 ? mix(c, [255, 249, 236], rnd(0.12, 0.34)) : mix(c, [30, 22, 16], rnd(0.1, 0.3))
+      a.strokeStyle = rgba(tone, rnd(0.25, 0.55)); a.lineWidth = rnd(0.35, 0.9)
+      lane(rnd(-0.9, 0.9), rnd(0, 0.18), rnd(0.7, 1), 12); a.stroke()
+    }
+    // the ridge catches the light along its upper edge
+    a.strokeStyle = rgba(mix(c, [255, 250, 238], 0.5), 0.38); a.lineWidth = 0.8
+    lane(-0.5, 0.06, 0.35, 8); a.stroke(); lane(-0.45, 0.45, 0.7, 8); a.stroke()
+    // and the brush runs dry at the end
+    a.globalCompositeOperation = 'destination-out'
+    for (let g = 0; g < 6; g++) { a.strokeStyle = 'rgba(0,0,0,.85)'; a.lineWidth = rnd(0.4, 0.9); lane(rnd(-0.85, 0.85), rnd(0.6, 0.85), 1, 8); a.stroke() }
+    a.globalCompositeOperation = 'source-over'
+    a.restore()
+  }
+  colours.forEach((h, ci) => { for (let v = 0; v < VAR; v++) { const n = ci * VAR + v; paintSprite(h, v, (n % ACOLS) * CW, ((n / ACOLS) | 0) * CH) } })
+
+  let W = 0, VH = 0, DOC = 0, wide = false, dpr = 1, zones = [], whorls = [], strokes = [], active = []
+  let built = false, demo = null, t0 = performance.now()
+  const BAND = 160, dirty = new Set()
+
+  const sdBox = (x, y, z) => { const qx = Math.abs(x - z.cx) - (z.hw - z.r), qy = Math.abs(y - z.cy) - (z.hh - z.r); return Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0) - z.r }
+  function nearest (x, y) { let d = 1e9, zi = 0; for (let i = 0; i < zones.length; i++) { const s = sdBox(x, y, zones[i]); if (s < d) { d = s; zi = i } } return [d, zi] }
+
+  function placeWhorls () {
+    whorls = []
+    if (!wide) {
+      for (let i = 0; i < zones.length; i++) {
+        const a = zones[i], b = zones[i + 1]
+        const top = a.cy + a.hh + 60, bottom = (b ? b.cy - b.hh : DOC) - 60
+        const gap = bottom - top
+        if (gap < 90) continue
+        whorls.push({ x: W * (i % 2 ? 0.3 : 0.7), y: top + gap / 2, R: Math.min(gap * 0.55 + 30, W * 0.34) })
+      }
+      return
+    }
+    const z0 = zones[0], left = z0.cx - z0.hw, right = z0.cx + z0.hw
+    const m = Math.min(left, W - right), Rm = Math.min(m * 0.36, 190)
+    zones.forEach((z, i) => {
+      const onLeft = i % 2 === 0
+      whorls.push({ x: onLeft ? left - m * 0.5 : right + m * 0.5, y: z.cy, R: Rm })
+      const n = zones[i + 1]
+      if (n) whorls.push({ x: onLeft ? right + m * 0.55 : left - m * 0.55, y: (z.cy + z.hh + n.cy - n.hh) / 2, R: Rm * 0.7 })
+    })
+  }
+
+  // which way the paint wants to go: a slow current, hugging his words, curling round the whorls
+  function flowAngle (x, y, d, zi) {
+    let X = 0, Y = 0
+    const add = (th, w) => { X += w * Math.cos(2 * th); Y += w * Math.sin(2 * th) }
+    add(0.4 * Math.sin(y / 150 + x / 290) + 0.28 * Math.sin(y / 95 - x / 180 + 1.7) + 0.16 * Math.sin(x / 70 + y / 230), 1)
+    if (d < 160) {
+      const z = zones[zi]
+      const gx = sdBox(x + 1, y, z) - sdBox(x - 1, y, z), gy = sdBox(x, y + 1, z) - sdBox(x, y - 1, z)
+      add(Math.atan2(gy, gx) + Math.PI / 2, 3.8 * Math.exp(-d / 30))
+    }
+    for (const o of whorls) {
+      const dx = x - o.x, dy = y - o.y, r = Math.hypot(dx, dy)
+      if (r > o.R * 1.7) continue
+      add(Math.atan2(dy, dx) + Math.PI / 2 + 0.25, 5 * Math.exp(-((r / o.R) ** 2) * 1.1))
+    }
+    return 0.5 * Math.atan2(Y, X)
+  }
+
+  // what tone it wants to be: lighter close to the words, light whorls, darker currents between
+  function paintColour (x, y, d) {
+    const dd = d + (vnoise(x / 34, y / 34) - 0.5) * 18
+    if (dd < 12) return [R() < 0.7 ? GREY[8] : GREY[7], rnd(22, 32)]
+    if (dd < 28) return [R() < 0.6 ? GREY[7] : GREY[5], rnd(24, 34)]
+    if (dd < 44) return [R() < 0.55 ? GREY[6] : GREY[4], rnd(26, 38)]
+    let best = 2
+    for (const o of whorls) best = Math.min(best, Math.hypot(x - o.x, y - o.y) / o.R)
+    if (best < 0.8) {
+      const q = best + rnd(-0.06, 0.06)
+      return [q < 0.2 ? GREY[8] : q < 0.4 ? GREY[7] : q < 0.6 ? GREY[5] : GREY[3], 16 + best * 34 + rnd(-3, 3)]
+    }
+    if (R() < 0.018) return [pick(ACCENT), rnd(26, 40)]
+    const t = vnoise(x / 120 + 1.3, y / 120 + 4.2) * 0.8 + vnoise(x / 40, y / 40) * 0.2
+    return [GREY[Math.max(0, Math.min(6, Math.floor((t + rnd(-0.12, 0.12)) * 7)))], rnd(32, 54)]
+  }
+
+  function makeStroke (x, y, S) {
+    const [d, zi] = nearest(x, y)
+    // before it comes together, strokes lie in small patches, each turned its own way
+    const a0 = hash(Math.floor(x / 26) + 91, Math.floor(y / 26) + 17) * Math.PI + rnd(-0.35, 0.35)
+    const jx = rnd(-8, 8) * S, jy = rnd(-8, 8) * S
+    const v = Math.floor(R() * VAR)
+    let s
+    if (d < 0) {
+      const c = id(pick(PALE))
+      s = { x1: x, y1: y, a1: rnd(-0.08, 0.08), x0: x + jx * 0.5, y0: y + jy * 0.5, a0, len: rnd(30, 46) * S, w: rnd(6, 8.5) * S, c1: c, c0: c, v, quiet: true }
+    } else {
+      const [c, len] = paintColour(x, y, d)
+      s = { x1: x, y1: y, a1: flowAngle(x, y, d, zi), x0: x + jx, y0: y + jy, a0, len: len * S, w: rnd(6, 9.5) * S, c1: id(c), c0: -1, v, quiet: false }
+    }
+    let da = s.a1 - s.a0
+    da = Math.atan2(Math.sin(2 * da), Math.cos(2 * da)) / 2
+    return Object.assign(s, { da, e: 0, start: -1, dur: 0, x: s.x0, y: s.y0, a: s.a0 })
+  }
+
+  function build () {
+    W = document.documentElement.clientWidth
+    VH = innerHeight
+    wide = W >= 900
+    DOC = document.documentElement.scrollHeight
+    dpr = Math.min(2, window.devicePixelRatio || 1, Math.sqrt(12e6 / (W * DOC)))
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(DOC * dpr)
+    canvas.style.width = W + 'px'; canvas.style.height = DOC + 'px'
+    const sy = scrollY, padX = wide ? 34 : 14, padY = wide ? 28 : 22
+    zones = blocks.map(el => {
+      const r = el.getBoundingClientRect()
+      return { cx: r.left + r.width / 2, cy: r.top + sy + r.height / 2, hw: r.width / 2 + padX, hh: r.height / 2 + padY, r: wide ? 44 : 30 }
+    })
+    placeWhorls()
+    seed = 20261014
+    const S = wide ? 1.2 : 1, cell = wide ? 14 : 11.5
+    const cols = Math.ceil((W + 2 * cell) / cell), rows = Math.ceil((DOC + 2 * cell) / cell)
+    const grid = []
+    strokes = []
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const s = makeStroke(-cell + (c + R()) * cell, -cell + (r + R()) * cell, S)
+        s.gr = r; s.gc = c; grid.push(s); strokes.push(s)
+      }
+    }
+    // and each one wears the colour of some stroke nearby, a little muddied
+    for (const s of strokes) {
+      if (s.quiet) continue
+      for (let t = 0; t < 8 && s.c0 < 0; t++) {
+        const rr = s.gr + Math.round(rnd(-11, 11)), cc = s.gc + Math.round(rnd(-11, 11))
+        if (rr < 0 || rr >= rows || cc < 0 || cc >= cols) continue
+        const o = grid[rr * cols + cc]
+        if (!o.quiet) s.c0 = id(muddy(colours[o.c1]))
+      }
+      if (s.c0 < 0) s.c0 = id(muddy(colours[s.c1]))
+    }
+    for (let i = strokes.length - 1; i > 0; i--) { const k = Math.floor(R() * (i + 1)); const t = strokes[i]; strokes[i] = strokes[k]; strokes[k] = t }
+    active = []; dirty.clear(); built = true
+    paintRange(0, DOC)
+    const z = zones[0]
+    demo = { t0: performance.now() + 1100, dur: wide ? 2300 : 1800, y: z.cy + z.hh + (wide ? 44 : 30) }
+    if (typeof buildGlass === 'function') buildGlass()
+  }
+
+  function cell (ci, v) {
+    const n = ci * VAR + v
+    ctx.drawImage(atlas, (n % ACOLS) * CW * SDPR, ((n / ACOLS) | 0) * CH * SDPR, CW * SDPR, CH * SDPR, -CW / 2, -CH / 2, CW, CH)
+  }
+  function drawStroke (s) {
+    const c = Math.cos(s.a), sn = Math.sin(s.a)
+    const lift = s.e > 0 && s.e < 1 ? 1 + 0.08 * Math.sin(Math.PI * s.e) : 1
+    const kx = s.len / SL * lift, ky = s.w / SW * lift
+    ctx.setTransform(dpr * c * kx, dpr * sn * kx, -dpr * sn * ky, dpr * c * ky, dpr * s.x, dpr * s.y)
+    if (s.e <= 0) cell(s.c0, s.v)
+    else if (s.e >= 1) cell(s.c1, s.v)
+    else { cell(s.c0, s.v); ctx.globalAlpha = s.e; cell(s.c1, s.v); ctx.globalAlpha = 1 }
+  }
+  function paintRange (ya, yb) {
+    ctx.save()
+    ctx.setTransform(1, 0, 0, 1, 0, 0)
+    ctx.beginPath(); ctx.rect(0, ya * dpr, canvas.width, (yb - ya) * dpr); ctx.clip()
+    ctx.clearRect(0, ya * dpr, canvas.width, (yb - ya) * dpr)
+    for (const s of strokes) { if (s.y + 44 < ya || s.y - 44 > yb) continue; drawStroke(s) }
+    ctx.restore()
+  }
+  function markDirty (s) {
+    const a = Math.floor((Math.min(s.y0, s.y1) - 44) / BAND), b = Math.floor((Math.max(s.y0, s.y1) + 44) / BAND)
+    for (let i = a; i <= b; i++) dirty.add(i)
+  }
+  function repaint () {
+    if (!dirty.size) return
+    const v0 = Math.floor((scrollY - 240) / BAND), v1 = Math.floor((scrollY + VH + 240) / BAND)
+    let a = Infinity, b = -Infinity
+    for (const i of dirty) if (i >= v0 && i <= v1) { if (i < a) a = i; if (i > b) b = i }
+    if (a > b) return
+    for (let i = a; i <= b; i++) dirty.delete(i)
+    paintRange(a * BAND, (b + 1) * BAND)
+  }
+
+  // each stroke, once something reaches it, turns and settles in its own time
+  const ease = p => p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2
+  function trigger (s, delay) {
+    if (s.start >= 0) return
+    s.start = performance.now() + (reduce ? 0 : delay)
+    s.dur = reduce ? 1 : 950 + Math.random() * 650
+    active.push(s)
+  }
+  function step (now) {
+    for (let i = active.length - 1; i >= 0; i--) {
+      const s = active[i], p = (now - s.start) / s.dur
+      if (p <= 0) continue
+      const e = p >= 1 ? 1 : ease(p)
+      s.e = e; s.x = s.x0 + (s.x1 - s.x0) * e; s.y = s.y0 + (s.y1 - s.y0) * e; s.a = s.a0 + s.da * e
+      markDirty(s)
+      if (p >= 1) { active[i] = active[active.length - 1]; active.pop() }
+    }
+  }
+  function brush (px, py, rad, ripple) {
+    for (const s of strokes) {
+      if (s.start >= 0) continue
+      const dx = s.x1 - px, dy = s.y1 - py
+      if (dx > rad || dx < -rad || dy > rad || dy < -rad) continue
+      const d = Math.hypot(dx, dy)
+      if (d > rad) continue
+      if (ripple) trigger(s, 60 + d * 2.6 + Math.random() * 90)
+      else if (d < rad * 0.72 || Math.random() < 0.3) trigger(s, d * 1.4 + Math.random() * 140)
+    }
+    for (const m of glass) {
+      if (m.start >= 0) continue
+      const d = Math.hypot(m.x - px, m.y - py)
+      if (d < rad * (ripple ? 1.2 : 0.9) + 30) triggerGlass(m, ripple ? 120 + d * 2 : 60)
+    }
+  }
+  // moving through: the strokes passing the middle of the screen come together as they go by
+  function scrollAssemble (dy) {
+    const max = Math.max(1, document.documentElement.scrollHeight - VH)
+    const prog = Math.min(1, Math.max(0, scrollY / max))
+    const yc = VH * (0.3 + 0.42 * prog), sig = VH * 0.27, k = Math.min(1, Math.abs(dy) / 120), sy = scrollY
+    for (const s of strokes) {
+      if (s.start >= 0) continue
+      const y = s.y1 - sy
+      if (y < -30 || y > VH + 30) continue
+      if (Math.random() < k * Math.exp(-(((y - yc) / sig) ** 2))) trigger(s, Math.random() * 300)
+    }
+    for (const m of glass) {
+      if (m.start >= 0) continue
+      const y = m.y - sy
+      if (y < -60 || y > VH + 60) continue
+      if (Math.random() < k * 0.35 * Math.exp(-(((y - yc) / sig) ** 2))) triggerGlass(m, Math.random() * 400)
+    }
+  }
+  // and if you just stay, it comes together on its own, slowly
+  function timeAssemble (dt) {
+    const sy = scrollY, rate = dt / 32, yc = VH * 0.42, sig = VH * 0.45
+    for (const s of strokes) {
+      if (s.start >= 0) continue
+      const y = s.y1 - sy
+      if (y < 0 || y > VH) continue
+      if (Math.random() < rate * (0.35 + 0.65 * Math.exp(-(((y - yc) / sig) ** 2)))) trigger(s, 0)
+    }
+    for (const m of glass) {
+      if (m.start >= 0) continue
+      const y = m.y - sy
+      if (y > 0 && y < VH && Math.random() < rate * 0.8) triggerGlass(m, 0)
+    }
+  }
+
+
+  // ---- the glass: strokes of coloured glass hovering over the paint, casting their colour on it ----
+  const glassEl = document.querySelector('.glass'), lightEl = document.querySelector('.light')
+  const GD = Math.min(2, window.devicePixelRatio || 1)
+  // round 1's colours, as glass, each loaded on the brush with a lighter tone of itself
+  const INKS = [['#d98a1c', '#f2c45e'], ['#c8452a', '#ec9670'], ['#cf5578', '#f0a2b8'], ['#2f56ad', '#8aa6e6'], ['#23807a', '#86c6bd'], ['#e2b532', '#f5df8a'], ['#6c4ca6', '#b8a2e0'], ['#de6e2e', '#f4b07c']]
+  const FAMILY = [[0, 1], [3, 4], [2, 6], [5, 7], [4, 3], [1, 2]]
+  let glass = []
+  const layers = ['gs', 'gb', 'gh'].map(c => { const d = document.createElement('div'); d.className = c + '-layer'; glassEl.appendChild(d); return d })
+
+  // one stroke of glass, painted with care: the brush lands, swells and lifts; two tones across its
+  // width; colour pools at the edges; it runs dry toward the tail
+  function paintGlass (ink, len, wid, dry) {
+    const pad = wid * 0.5 + 10
+    const cw = Math.ceil((len + pad * 2) * GD), ch = Math.ceil((wid * 1.9 + pad * 2) * GD)
+    const mk = () => { const c = document.createElement('canvas'); c.width = cw; c.height = ch; return c }
+    const body = mk(), sheen = mk()
+    const g = body.getContext('2d'), h = sheen.getContext('2d')
+    for (const c of [g, h]) { c.scale(GD, GD); c.translate(pad, ch / GD / 2); c.lineCap = 'round' }
+    const deep = mix(hex(ink[0]), [28, 18, 12], 0.22), lite = hex(ink[1])
+    const k = rnd(-0.06, 0.06), s2 = rnd(-0.025, 0.025)
+    const mid = u => k * len * 4 * u * (1 - u) + s2 * len * Math.sin(Math.PI * 2 * u)
+    const half = u => wid / 2 * (u < 0.12 ? 0.7 + 0.3 * Math.sin(Math.PI / 2 * u / 0.12) : u < 0.55 ? 1 - 0.08 * (u - 0.12) : 0.965 - 0.72 * Math.pow((u - 0.55) / 0.45, 1.15))
+    const P = (u, v) => [u * len, mid(u) + v * half(u)]
+    g.beginPath()
+    for (let i = 0; i <= 24; i++) { const [x, y] = P(i / 24, -0.92); i ? g.lineTo(x, y) : g.moveTo(x, y) }
+    for (let i = 24; i >= 0; i--) { const [x, y] = P(i / 24, 0.92); g.lineTo(x, y) }
+    g.closePath()
+    const wash = g.createLinearGradient(0, 0, len, 0)
+    wash.addColorStop(0, rgba(mix(deep, lite, 0.45), 0.24)); wash.addColorStop(1, rgba(mix(deep, lite, 0.6), 0.06))
+    g.fillStyle = wash; g.fill()
+    const nb = Math.round(wid * 2.3)
+    for (let b = 0; b < nb; b++) {
+      const v = -1 + 2 * (b + rnd(0.15, 0.85)) / nb, edge = Math.abs(v)
+      const u0 = 0.01 + 0.06 * edge * edge * edge + rnd(0, 0.012)
+      const u1 = 1 - dry * Math.pow(R(), 1.2) * (0.06 + 0.3 * edge)
+      const col = mix(deep, lite, Math.min(1, Math.max(0, (v + 1) / 2 + rnd(-0.12, 0.12))))
+      const al = (0.32 + 0.2 * R()) * (edge > 0.8 ? 1.45 : 1)
+      g.lineWidth = wid / nb * rnd(1.4, 2.1)
+      let ua = u0
+      while (ua < u1) {
+        const gap = ua > 0.5 && R() < dry * (0.35 + 0.6 * (ua - 0.5))
+        const ub = Math.min(u1, ua + (ua > 0.5 ? rnd(0.06, 0.2) : rnd(0.2, 0.45)))
+        if (!gap) {
+          const gr = g.createLinearGradient(ua * len, 0, ub * len, 0)
+          gr.addColorStop(0, rgba(col, al * (1 - 0.45 * ua))); gr.addColorStop(1, rgba(col, al * (1 - 0.45 * ub) * (ub >= u1 - 0.001 ? 0.4 : 1)))
+          g.strokeStyle = gr
+          g.beginPath()
+          for (let i = 0; i <= 10; i++) { const u = ua + (ub - ua) * i / 10; const [x, y] = P(u, v + 0.03 * Math.sin(u * 17 + b)); i ? g.lineTo(x, y) : g.moveTo(x, y) }
+          g.stroke()
+        }
+        ua = ub + (gap ? rnd(0.02, 0.06) : 0)
+      }
+    }
+    // where the light catches the ridge
+    for (let i = 0; i < 4; i++) {
+      const v = rnd(-0.7, -0.15), ua = rnd(0.04, 0.2), ub = rnd(0.45, 0.8)
+      const gr = h.createLinearGradient(ua * len, 0, ub * len, 0)
+      gr.addColorStop(0, 'rgba(255,250,240,0)'); gr.addColorStop(0.3, `rgba(255,250,240,${rnd(0.3, 0.5).toFixed(2)})`); gr.addColorStop(1, 'rgba(255,250,240,0)')
+      h.strokeStyle = gr; h.lineWidth = rnd(0.7, 1.4)
+      h.beginPath(); for (let j = 0; j <= 10; j++) { const u = ua + (ub - ua) * j / 10; const [x, y] = P(u, v); j ? h.lineTo(x, y) : h.moveTo(x, y) } h.stroke()
+    }
+    // its shadow: the same stroke, softened, to lie on the paint below
+    const shadow = mk(), sx = shadow.getContext('2d')
+    const t1 = document.createElement('canvas'); t1.width = Math.max(2, Math.round(cw / 4)); t1.height = Math.max(2, Math.round(ch / 4))
+    const t2 = document.createElement('canvas'); t2.width = Math.max(2, Math.round(cw / 9)); t2.height = Math.max(2, Math.round(ch / 9))
+    t1.getContext('2d').drawImage(body, 0, 0, t1.width, t1.height); t2.getContext('2d').drawImage(t1, 0, 0, t2.width, t2.height)
+    sx.drawImage(t2, 0, 0, cw, ch)
+    return { body, sheen, shadow, ax: pad, ay: ch / GD / 2, w: cw / GD, h: ch / GD }
+  }
+
+  // a ribbon beside each passage: glass strokes laid along one curve, overlapping, graded in colour
+  function bez (p0, p1, p2, p3, n) {
+    const pts = []
+    for (let i = 0; i <= n; i++) { const t = i / n, u = 1 - t; pts.push([u * u * u * p0[0] + 3 * u * u * t * p1[0] + 3 * u * t * t * p2[0] + t * t * t * p3[0], u * u * u * p0[1] + 3 * u * u * t * p1[1] + 3 * u * t * t * p2[1] + t * t * t * p3[1]]) }
+    return pts
+  }
+  function evenly (pts, K) {
+    const cum = [0]
+    for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]))
+    const P = cum[cum.length - 1], out = []
+    for (let k = 0; k < K; k++) {
+      const d = (0.08 + 0.84 * k / Math.max(1, K - 1)) * P
+      let j = 1; while (j < pts.length - 1 && cum[j] < d) j++
+      const a = pts[j - 1], b = pts[j], t = (d - cum[j - 1]) / ((cum[j] - cum[j - 1]) || 1)
+      out.push({ x: a[0] + (b[0] - a[0]) * t, y: a[1] + (b[1] - a[1]) * t, a: Math.atan2(b[1] - a[1], b[0] - a[0]) })
+    }
+    return out
+  }
+  const clearOf = (x, y, a, len) => [-0.5, -0.25, 0, 0.25, 0.5].every(f => nearest(x + Math.cos(a) * len * f, y + Math.sin(a) * len * f)[0] > 18)
+  function ribbons () {
+    const out = []
+    const colL = zones[0].cx - zones[0].hw, colR = zones[0].cx + zones[0].hw, mg = Math.min(colL, W - colR)
+    zones.forEach((z, i) => {
+      const left = i % 2 === 0
+      let cx, cy, room
+      if (!wide) {
+        const n = zones[i + 1], top = z.cy + z.hh, bottom = n ? n.cy - n.hh : DOC - 30, gh = bottom - top
+        if (gh < 140) return
+        cx = W / 2; cy = top + gh / 2; room = gh
+      } else { cx = left ? colL - mg * 0.5 : colR + mg * 0.5; cy = z.cy; room = Math.min(mg * 0.9, 2 * z.hh + 160) }
+      const push = (x, y, a, len, wid, ink) => out.push({ x1: x, y1: y, a1: a, len, wid, ink })
+      // laid like the leaves: pointing out from a centre, yellow at the top deepening to red below
+      const S = wide ? 1.35 : 1, r = Math.min(room * 0.2, 56) * S, K = 14
+      for (let k = 0; k < K; k++) {
+        const t = -Math.PI / 2 + k / K * Math.PI * 2, L = rnd(46, 56) * S, g = (1 - Math.cos(t + Math.PI / 2)) / 2
+        push(cx + Math.cos(t) * (r + L / 2), cy + Math.sin(t) * (r + L / 2), t, L, rnd(15, 19) * S, INKS[[5, 0, 7, 1][Math.min(3, Math.floor(g * 4))]])
+      }
+    })
+    return out
+  }
+  function buildGlass () {
+    layers.forEach(l => { l.textContent = '' })
+    glassEl.style.height = DOC + 'px'
+    seed = 4242
+    glass = ribbons().map(m => {
+      const len = m.len, wid = m.wid || (wide ? rnd(38, 46) : rnd(27, 33))
+      const sp = paintGlass(m.ink, len, wid, rnd(0.4, 0.8))
+      const imgs = [sp.shadow, sp.body, sp.sheen].map((c, i) => { const im = new Image(); im.src = c.toDataURL('image/png'); im.className = ['gs', 'gb', 'gh'][i]; im.alt = ''; im.style.width = sp.w + 'px'; im.style.height = sp.h + 'px'; layers[i].appendChild(im); return im })
+      sp.shadow = imgs[0]; sp.body = imgs[1]; sp.sheen = imgs[2]
+      // before it comes together, each stroke floats somewhere off its place, turned its own way, clear of the words
+      let x0, y0, a0, tries = 0
+      do { x0 = Math.min(W - 20, Math.max(20, m.x1 + rnd(-W * 0.38, W * 0.38))); y0 = m.y1 + rnd(-230, 230); a0 = rnd(0, Math.PI * 2); tries++ } while (!clearOf(x0, y0, a0, len) && tries < 160)
+      let da = m.a1 - a0; da = Math.atan2(Math.sin(da), Math.cos(da))
+      const g = { ...m, sp, x0, y0, a0, da, x: x0, y: y0, a: a0, e: 0, start: -1, dur: 0, ph: rnd(0, 6.28) }
+      place(sp.shadow, x0, y0 + 15, a0, sp, 1.05); place(sp.body, x0, y0, a0, sp, 1); place(sp.sheen, x0, y0, a0, sp, 1)
+      return g
+    })
+  }
+  function triggerGlass (m, delay) {
+    if (m.start >= 0) return
+    m.start = performance.now() + (reduce ? 0 : delay)
+    m.dur = reduce ? 1 : 1700 + Math.random() * 900
+  }
+  // the light: a lamp you carry; it follows the cursor or your finger, and wanders when left alone
+  const light = { x: innerWidth * 0.72, y: innerHeight * 0.2 }, lt = { x: light.x, y: light.y }
+  let lastLight = -1e9
+  addEventListener('pointermove', e => { if (e.pointerType === 'mouse') { lt.x = e.clientX; lt.y = e.clientY; lastLight = performance.now() } }, { passive: true })
+  const touchLight = e => { const t = e.touches[0]; if (t) { lt.x = t.clientX; lt.y = t.clientY; lastLight = performance.now() } }
+  addEventListener('touchstart', touchLight, { passive: true })
+  addEventListener('touchmove', touchLight, { passive: true })
+  const place = (el, x, y, a, sp, sc) => { el.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) rotate(${a.toFixed(4)}rad) scale(${sc}) translate(${(-sp.ax).toFixed(1)}px,${(-sp.ay).toFixed(1)}px)` }
+  function glassFrame (now) {
+    const t = now / 1000, dt = 1
+    if (!reduce && now - lastLight > 4500) { lt.x = innerWidth * (0.2 + 0.6 * (0.5 + 0.5 * Math.sin(t * 0.07))); lt.y = innerHeight * (0.12 + 0.3 * (0.5 + 0.5 * Math.cos(t * 0.09))) }
+    const k = reduce ? 1 : 0.06 * dt
+    light.x += (lt.x - light.x) * k; light.y += (lt.y - light.y) * k
+    lightEl.style.transform = `translate(${light.x.toFixed(1)}px,${light.y.toFixed(1)}px)`
+    const sy = scrollY, top = sy - 320, bot = sy + VH + 320, Lx = light.x, Ly = light.y + sy, reach = Math.max(innerWidth, innerHeight) * 0.85
+    for (const m of glass) {
+      if (m.start >= 0 && m.e < 1) {
+        const p = (now - m.start) / m.dur
+        if (p > 0) { const e = p >= 1 ? 1 : ease(p); m.e = e; m.x = m.x0 + (m.x1 - m.x0) * e; m.y = m.y0 + (m.y1 - m.y0) * e; m.a = m.a0 + m.da * e }
+      }
+      if (m.y < top || m.y > bot) continue
+      // it hovers: a slow rise and fall, a little tilt
+      const x = m.x, y = m.y + (reduce ? 0 : Math.sin(t * 0.55 + m.ph) * 2.2), a = m.a + (reduce ? 0 : Math.sin(t * 0.4 + m.ph * 1.3) * 0.012)
+      const I = Math.max(0, 1 - Math.hypot(x - Lx, y - Ly) / reach)
+      place(m.sp.shadow, x + (x - Lx) * 0.04, y + (y - Ly) * 0.04 + 15, a, m.sp, 1.05)
+      m.sp.shadow.style.opacity = (0.42 + 0.3 * I).toFixed(3)
+      place(m.sp.body, x, y, a, m.sp, 1)
+      place(m.sp.sheen, x, y, a, m.sp, 1)
+      m.sp.sheen.style.opacity = (0.3 + 0.7 * I * I).toFixed(3)
+    }
+  }
+
+  addEventListener('pointermove', e => { if (built && e.pointerType === 'mouse') brush(e.clientX, e.clientY + scrollY, wide ? 92 : 70) }, { passive: true })
+  const touch = e => { if (built) for (const t of e.touches) brush(t.clientX, t.clientY + scrollY, 62) }
+  addEventListener('touchstart', touch, { passive: true })
+  addEventListener('touchmove', touch, { passive: true })
+  addEventListener('click', e => { if (built && !e.target.closest('a')) brush(e.clientX, e.clientY + scrollY, wide ? 190 : 150, true) })
+
+  let lastY = scrollY, lastT = performance.now()
+  function frame (now) {
+    const dt = Math.min(0.1, (now - lastT) / 1000); lastT = now
+    if (built) {
+      const dy = scrollY - lastY
+      if (dy !== 0) { lastY = scrollY; scrollAssemble(dy) }
+      if (demo) {
+        const u = (now - demo.t0) / demo.dur
+        if (u >= 0) {
+          const uu = Math.min(1, u)
+          brush(-40 + (W + 80) * uu, demo.y + Math.sin(uu * Math.PI * 2.2) * (wide ? 34 : 22), wide ? 70 : 54)
+          if (u >= 1) demo = null
+        }
+      }
+      if (!reduce && now - t0 > 5000) timeAssemble(dt)
+      if (active.length) step(now)
+      repaint()
+      glassFrame(now)
+    }
+    requestAnimationFrame(frame)
+  }
+
+  let lastW = document.documentElement.clientWidth, rt
+  addEventListener('resize', () => { const w = document.documentElement.clientWidth; if (w === lastW) { VH = innerHeight; return } lastW = w; clearTimeout(rt); rt = setTimeout(build, 160) })
+  build()
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (document.documentElement.scrollHeight !== DOC) build() })
+  requestAnimationFrame(frame)
+
+  // for checking only: bring the whole painting together at once, and time a repaint
+  window.__together = {
+    all () { for (const s of strokes) { s.start = 0; s.e = 1; s.x = s.x1; s.y = s.y1; s.a = s.a1 } for (const m of glass) { m.start = 0; m.e = 1; m.x = m.x1; m.y = m.y1; m.a = m.a1 } active = []; paintRange(0, DOC) },
+    bench () { const t = performance.now(); for (let i = 0; i < 5; i++) paintRange(scrollY, scrollY + VH); return (performance.now() - t) / 5 },
+    count () { return { strokes: strokes.length, settled: strokes.filter(s => s.e >= 1).length, glass: glass.length, glassSettled: glass.filter(m => m.e >= 1).length } }
+  }
+})()
+</script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Round 4, sketch 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Schibsted+Grotesk:wght@400..700&display=swap">
+<style>
+/* layout: a quiet page that wears in as you use it; colour seeps in under the words wherever you linger, and it remembers */
+:root {
+  --paper: #ebe6dd;
+  --ink: #231e19;
+  --ink-soft: #6b645b;
+  --link: #a4401c;
+  --font-text: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-ui: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--paper); color: var(--ink); }
+body { font-family: var(--font-ui); -webkit-font-smoothing: antialiased; }
+canvas#wear { position: fixed; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; pointer-events: none; }
+.page { position: relative; z-index: 1; max-width: 36rem; margin-inline: auto; padding-left: max(26px, env(safe-area-inset-left, 0px)); padding-right: max(26px, env(safe-area-inset-right, 0px)); padding-block: calc(26px + env(safe-area-inset-top, 0px)) calc(24vh + env(safe-area-inset-bottom, 0px)); display: grid; gap: 4.2rem; }
+.top { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.name { margin: 0; font-family: var(--font-text); font-variation-settings: "SOFT" 100, "WONK" 1; font-weight: 500; font-size: clamp(1.9rem, 1.3rem + 2.4vw, 2.9rem); letter-spacing: -.01em; line-height: 1.02; }
+.place { margin: .35rem 0 0; color: var(--ink-soft); font-size: .95rem; }
+.small { display: flex; gap: 1rem; font-size: .8rem; white-space: nowrap; }
+.small a, .small button { font: inherit; color: var(--ink-soft); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: none; }
+.small a:hover, .small button:hover, .small a:focus-visible, .small button:focus-visible { color: var(--ink); }
+.block { font-family: var(--font-text); font-variation-settings: "SOFT" 100; font-size: 1.22rem; line-height: 1.62; }
+.block p { margin: 0; }
+.block .lead { font-variation-settings: "SOFT" 100, "WONK" 1; font-size: clamp(1.6rem, 1.15rem + 1.8vw, 2.3rem); line-height: 1.25; font-weight: 450; }
+h2 { margin: 0 0 1rem; font-family: var(--font-ui); font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.roles { list-style: none; margin: 0; padding: 0; display: grid; gap: .85rem; font-family: var(--font-ui); font-size: 1rem; }
+.roles li { display: grid; grid-template-columns: 1fr auto; gap: .1rem 1rem; align-items: baseline; }
+.roles .org { font-weight: 600; }
+.roles .years, .roles .what { color: var(--ink-soft); font-size: .92rem; font-variant-numeric: tabular-nums; }
+.roles .what { grid-column: 1 / -1; }
+.links { display: flex; flex-wrap: wrap; gap: .6rem 1.6rem; font-family: var(--font-ui); font-size: 1.1rem; }
+.links a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--link); text-decoration-thickness: 1.5px; text-underline-offset: .28em; }
+.links a:hover, .links a:focus-visible { color: var(--link); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; border-radius: 2px; }
+@media (max-width: 520px) { .block { font-size: 1.12rem; } }
+</style>
+</head>
+<body>
+<canvas id="wear" aria-hidden="true"></canvas>
+<div class="page">
+  <div class="top">
+    <header>
+      <h1 class="name">Shubham Chandra</h1>
+      <p class="place">Chicago</p>
+    </header>
+    <div class="small"><button type="button" id="fresh">Start fresh</button><a href="../index.html">All sketches</a></div>
+  </div>
+  <div class="block" data-hue="0"><p class="lead">I do better with things that take a little time to make sense of.</p></div>
+  <div class="block" data-hue="1"><p>I’m drawn to interesting textures, small restaurants that don’t advertise themselves, and travel that doesn’t come with a gift shop. I like being in places that aren’t trying to perform for you. Street level feels honest: you’re walking, noticing, adjusting. In Kerala, that’s a fabric market, not a landmark.</p></div>
+  <div class="block" data-hue="2"><p>Back home, I pay attention to craft. Clothes are an easy example: weave, weight, hand feel, drape. I’m not interested in labels as a proxy for taste. I’m interested in the work. Cooking is the same impulse. Start with something solid, then tinker until it tastes like mine.</p></div>
+  <div class="block" data-hue="3"><p>I read a lot of sci-fi, especially the kind that starts fun and ends up making you stare at the ceiling for ten minutes. Consciousness, time, huge structures, weird rules.</p></div>
+  <div class="block" data-hue="4">
+    <h2>Before</h2>
+    <ul class="roles">
+      <li><span class="org">Garner Health</span><span class="years">2021–22</span><span class="what">Head of Business Operations</span></li>
+      <li><span class="org">NJOY</span><span class="years">2018–21</span><span class="what">Head of Strategy, Office of the CEO</span></li>
+      <li><span class="org">L.E.K. Consulting</span><span class="years">2016–18</span><span class="what">Associate</span></li>
+    </ul>
+  </div>
+  <div class="block links" data-hue="5"><a href="#">Email</a><a href="#">LinkedIn</a><a href="#">Curriculum vitae</a></div>
+</div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const cv = document.getElementById('wear'), ctx = cv.getContext('2d')
+  const blocks = [...document.querySelectorAll('.block')]
+  // the colours that come in, one family per passage: turmeric, indigo, madder, sage, terracotta, plum
+  const hues = [[226, 160, 62], [92, 122, 190], [204, 94, 86], [108, 156, 112], [198, 108, 66], [138, 84, 128]]
+  const paper = [235, 230, 221]
+  const COLS = 72
+  let W, H, cell, rows, field, rowHue, docH
+  const KEY = 'round4-wear-v1'
+
+  function layout () {
+    W = innerWidth; H = innerHeight
+    docH = document.documentElement.scrollHeight
+    cell = W / COLS
+    const newRows = Math.ceil(docH / cell) + 2
+    const old = field, oldRows = rows
+    rows = newRows
+    field = new Float32Array(COLS * rows)
+    if (old && oldRows) field.set(old.subarray(0, Math.min(old.length, field.length)))
+    // each row of the page takes the colour of the passage nearest to it, blended between neighbours
+    const centres = blocks.map(b => { const r = b.getBoundingClientRect(); return { y: r.top + scrollY + r.height / 2, hue: hues[Number(b.dataset.hue)] } })
+    rowHue = new Array(rows)
+    for (let r = 0; r < rows; r++) {
+      const y = r * cell
+      let a = centres[0], b = centres[centres.length - 1]
+      for (let i = 0; i < centres.length - 1; i++) if (y >= centres[i].y && y <= centres[i + 1].y) { a = centres[i]; b = centres[i + 1] }
+      const t = a === b ? 0 : Math.min(1, Math.max(0, (y - a.y) / (b.y - a.y)))
+      const k = t * t * (3 - 2 * t)
+      rowHue[r] = a.hue.map((v, i) => v + (b.hue[i] - v) * k)
+    }
+    const dpr = Math.min(devicePixelRatio || 1, 2)
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+  }
+
+  function load () {
+    try {
+      const raw = localStorage.getItem(KEY); if (!raw) return false
+      const saved = JSON.parse(raw); if (saved.cols !== COLS) return false
+      const bytes = atob(saved.d), n = Math.min(bytes.length, field.length)
+      for (let i = 0; i < n; i++) field[i] = bytes.charCodeAt(i) / 255
+      return true
+    } catch (e) { return false }
+  }
+  let saveT = 0
+  function save (now) {
+    if (now - saveT < 1500) return
+    saveT = now
+    try { let s = ''; for (let i = 0; i < field.length; i++) s += String.fromCharCode(Math.round(Math.min(1, field[i]) * 255)); localStorage.setItem(KEY, JSON.stringify({ cols: COLS, d: btoa(s) })) } catch (e) { /* storage unavailable: the page still works, it just forgets */ }
+  }
+
+  // attention lays colour in, softly, around a point (in page coordinates)
+  function lay (x, y, radius, amount) {
+    const cx = x / cell, cy = y / cell, rr = radius / cell
+    const c0 = Math.max(0, Math.floor(cx - rr)), c1 = Math.min(COLS - 1, Math.ceil(cx + rr))
+    const r0 = Math.max(0, Math.floor(cy - rr)), r1 = Math.min(rows - 1, Math.ceil(cy + rr))
+    for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) {
+      const d = Math.hypot(c - cx, r - cy) / rr
+      if (d >= 1) continue
+      const i = r * COLS + c, f = (1 - d * d)
+      field[i] = Math.min(1, field[i] + amount * f * f)
+    }
+  }
+  // reading lays colour across the whole passage, more where the words are
+  function soak (el, amount) {
+    const r = el.getBoundingClientRect(), top = r.top + scrollY
+    const step = cell * 3
+    for (let y = top - 6; y <= top + r.height + 6; y += step) for (let x = r.left - 10; x <= r.right + 10; x += step) { if (Math.random() < 0.35) continue; lay(x + (Math.random() - 0.5) * step * 1.6, y + (Math.random() - 0.5) * step * 1.6, cell * (3.5 + Math.random() * 4), amount * Math.pow(Math.random(), 1.6) * 2) }
+  }
+
+  layout()
+  const remembered = load()
+  addEventListener('resize', () => { clearTimeout(layout.t); layout.t = setTimeout(layout, 150) })
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout)
+
+  let lastScroll = performance.now(), lastY = scrollY
+  addEventListener('scroll', () => { lastScroll = performance.now() }, { passive: true })
+  let pointer = null, pressed = false, still = 0
+  addEventListener('pointermove', e => { pointer = { x: e.clientX, y: e.clientY + scrollY, t: performance.now() }; still = performance.now() }, { passive: true })
+  addEventListener('pointerdown', e => { pressed = true; pointer = { x: e.clientX, y: e.clientY + scrollY, t: performance.now() } }, { passive: true })
+  addEventListener('pointerup', () => { pressed = false }); addEventListener('pointercancel', () => { pressed = false })
+  document.getElementById('fresh').addEventListener('click', () => { field.fill(0); try { localStorage.removeItem(KEY) } catch (e) {} arrive = performance.now() })
+
+  // arriving leaves the first mark, so you can see what the page does without doing anything
+  let arrive = remembered ? -1 : performance.now()
+  const small = document.createElement('canvas'), sx = small.getContext('2d')
+  const grain = document.createElement('canvas'); grain.width = grain.height = 160
+  ;(() => { const g = grain.getContext('2d'), d = g.createImageData(160, 160); for (let i = 0; i < d.data.length; i += 4) { d.data[i] = d.data[i + 1] = d.data[i + 2] = 0; d.data[i + 3] = Math.random() < 0.5 ? Math.round(Math.random() * 140) : 0 } g.putImageData(d, 0, 0) })()
+  let pattern = null
+
+  let prev = performance.now()
+  function frame (now) {
+    const dt = Math.min(60, now - prev) / 1000; prev = now
+    // the passage you've stopped on soaks up colour while you stay
+    if (now - lastScroll > 450) {
+      const mid = H * 0.45
+      let best = null, bd = 1e9
+      for (const b of blocks) { const r = b.getBoundingClientRect(); if (r.bottom < 0 || r.top > H) continue; const d = Math.abs((r.top + r.bottom) / 2 - mid); if (d < bd) { bd = d; best = b } }
+      if (best) soak(best, 0.05 * dt * 6)
+    }
+    if (arrive > 0) { const k = (now - arrive) / 2200; if (k < 1) soak(blocks[0], 0.06); else arrive = -1 }
+    // a finger held down, or a cursor resting, blooms where it is
+    if (pointer && (pressed || now - still > 300)) lay(pointer.x, pointer.y, cell * (pressed ? 9 : 6), (pressed ? 0.9 : 0.25) * dt)
+
+    // draw only the rows on screen into a small image, then let the browser soften it as it scales up
+    const r0 = Math.max(0, Math.floor(scrollY / cell) - 2), r1 = Math.min(rows - 1, Math.ceil((scrollY + H) / cell) + 2), vr = r1 - r0 + 1
+    if (small.width !== COLS || small.height !== vr) { small.width = COLS; small.height = vr }
+    const img = sx.createImageData(COLS, vr), d = img.data
+    for (let r = 0; r < vr; r++) {
+      const hue = rowHue[r + r0] || hues[0]
+      for (let c = 0; c < COLS; c++) {
+        const v = field[(r + r0) * COLS + c], k = v * v * (3 - 2 * v), o = (r * COLS + c) * 4
+        d[o] = hue[0]; d[o + 1] = hue[1]; d[o + 2] = hue[2]; d[o + 3] = Math.round(k * 108)
+      }
+    }
+    sx.putImageData(img, 0, 0)
+    ctx.clearRect(0, 0, W, H)
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high'
+    const y0 = r0 * cell - scrollY
+    ctx.drawImage(small, 0, y0, W, vr * cell)
+    // a second, softer pass gives the edges a bleed, like dye spreading in cloth
+    ctx.globalAlpha = 0.45; ctx.drawImage(small, -cell * 4, y0 - cell * 4, W + cell * 8, vr * cell + cell * 8); ctx.globalAlpha = 1
+    // and the paper's own grain shows through the colour
+    if (!pattern) pattern = ctx.createPattern(grain, 'repeat')
+    ctx.globalCompositeOperation = 'destination-out'; ctx.fillStyle = pattern; ctx.fillRect(0, 0, W, H); ctx.globalCompositeOperation = 'source-over'
+    save(now)
+    requestAnimationFrame(frame)
+  }
+  requestAnimationFrame(frame)
+})()
+</script>
+</body>
+</html>

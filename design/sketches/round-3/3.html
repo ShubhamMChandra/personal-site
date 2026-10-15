@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Round 3, sketch 3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap">
+<style>
+/* layout: one panel of glass that assembles as you read; the words scroll, each passage brings its pieces home; at the end a light comes on behind it */
+:root {
+  --ground: #e6dfd3;
+  --ink: #221e1a;
+  --ink-soft: #6a635b;
+  --link: #b4471f;
+  --font-ui: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-text: "Source Serif 4", Georgia, "Times New Roman", serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--ground); color: var(--ink); }
+body { font-family: var(--font-ui); -webkit-font-smoothing: antialiased; }
+.top { position: fixed; z-index: 5; left: 0; right: 0; top: 0; display: flex; justify-content: space-between; gap: 1rem; padding: calc(18px + env(safe-area-inset-top, 0px)) max(24px, env(safe-area-inset-right, 0px)) 14px max(24px, env(safe-area-inset-left, 0px)); font-size: .88rem; background: linear-gradient(var(--ground) 70%, rgba(230, 223, 211, 0)); }
+.top b { font-weight: 600; }
+.top span { color: var(--ink-soft); }
+.top a { color: var(--ink-soft); text-decoration: none; font-size: .8rem; }
+.top a:hover, .top a:focus-visible { color: var(--ink); }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4vw; max-width: 1240px; margin-inline: auto; padding: 0 max(24px, env(safe-area-inset-right, 0px)) 0 max(24px, env(safe-area-inset-left, 0px)); }
+.panel { position: sticky; top: 0; height: 100svh; order: 2; }
+.panel canvas { width: 100%; height: 100%; display: block; }
+.words { order: 1; padding-block: 34vh 40vh; display: grid; gap: 28vh; max-width: 32rem; justify-self: end; width: 100%; }
+.passage { font-family: var(--font-text); font-size: 1.16rem; line-height: 1.66; transition: opacity .6s ease; }
+.passage p { margin: 0; }
+.passage .lead { font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.2rem); line-height: 1.25; font-weight: 500; text-wrap: balance; }
+h2 { margin: 0 0 .9rem; font-family: var(--font-ui); font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.roles { list-style: none; margin: 0; padding: 0; display: grid; gap: .8rem; font-family: var(--font-ui); }
+.roles li { display: grid; grid-template-columns: 1fr auto; gap: .1rem 1rem; align-items: baseline; }
+.roles .org { font-weight: 600; }
+.roles .years, .roles .what { color: var(--ink-soft); font-size: .92rem; font-variant-numeric: tabular-nums; }
+.roles .what { grid-column: 1 / -1; }
+.links { display: flex; flex-wrap: wrap; gap: .6rem 1.6rem; font-family: var(--font-ui); font-size: 1.1rem; }
+.links a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--link); text-decoration-thickness: 1.5px; text-underline-offset: .28em; }
+.links a:hover, .links a:focus-visible { color: var(--link); }
+a:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; border-radius: 2px; }
+.grain { position: fixed; inset: -50%; z-index: 6; pointer-events: none; opacity: .5; mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+@media (max-width: 820px) {
+  .layout { display: block; }
+  .panel { position: sticky; top: 0; z-index: 3; height: 48svh; margin-inline: calc(-1 * max(24px, env(safe-area-inset-left, 0px))); padding-top: calc(48px + env(safe-area-inset-top, 0px)); background: linear-gradient(var(--ground) 90%, rgba(230, 223, 211, 0)); }
+  .words { padding-block: 6vh 30vh; gap: 22vh; justify-self: stretch; }
+  .passage { font-size: 1.07rem; }
+}
+</style>
+</head>
+<body>
+<div class="top"><div><b>Shubham Chandra</b> <span>Chicago</span></div><a href="../index.html">All sketches</a></div>
+<div class="layout">
+  <div class="panel" aria-hidden="true"><canvas id="glass"></canvas></div>
+  <div class="words">
+    <div class="passage" data-part="0"><p class="lead">I do better with things that take a little time to make sense of.</p></div>
+    <div class="passage" data-part="1"><p>I’m drawn to interesting textures, small restaurants that don’t advertise themselves, and travel that doesn’t come with a gift shop. I like being in places that aren’t trying to perform for you. In Kerala, that’s a fabric market, not a landmark.</p></div>
+    <div class="passage" data-part="2"><p>Back home, I pay attention to craft. Clothes are an easy example: weave, weight, hand feel, drape. Cooking is the same impulse. Start with something solid, then tinker until it tastes like mine.</p></div>
+    <div class="passage" data-part="3"><p>I read a lot of sci-fi, especially the kind that starts fun and ends up making you stare at the ceiling for ten minutes.</p></div>
+    <div class="passage" data-part="4">
+      <h2>Before</h2>
+      <ul class="roles">
+        <li><span class="org">Garner Health</span><span class="years">2021–22</span><span class="what">Head of Business Operations</span></li>
+        <li><span class="org">NJOY</span><span class="years">2018–21</span><span class="what">Head of Strategy, Office of the CEO</span></li>
+        <li><span class="org">L.E.K. Consulting</span><span class="years">2016–18</span><span class="what">Associate</span></li>
+      </ul>
+    </div>
+    <div class="passage links" data-part="5"><a href="#">Email</a><a href="#">LinkedIn</a><a href="#">Curriculum vitae</a></div>
+  </div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const cv = document.getElementById('glass'), ctx = cv.getContext('2d')
+  const parts = [...document.querySelectorAll('[data-part]')]
+  let seed = 1996
+  const R = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296 }
+
+  // the panel, in its own units (400 × 500): cells cut around scattered points, like a leaded panel
+  const PW = 400, PH = 500
+  const sites = []
+  while (sites.length < 26) { const p = [20 + R() * (PW - 40), 20 + R() * (PH - 40)]; if (sites.every(q => Math.hypot(q[0] - p[0], q[1] - p[1]) > 58)) sites.push(p) }
+  function clip (poly, a, b) {
+    // keep the side of the bisector nearer to a
+    const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, nx = b[0] - a[0], ny = b[1] - a[1]
+    const inside = p => (p[0] - mx) * nx + (p[1] - my) * ny <= 0
+    const out = []
+    for (let i = 0; i < poly.length; i++) {
+      const p = poly[i], q = poly[(i + 1) % poly.length], ip = inside(p), iq = inside(q)
+      if (ip) out.push(p)
+      if (ip !== iq) { const t = ((mx - p[0]) * nx + (my - p[1]) * ny) / ((q[0] - p[0]) * nx + (q[1] - p[1]) * ny); out.push([p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t]) }
+    }
+    return out
+  }
+  const glass = ['#e0952c', '#c4661d', '#2b4fa6', '#a8263b', '#1f7856', '#2a878b', '#e8e0cc', '#e8e0cc', '#d9cfb6', '#8d8f84']
+  const pieces = sites.map((s, i) => {
+    let poly = [[0, 0], [PW, 0], [PW, PH], [0, PH]]
+    sites.forEach((t, j) => { if (j !== i) poly = clip(poly, s, t) })
+    const cx = poly.reduce((a, p) => a + p[0], 0) / poly.length, cy = poly.reduce((a, p) => a + p[1], 0) / poly.length
+    const local = poly.map(p => [p[0] - cx, p[1] - cy])
+    return { local, cx, cy, colour: glass[Math.floor(R() * glass.length)], part: 0, delay: 0, sx: (R() - 0.5) * PW * 0.95, sy: (R() - 0.5) * PH * 0.55, srot: (R() - 0.5) * 2.4, ph: R() * 6.28, land: 0 }
+  })
+  // hand the pieces out to the passages, top of the panel first, so it fills from the top down
+  pieces.sort((a, b) => a.cy - b.cy).forEach((p, i, all) => { p.part = Math.min(parts.length - 2, Math.floor(i / all.length * (parts.length - 1))); p.delay = R() * 0.45 })
+
+  let W = 0, H = 0, dpr = 1
+  function resize () {
+    const r = cv.getBoundingClientRect(); dpr = Math.min(devicePixelRatio || 1, 2)
+    W = r.width; H = r.height; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr)
+  }
+  resize(); addEventListener('resize', resize)
+
+  const progress = new Array(parts.length).fill(0)
+  const t0 = performance.now()
+  const ease = t => 1 - Math.pow(1 - t, 3)
+  function frame (now) {
+    const vh = innerHeight
+    parts.forEach((el, i) => { const r = el.getBoundingClientRect(); progress[i] = Math.min(1, Math.max(0, (vh * 0.85 - r.top) / (vh * 0.45))) })
+    progress[0] = Math.max(progress[0], Math.min(1, (now - t0) / 1600))
+    const done = progress[parts.length - 1]
+    const s = Math.min(W * 0.72 / PW, H * 0.86 / PH)
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H)
+    ctx.translate((W - PW * s) / 2, (H - PH * s) / 2); ctx.scale(s, s)
+    // the light behind, when it has all come together
+    if (done > 0) {
+      const g = ctx.createRadialGradient(PW / 2, PH * 0.45, 10, PW / 2, PH * 0.45, PW * 0.9)
+      g.addColorStop(0, `rgba(255,214,140,${0.75 * done})`); g.addColorStop(1, 'rgba(255,214,140,0)')
+      ctx.fillStyle = g; ctx.fillRect(-PW * 0.3, -PH * 0.3, PW * 1.6, PH * 1.6)
+    }
+    const t = now / 1000
+    for (const p of pieces) {
+      const raw = Math.min(1, Math.max(0, (progress[p.part] - p.delay) / (1 - p.delay)))
+      p.land += ((reduce ? raw : ease(raw)) - p.land) * (reduce ? 1 : 0.12)
+      const k = p.land, free = 1 - k
+      const bob = reduce ? 0 : free * Math.sin(t * 0.6 + p.ph) * 6
+      ctx.save()
+      ctx.translate(p.cx + p.sx * free, p.cy + p.sy * free + bob)
+      ctx.rotate(p.srot * free)
+      ctx.beginPath(); p.local.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath()
+      ctx.globalAlpha = 0.55 + 0.35 * k
+      ctx.fillStyle = p.colour; ctx.fill()
+      const sh = ctx.createLinearGradient(-40, -40, 40, 40); sh.addColorStop(0, `rgba(255,255,255,${0.28 + 0.2 * done})`); sh.addColorStop(0.5, 'rgba(255,255,255,0)')
+      ctx.fillStyle = sh; ctx.fill()
+      ctx.globalAlpha = 0.35 + 0.65 * k
+      ctx.lineJoin = 'round'; ctx.lineWidth = 5; ctx.strokeStyle = '#2d2622'; ctx.stroke()
+      ctx.restore()
+    }
+    ctx.globalAlpha = 1
+    requestAnimationFrame(frame)
+  }
+  requestAnimationFrame(frame)
+})()
+</script>
+</body>
+</html>

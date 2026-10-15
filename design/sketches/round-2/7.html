@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Round 2, sketch 7</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap">
+<style>
+/* layout: a few short sentences; any underlined phrase opens into more, and each layer lays another tint of coloured glass over the words */
+:root {
+  --ground: #e6e0d6;
+  --ink: #221e1a;
+  --ink-soft: #6c655c;
+  --link: #b4471f;
+  --t0: 255, 186, 66;
+  --t1: 255, 128, 160;
+  --t2: 96, 150, 255;
+  --t3: 70, 196, 146;
+  --t4: 176, 128, 255;
+  --font-ui: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-text: "Source Serif 4", Georgia, "Times New Roman", serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { background: var(--ground); }
+body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--font-ui); -webkit-font-smoothing: antialiased; transition: background-color 1.2s ease; }
+.wrap { max-width: 40rem; margin-inline: auto; padding-left: max(22px, env(safe-area-inset-left, 0px)); padding-right: max(22px, env(safe-area-inset-right, 0px)); padding-block: calc(26px + env(safe-area-inset-top, 0px)) calc(5rem + env(safe-area-inset-bottom, 0px)); min-height: 100svh; display: flex; flex-direction: column; gap: 3.2rem; }
+.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+.name { margin: 0; font-weight: 600; font-size: 1.15rem; letter-spacing: -.005em; }
+.place { margin: .2rem 0 0; color: var(--ink-soft); font-size: .9rem; }
+.controls { display: flex; gap: 1.1rem; align-items: baseline; font-size: .82rem; }
+.controls button, .controls a { font: inherit; color: var(--ink-soft); background: none; border: 0; padding: .2rem 0; cursor: pointer; text-decoration: none; }
+.controls button:hover, .controls a:hover, .controls button:focus-visible, .controls a:focus-visible { color: var(--ink); }
+.text { display: grid; gap: 1.4em; font-family: var(--font-text); font-size: clamp(1.4rem, 1.02rem + 1.3vw, 1.95rem); line-height: 1.46; letter-spacing: -.004em; flex: 1; align-content: start; }
+.text p { margin: 0; }
+.text .work { display: grid; gap: .35em; }
+.phrase { cursor: pointer; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .2em; text-decoration-color: rgba(var(--next), .9); border-radius: 2px; outline: none; transition: background-color .3s ease; -webkit-tap-highlight-color: transparent; }
+.phrase:hover { background-color: rgba(var(--next), .12); }
+.phrase:focus-visible { box-shadow: 0 0 0 2px rgba(var(--next), .9); }
+.phrase[aria-expanded="true"] { text-decoration-color: rgba(var(--next), .35); }
+.phrase.breathe { background-color: rgba(var(--next), .16); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6); animation: breathe 3.2s ease-in-out infinite; }
+@keyframes breathe { 50% { text-decoration-color: rgba(var(--next), .35); } }
+.more { mix-blend-mode: multiply; background-color: rgba(var(--tint), .3); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .55); border-radius: 3px; padding: .04em .12em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.more.entering { animation: rise .9s cubic-bezier(.2, .7, .2, 1) both; }
+@keyframes rise { from { opacity: 0; filter: blur(6px); } to { opacity: 1; filter: blur(0); } }
+.more.leaf.entering { background-image: linear-gradient(105deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, .7) 50%, rgba(255, 255, 255, 0) 60%); background-size: 320% 100%; background-repeat: no-repeat; animation: rise .9s cubic-bezier(.2, .7, .2, 1) both, glint 1.6s ease .5s both; }
+@keyframes glint { from { background-position: 120% 0; } to { background-position: -20% 0; } }
+.links { display: flex; flex-wrap: wrap; gap: .6rem 1.6rem; font-size: 1.05rem; }
+.links a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--link); text-decoration-thickness: 1.5px; text-underline-offset: .28em; }
+.links a:hover, .links a:focus-visible { color: var(--link); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; border-radius: 2px; }
+.grain { position: fixed; inset: -50%; z-index: 6; pointer-events: none; opacity: .5; mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+@media (prefers-reduced-motion: reduce) { .more.entering, .more.leaf.entering, .phrase.breathe { animation: none; } body { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <header>
+      <h1 class="name">Shubham Chandra</h1>
+      <p class="place">Chicago</p>
+    </header>
+    <div class="controls">
+      <button type="button" id="all">Open everything</button>
+      <a href="../index.html">All sketches</a>
+    </div>
+  </div>
+  <main class="text" id="text"></main>
+  <footer class="links">
+    <a href="#">Email</a>
+    <a href="#">LinkedIn</a>
+    <a href="#">Curriculum vitae</a>
+  </footer>
+</div>
+<div class="grain" aria-hidden="true"></div>
+
+<script>
+(() => {
+  // every word below comes from the old site's copy; a phrase in o() opens into its list of parts
+  const o = (text, more) => ({ text, more })
+  const blocks = [
+    ['I do better with ', o('things that take a little time to make sense of', [
+      ': ', o('interesting textures', [' (clothes are an easy example: weave, weight, hand feel, drape. I’m not interested in labels as a proxy for taste. I’m interested in ', o('the work', [', and cooking is the same impulse: start with something solid, then tinker until it tastes like mine']), ')']),
+      ', small restaurants that don’t advertise themselves, and ',
+      o('travel that doesn’t come with a gift shop', ['. Street level feels honest: you’re walking, noticing, adjusting. In ', o('Kerala', [', that’s a fabric market, not a landmark. Heat, noise, color, bargaining, getting a little turned around and not minding it. I like the feeling of earning your way into a place'])]),
+      '. I like being in places that aren’t trying to perform for you'
+    ]), '.'],
+    ['I read a lot of ', o('sci-fi', [', especially the kind that starts fun and ends up making you stare at the ceiling for ten minutes: consciousness, time, huge structures, weird rules']), '.'],
+    { work: [
+      [o('Garner Health', [', head of business operations, and the ', o('first ops hire', ['. I built ', o('marketing', [' (more than 60 touchpoints designed and tested; sign-ups up 14%, product usage up 30%)']), ' and ', o('talent', [' (outbound sourcing rebuilt, self-sourced hires up from 20% to 75%, $1.4M a year saved in agency fees)']), ' from scratch']), '. It grew from 38 people to more than 200 while I was there']), ', 2021–22.'],
+      [o('NJOY', [', head of strategy in the CEO’s office, through ', o('four funding rounds', [' (more than $200M, from D.E. Shaw and L Catterton)']), ' and a $2.8B acquisition by Altria. I also built the go-to-market for ', o('11 countries', [': 30 retail partners identified, 17 launched'])]), ', 2018–21.'],
+      [o('L.E.K. Consulting', [', associate: growth strategy and private equity diligence across 14 engagements, ', o('breaking down businesses', [' for investors making eight- and nine-figure decisions'])]), ', 2016–18.']
+    ] }
+  ]
+
+  const tints = ['--t0', '--t1', '--t2', '--t3', '--t4']
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const root = document.getElementById('text')
+  let total = 0, opened = 0
+
+  function render (parts, depth, into) {
+    for (const part of parts) {
+      if (typeof part === 'string') { into.appendChild(document.createTextNode(part)); continue }
+      total++
+      const ph = document.createElement('span')
+      ph.className = 'phrase'; ph.textContent = part.text
+      ph.setAttribute('role', 'button'); ph.setAttribute('tabindex', '0'); ph.setAttribute('aria-expanded', 'false')
+      ph.style.setProperty('--next', `var(${tints[depth % tints.length]})`)
+      ph._part = part; ph._depth = depth
+      into.appendChild(ph)
+      countInside(part.more)
+    }
+  }
+  function countInside (parts) { for (const p of parts) if (typeof p !== 'string') { /* counted when rendered */ } }
+  function countAll (parts) { let n = 0; for (const p of parts) if (typeof p !== 'string') n += 1 + countAll(p.more); return n }
+
+  function open (ph, animate) {
+    if (ph.getAttribute('aria-expanded') === 'true') return
+    const more = document.createElement('span')
+    more.className = 'more'
+    more.style.setProperty('--tint', `var(${tints[ph._depth % tints.length]})`)
+    render(ph._part.more, ph._depth + 1, more)
+    if (!more.querySelector('.phrase')) more.classList.add('leaf')
+    if (animate && !reduce) { more.classList.add('entering'); more.addEventListener('animationend', () => more.classList.remove('entering'), { once: true }) }
+    ph.after(more); ph._more = more
+    ph.setAttribute('aria-expanded', 'true')
+    ph.classList.remove('breathe')
+    opened++
+    warm()
+  }
+  function close (ph) {
+    if (ph.getAttribute('aria-expanded') !== 'true') return
+    opened -= 1 + ph._more.querySelectorAll('.phrase[aria-expanded="true"]').length
+    ph._more.remove(); ph._more = null
+    ph.setAttribute('aria-expanded', 'false')
+    warm()
+  }
+  // the page itself warms a little as you go deeper
+  const from = [230, 224, 214], to = [222, 205, 180]
+  function warm () {
+    const k = Math.min(1, opened / Math.max(1, grand))
+    document.body.style.backgroundColor = `rgb(${from.map((v, i) => Math.round(v + (to[i] - v) * k)).join(',')})`
+    allBtn.textContent = opened >= grand ? 'Close everything' : 'Open everything'
+  }
+
+  for (const b of blocks) {
+    if (b.work) {
+      const w = document.createElement('div'); w.className = 'work'
+      for (const line of b.work) { const p = document.createElement('p'); render(line, 0, p); w.appendChild(p) }
+      root.appendChild(w)
+    } else {
+      const p = document.createElement('p'); render(b, 0, p); root.appendChild(p)
+    }
+  }
+  const grand = blocks.reduce((n, b) => n + (b.work ? b.work.reduce((m, l) => m + countAll(l), 0) : countAll(b)), 0)
+  const first = root.querySelector('.phrase'); if (first) first.classList.add('breathe')
+
+  root.addEventListener('click', e => { const ph = e.target.closest('.phrase'); if (!ph) return; ph.getAttribute('aria-expanded') === 'true' ? close(ph) : open(ph, true) })
+  root.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('phrase')) { e.preventDefault(); e.target.click() } })
+
+  const allBtn = document.getElementById('all')
+  allBtn.addEventListener('click', () => {
+    if (opened >= grand) { root.querySelectorAll(':scope > p > .phrase, :scope > .work > p > .phrase').forEach(close); return }
+    let ph
+    while ((ph = root.querySelector('.phrase[aria-expanded="false"]'))) open(ph, false)
+  })
+  warm()
+})()
+</script>
+</body>
+</html>
