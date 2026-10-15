@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sketch 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap">
+<style>
+/* a painted page: the ground is a field of short strokes, laid by hand, still wet.
+   the words sit where the painter left the ground quiet. touch smears the paint. */
+:root {
+  --ground: #a39b92;
+  --ink: #2a2420;
+  --ink-soft: #4d443d;
+  --amber: #b9741c;
+  --font-ui: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-text: "Source Serif 4", Georgia, "Times New Roman", serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { background: var(--ground); }
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  position: relative;
+}
+#paint { position: absolute; inset: 0 auto auto 0; z-index: 0; pointer-events: none; }
+.page {
+  position: relative; z-index: 2;
+  max-width: 33rem;
+  margin-left: max(24px, env(safe-area-inset-left, 0px));
+  margin-right: max(24px, env(safe-area-inset-right, 0px));
+  padding-top: calc(46svh + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  display: grid; gap: 2.6rem;
+}
+@media (min-width: 900px) {
+  .page { margin-left: 7vw; padding-top: 92px; }
+}
+header { display: grid; gap: .3rem; }
+.name { margin: 0; font-family: var(--font-ui); font-weight: 650; font-size: clamp(1.8rem, 1.3rem + 1.8vw, 2.5rem); letter-spacing: -.014em; line-height: 1.04; }
+.place { margin: 0; font-family: var(--font-ui); color: var(--ink-soft); font-size: .95rem; }
+.roles { margin: 0; padding: 0; list-style: none; display: grid; gap: .55rem; font-family: var(--font-ui); font-size: .92rem; }
+.roles li { display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: baseline; }
+.roles .what { color: var(--ink-soft); }
+.roles .where { font-weight: 600; }
+.roles .when { color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.prose { display: grid; gap: 1.1em; font-size: 1.12rem; line-height: 1.62; font-optical-sizing: auto; }
+.prose p { margin: 0; }
+.prose .lead { font-size: 1.3rem; line-height: 1.42; font-weight: 500; }
+.prose h2 { margin: 0 0 .2em; font-family: var(--font-ui); font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.links { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; font-family: var(--font-ui); font-size: .95rem; }
+.links a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--amber); text-underline-offset: .22em; text-decoration-thickness: 2px; }
+.links a:hover, .links a:focus-visible { color: var(--amber); }
+.back { position: absolute; z-index: 3; right: max(20px, env(safe-area-inset-right, 0px)); top: max(18px, env(safe-area-inset-top, 0px)); font-family: var(--font-ui); font-size: .8rem; color: var(--ink-soft); text-decoration: none; }
+.back:hover, .back:focus-visible { color: var(--ink); }
+.smear-note { position: absolute; z-index: 2; margin: 0; width: 13rem; font-family: var(--font-ui); font-style: italic; font-size: .82rem; line-height: 1.35; color: var(--ink); opacity: .78; pointer-events: none; }
+.grain { position: fixed; inset: -50%; z-index: 4; pointer-events: none; opacity: .5; mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+</style>
+</head>
+<body>
+<canvas id="paint" aria-hidden="true"></canvas>
+<a class="back" href="index.html">All sketches</a>
+<p class="smear-note" id="smearNote">someone touched it while it was still wet. you can too.</p>
+
+<main class="page" id="page">
+  <header>
+    <h1 class="name">Shubham Chandra</h1>
+    <p class="place">Chicago</p>
+  </header>
+
+  <ul class="roles">
+    <li><span><span class="where">Garner Health</span> <span class="what">Head of Business Operations</span></span><span class="when">2021–22</span></li>
+    <li><span><span class="where">NJOY</span> <span class="what">Head of Strategy, Office of the CEO</span></span><span class="when">2018–21</span></li>
+    <li><span><span class="where">L.E.K. Consulting</span> <span class="what">Associate</span></span><span class="when">2016–18</span></li>
+  </ul>
+
+  <section class="prose">
+    <h2>Beyond work</h2>
+    <p class="lead">I do better with things that take a little time to make sense of.</p>
+    <p>I’m drawn to interesting textures, small restaurants that don’t advertise themselves, and travel that doesn’t come with a gift shop. I like being in places that aren’t trying to perform for you. Street level feels honest: you’re walking, noticing, adjusting. In Kerala, that’s a fabric market, not a landmark. Heat, noise, color, bargaining, getting a little turned around and not minding it. I like the feeling of earning your way into a place.</p>
+    <p>Back home, I pay attention to craft. Clothes are an easy example: weave, weight, hand feel, drape. I’m not interested in labels as a proxy for taste. I’m interested in the work. Cooking is the same impulse. Start with something solid, then tinker until it tastes like mine.</p>
+    <p>I read a lot of sci-fi, especially the kind that starts fun and ends up making you stare at the ceiling for ten minutes. Consciousness, time, huge structures, weird rules. I like direct people and sharp conversation. I can be meticulous about what I care about and pretty relaxed about everything else.</p>
+  </section>
+
+  <nav class="links" aria-label="Contact">
+    <a href="#">Email</a>
+    <a href="#">LinkedIn</a>
+    <a href="#">Curriculum vitae</a>
+  </nav>
+</main>
+<div class="grain" aria-hidden="true"></div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const canvas = document.getElementById('paint')
+  const ctx = canvas.getContext('2d')
+  const page = document.getElementById('page')
+  const note = document.getElementById('smearNote')
+  const dpr = Math.min(2, window.devicePixelRatio || 1)
+
+  // paint: mostly the ground, in many hands' worth of strokes; colour where the words aren't
+  const GROUND = ['#a8a097', '#b3aba1', '#9b938a', '#bfb6aa', '#8f8880', '#b3a48b', '#cdc2b2', '#80746a', '#a99a84']
+  const COLOUR = ['#e2a136', '#d4532f', '#dc6a84', '#3a63b4', '#2f8d84', '#eac34a', '#7a5bb0', '#e27a3a']
+  let strokes = [], W = 0, H = 0, quiet = null, smear = null
+  let dirty = true, tick = 0
+
+  const rnd = (a, b) => a + Math.random() * (b - a)
+  const flow = (x, y) => Math.sin(x * .0042 + 1.3) + Math.cos(y * .0037) + .6 * Math.sin((x + y) * .0019)
+  const smooth = t => t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t)
+  const distRect = (x, y, r) => {
+    const dx = Math.max(r.left - x, 0, x - r.right), dy = Math.max(r.top - y, 0, y - r.bottom)
+    return Math.hypot(dx, dy)
+  }
+  const hex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]
+  const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t))
+  const css = (c, al = 1) => `rgba(${c[0]},${c[1]},${c[2]},${al})`
+
+  function layout () {
+    W = document.documentElement.clientWidth
+    H = Math.max(document.documentElement.scrollHeight, window.innerHeight)
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr)
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px'
+    const r0 = page.querySelector('header').getBoundingClientRect(), r1 = page.querySelector('nav').getBoundingClientRect()
+    const r = page.getBoundingClientRect(), sy = window.scrollY
+    quiet = { left: r.left - 26, right: r.right + 26, top: r0.top + sy - 30, bottom: r1.bottom + sy + 26 }
+    // a thumb went through the wet paint here, before you arrived
+    const wide = W >= 900
+    const cx = wide ? Math.min(W - 180, quiet.right + 220) : W * .6
+    const cy = wide ? quiet.top + 170 : Math.max(90, quiet.top - 140)
+    smear = { cx, cy, r: wide ? 110 : 84, a0: -2.7, a1: -.2 }
+    note.style.left = Math.round(wide ? cx - 40 : Math.min(cx - 60, W - 14 * 16)) + 'px'
+    note.style.top = Math.round(cy + smear.r + 18) + 'px'
+    build()
+  }
+
+  function build () {
+    strokes = []
+    const cell = W < 700 ? 31 : 28
+    for (let gy = -cell; gy < H + cell; gy += cell) {
+      for (let gx = -cell; gx < W + cell; gx += cell) {
+        const x = gx + rnd(0, cell), y = gy + rnd(0, cell)
+        const d = distRect(x, y, quiet)
+        const open = smooth(d / 110)               // 0 under the words, 1 out in the open
+        const pColour = .15 * open
+        const isColour = Math.random() < pColour
+        const base = hex(isColour ? COLOUR[(Math.random() * COLOUR.length) | 0] : GROUND[(Math.random() * GROUND.length) | 0])
+        // under the words the strokes flatten toward the ground so the ink reads
+        const col = isColour ? base : mix(base, hex('#a39b92'), (1 - open) * .55)
+        const a = flow(x, y) * .85 + rnd(-.12, .12)
+        strokes.push({
+          x, y, a, len: rnd(22, 62) * (isColour ? .9 : 1), w: rnd(4, 10) * (open > .5 ? 1.05 : .9),
+          k: rnd(-.18, .18), col, light: mix(col, [255, 246, 228], .32), dark: mix(col, [58, 42, 30], .3),
+          ph: rnd(0, Math.PI * 2), om: rnd(.25, .55), dx: 0, dy: 0, da: 0, gleam: 0
+        })
+      }
+    }
+    // the thumb: strokes along an arc are dragged with it, widened, muddied
+    const s = smear
+    for (const st of strokes) {
+      const vx = st.x - s.cx, vy = st.y - s.cy, dist = Math.hypot(vx, vy), ang = Math.atan2(vy, vx)
+      const onArc = ang > s.a0 && ang < s.a1
+      const near = Math.abs(dist - s.r)
+      if (!onArc || near > 38) continue
+      const f = (1 - near / 38)
+      const tx = -Math.sin(ang), ty = Math.cos(ang)       // tangent, the direction the thumb went
+      st.dx += tx * 38 * f; st.dy += ty * 38 * f
+      st.da += (Math.atan2(ty, tx) - st.a) * .7 * f
+      st.w *= 1 + .5 * f; st.len *= 1 + .25 * f
+      st.col = mix(st.col, hex('#7b6758'), .4 * f); st.light = mix(st.col, [255, 246, 228], .25); st.dark = mix(st.col, [58, 42, 30], .3)
+    }
+    for (let i = 0; i < 12; i++) {
+      const ang = s.a0 + (s.a1 - s.a0) * (i + .5) / 12
+      const x = s.cx + Math.cos(ang) * s.r + rnd(-6, 6), y = s.cy + Math.sin(ang) * s.r + rnd(-6, 6)
+      const col = mix(hex('#7b6758'), hex('#b3a48b'), rnd(0, .6))
+      strokes.push({ x, y, a: ang + Math.PI / 2, len: rnd(34, 58), w: rnd(9, 15), k: .1, col, light: mix(col, [255, 246, 228], .18), dark: mix(col, [58, 42, 30], .25), ph: rnd(0, 6), om: .3, dx: 0, dy: 0, da: 0, gleam: 0, mud: true })
+    }
+    dirty = true
+  }
+
+  function draw (t) {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    ctx.clearRect(0, 0, W, H)
+    ctx.lineCap = 'round'
+    const idle = reduce ? 0 : 1
+    for (const s of strokes) {
+      const wob = idle * Math.sin(t * s.om + s.ph)
+      const a = s.a + s.da + wob * .03
+      const x = s.x + s.dx + wob * 1.1, y = s.y + s.dy + Math.cos(t * s.om * .8 + s.ph) * idle * .8
+      const c = Math.cos(a), sn = Math.sin(a), hl = s.len / 2
+      const x0 = x - c * hl, y0 = y - sn * hl, x1 = x + c * hl, y1 = y + sn * hl
+      const qx = x - sn * s.k * s.len, qy = y + c * s.k * s.len
+      // shadow, body, highlight: the paint stands up a little
+      ctx.lineWidth = s.w
+      ctx.strokeStyle = css(s.dark, .28)
+      ctx.beginPath(); ctx.moveTo(x0 + 1.4, y0 + 1.6); ctx.quadraticCurveTo(qx + 1.4, qy + 1.6, x1 + 1.4, y1 + 1.6); ctx.stroke()
+      const body = s.gleam > 0 ? mix(s.col, [255, 250, 235], s.gleam * .35) : s.col
+      ctx.strokeStyle = css(body, s.mud ? .72 : .96)
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.quadraticCurveTo(qx, qy, x1, y1); ctx.stroke()
+      if (s.w > 7) {
+        ctx.lineWidth = s.w * .38
+        ctx.strokeStyle = css(s.light, .3 + s.gleam * .3)
+        ctx.beginPath(); ctx.moveTo(x0 - .9, y0 - 1.1); ctx.quadraticCurveTo(qx - .9, qy - 1.1, x1 - .9, y1 - 1.1); ctx.stroke()
+      }
+      if (s.gleam > 0) { s.gleam *= .965; if (s.gleam < .02) s.gleam = 0; else dirty = true }
+    }
+  }
+
+  function loop (ms) {
+    tick++
+    const t = ms / 1000
+    if (!reduce && tick % 2 === 0) dirty = true
+    if (dirty) { dirty = false; draw(t) }
+    requestAnimationFrame(loop)
+  }
+
+  // touch smears the paint: strokes under your finger go with it, and gleam while wet
+  let last = null
+  function smearAt (px, py) {
+    if (last) {
+      let vx = px - last.x, vy = py - last.y
+      const sp = Math.hypot(vx, vy)
+      if (sp > .5) {
+        const cap = Math.min(sp, 28) / sp; vx *= cap; vy *= cap
+        const dir = Math.atan2(vy, vx)
+        const R = 84
+        for (const s of strokes) {
+          const dx = s.x + s.dx - px, dy = s.y + s.dy - py
+          if (Math.abs(dx) > R || Math.abs(dy) > R) continue
+          const d = Math.hypot(dx, dy); if (d > R) continue
+          const f = (1 - d / R) ** 2
+          s.dx += vx * .7 * f; s.dy += vy * .7 * f
+          const m = Math.hypot(s.dx, s.dy); if (m > 60) { s.dx *= 60 / m; s.dy *= 60 / m }
+          let diff = dir - (s.a + s.da); diff = Math.atan2(Math.sin(diff), Math.cos(diff))
+          if (Math.cos(diff) < 0) diff = Math.atan2(Math.sin(diff + Math.PI), Math.cos(diff + Math.PI))
+          s.da += diff * .3 * f
+          s.gleam = Math.max(s.gleam, f)
+        }
+        dirty = true
+      }
+    }
+    last = { x: px, y: py }
+  }
+  window.addEventListener('pointermove', e => { if (e.pointerType === 'touch') return; smearAt(e.clientX, e.clientY + window.scrollY) }, { passive: true })
+  window.addEventListener('pointerleave', () => { last = null })
+  window.addEventListener('touchstart', e => { const t = e.touches[0]; last = { x: t.clientX, y: t.clientY + window.scrollY } }, { passive: true })
+  window.addEventListener('touchmove', e => { const t = e.touches[0]; smearAt(t.clientX, t.clientY + window.scrollY) }, { passive: true })
+  window.addEventListener('touchend', () => { last = null }, { passive: true })
+
+  let rt
+  let lastW = document.documentElement.clientWidth
+  window.addEventListener('resize', () => { const w = document.documentElement.clientWidth; if (w === lastW) return; lastW = w; clearTimeout(rt); rt = setTimeout(layout, 160) })
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout)
+  layout()
+  requestAnimationFrame(loop)
+})()
+</script>
+</body>
+</html>

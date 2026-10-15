@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Round 2, sketch 3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap">
+<style>
+/* layout: a page made of cut paper laid on a table; pieces sit at different heights, cast real shadows, and move in hand-moved steps */
+:root {
+  --table: #ddd2bf;
+  --paper: #f5eee1;
+  --ink: #241f1a;
+  --ink-soft: #6e665c;
+  --link: #c0461c;
+  --font-ui: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-text: "Source Serif 4", Georgia, "Times New Roman", serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { background: var(--table); overflow-x: clip; }
+body { margin: 0; background: var(--table); color: var(--ink); font-family: var(--font-ui); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+.cuts { position: absolute; left: 0; top: 0; width: 100%; overflow: hidden; pointer-events: none; z-index: 1; }
+.cut { position: absolute; pointer-events: auto; cursor: pointer; filter: drop-shadow(0 var(--sd, 6px) var(--sb, 8px) rgba(74, 50, 28, .3)); will-change: transform; }
+.cut .face { width: 100%; height: 100%; }
+.cut.front { z-index: 3; }
+.page { position: relative; z-index: 2; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); padding-block: calc(22px + env(safe-area-inset-top, 0px)) calc(5rem + env(safe-area-inset-bottom, 0px)); }
+.hero { min-height: 80svh; display: flex; flex-direction: column; justify-content: space-between; gap: 2rem; }
+.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+.back { font-size: .8rem; color: var(--ink-soft); text-decoration: none; padding: .3rem 0; position: relative; z-index: 4; }
+.back:hover, .back:focus-visible { color: var(--ink); }
+.sheet { position: relative; background: var(--paper); filter: drop-shadow(0 4px 6px rgba(74, 50, 28, .22)); }
+.sheet > .in { padding: 1.3rem 1.4rem; }
+.label { display: inline-block; transform: rotate(-1.4deg); }
+.label .in { padding: .9rem 1.2rem 1rem; }
+.name { margin: 0; font-weight: 600; font-size: clamp(1.6rem, 1.2rem + 1.8vw, 2.3rem); letter-spacing: -.012em; line-height: 1.05; }
+.place { margin: .3rem 0 0; color: var(--ink-soft); font-size: .95rem; }
+.lead-sheet { max-width: 26rem; transform: rotate(.8deg); }
+.lead { margin: 0; font-family: var(--font-text); font-weight: 500; font-size: clamp(1.4rem, 1.05rem + 1.8vw, 2.2rem); line-height: 1.22; text-wrap: balance; }
+.stack { max-width: 35rem; margin: 3.5rem auto 0; display: grid; gap: 2.6rem; }
+.prose-sheet { transform: rotate(-.5deg); }
+.prose { display: grid; gap: 1.1em; font-family: var(--font-text); font-size: 1.1rem; line-height: 1.64; }
+.prose p { margin: 0; }
+.roles-sheet { transform: rotate(.7deg); }
+h2 { margin: 0 0 1rem; font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.roles { list-style: none; margin: 0; padding: 0; display: grid; gap: .85rem; }
+.roles li { display: grid; grid-template-columns: 1fr auto; gap: .1rem 1rem; align-items: baseline; }
+.roles .org { font-weight: 600; font-size: 1.02rem; }
+.roles .years { color: var(--ink-soft); font-size: .9rem; font-variant-numeric: tabular-nums; }
+.roles .what { grid-column: 1 / -1; color: var(--ink-soft); font-size: .92rem; }
+.links-sheet { justify-self: start; transform: rotate(-1deg); }
+.links { display: flex; flex-wrap: wrap; gap: .6rem 1.5rem; font-size: 1.05rem; }
+.links a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--link); text-decoration-thickness: 1.5px; text-underline-offset: .28em; }
+.links a:hover, .links a:focus-visible { color: var(--link); }
+a:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; border-radius: 2px; }
+.grain { position: fixed; inset: -50%; z-index: 6; pointer-events: none; opacity: .55; mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+@media (max-width: 520px) { .prose { font-size: 1.05rem; } .sheet > .in { padding: 1.1rem 1.15rem; } }
+</style>
+</head>
+<body>
+<div class="cuts" id="cuts" aria-hidden="true"></div>
+
+<div class="page">
+  <section class="hero">
+    <div class="top">
+      <div class="sheet label torn"><div class="in">
+        <h1 class="name">Shubham Chandra</h1>
+        <p class="place">Chicago</p>
+      </div></div>
+      <a class="back" href="../index.html">All sketches</a>
+    </div>
+    <div class="sheet lead-sheet torn"><div class="in">
+      <p class="lead">I do better with things that take a little time to make sense of.</p>
+    </div></div>
+  </section>
+
+  <div class="stack">
+    <div class="sheet prose-sheet torn" data-anchor><div class="in prose">
+      <p>I’m drawn to interesting textures, small restaurants that don’t advertise themselves, and travel that doesn’t come with a gift shop. I like being in places that aren’t trying to perform for you. Street level feels honest: you’re walking, noticing, adjusting. In Kerala, that’s a fabric market, not a landmark.</p>
+      <p>Back home, I pay attention to craft. Clothes are an easy example: weave, weight, hand feel, drape. I’m not interested in labels as a proxy for taste. I’m interested in the work. Cooking is the same impulse. Start with something solid, then tinker until it tastes like mine.</p>
+      <p>I read a lot of sci-fi, especially the kind that starts fun and ends up making you stare at the ceiling for ten minutes. Consciousness, time, huge structures, weird rules.</p>
+    </div></div>
+    <div class="sheet roles-sheet torn" data-anchor><div class="in">
+      <h2>Before</h2>
+      <ul class="roles">
+        <li><span class="org">Garner Health</span><span class="years">2021–22</span><span class="what">Head of Business Operations</span></li>
+        <li><span class="org">NJOY</span><span class="years">2018–21</span><span class="what">Head of Strategy, Office of the CEO</span></li>
+        <li><span class="org">L.E.K. Consulting</span><span class="years">2016–18</span><span class="what">Associate</span></li>
+      </ul>
+    </div></div>
+    <div class="sheet links-sheet torn" data-anchor><div class="in links">
+      <a href="#">Email</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">Curriculum vitae</a>
+    </div></div>
+  </div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const cutsEl = document.getElementById('cuts')
+  let seed = 2010
+  const R = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296 }
+
+  // torn edges on every sheet of paper: a ragged top and bottom, cut fresh for each one
+  document.querySelectorAll('.torn').forEach(el => {
+    const n = 26, top = [], bottom = []
+    for (let i = 0; i <= n; i++) top.push(`${(i / n * 100).toFixed(2)}% ${(R() * 5).toFixed(1)}px`)
+    for (let i = n; i >= 0; i--) bottom.push(`${(i / n * 100).toFixed(2)}% calc(100% - ${(R() * 5).toFixed(1)}px)`)
+    el.firstElementChild.style.clipPath = `polygon(${top.concat(bottom).join(',')})`
+    el.firstElementChild.style.background = 'var(--paper)'
+    el.style.background = 'transparent'
+  })
+
+  // shapes cut with scissors, as paths in a w × h box
+  const shapes = {
+    scallop (w, h) { const n = 64, k = 9 + Math.floor(R() * 5), pts = []; for (let i = 0; i < n; i++) { const t = i / n * 6.283, m = 0.9 + 0.08 * Math.abs(Math.sin(t * k / 2)) + (R() - 0.5) * 0.02; pts.push([w / 2 + Math.cos(t) * w / 2 * m, h / 2 + Math.sin(t) * h / 2 * m]) } return pts },
+    wave (w, h) { const pts = [], ph = R() * 6.28; for (let i = 0; i <= 24; i++) { const x = i / 24 * w; pts.push([x, h * 0.18 + Math.sin(i / 24 * 6.283 * 1.5 + ph) * h * 0.16 + (R() - 0.5) * 2]) } for (let i = 24; i >= 0; i--) pts.push([i / 24 * w + (R() - 0.5) * 2, h - R() * 3]); return pts },
+    leaf (w, h) { const pts = []; for (let i = 0; i <= 30; i++) { const t = i / 30 * Math.PI; pts.push([w / 2 + Math.sin(t) * w * 0.48 + (R() - 0.5) * 1.5, h * (i / 30)]) } for (let i = 30; i >= 0; i--) { const t = i / 30 * Math.PI; pts.push([w / 2 - Math.sin(t) * w * 0.48 + (R() - 0.5) * 1.5, h * (i / 30)]) } return pts },
+    blob (w, h) { const n = 9, pts = []; for (let i = 0; i < n; i++) { const t = (i + R() * 0.5) / n * 6.283, m = 0.72 + R() * 0.28; pts.push([w / 2 + Math.cos(t) * w / 2 * m, h / 2 + Math.sin(t) * h / 2 * m]) } return pts },
+    half (w, h) { const pts = []; for (let i = 0; i <= 36; i++) { const t = Math.PI + i / 36 * Math.PI; pts.push([w / 2 + Math.cos(t) * w / 2 + (R() - 0.5) * 1.5, h + Math.sin(t) * h + (R() - 0.5) * 1.5]) } return pts }
+  }
+  const toPath = pts => 'path("M' + pts.map(([x, y]) => x.toFixed(1) + ' ' + y.toFixed(1)).join('L') + 'Z")'
+
+  const paper = { marigold: '#eaa335', tomato: '#d8553a', teal: '#2c8686', plum: '#6d3a60', sky: '#7fa9cf', leaf: '#5d8b47', pink: '#e58ea0' }
+  const backs = { marigold: '#f7e2b8', tomato: '#f4d2c6', teal: '#cfe3df', plum: '#e6d3de', sky: '#dde8f2', leaf: '#dde7cf', pink: '#f6dde2' }
+  let cuts = []
+  function build () {
+    cutsEl.textContent = ''
+    cuts = []
+    seed = 1996
+    const W = innerWidth, H = innerHeight, narrow = W < 700
+    cutsEl.style.height = document.documentElement.scrollHeight + 'px'
+    const u = Math.min(W, 820)
+    const place = (x, y, w, h, shape, colour, z, rot, front) => {
+      const el = document.createElement('div'); el.className = 'cut' + (front ? ' front' : '')
+      const face = document.createElement('div'); face.className = 'face'
+      face.style.background = paper[colour]; face.style.clipPath = toPath(shapes[shape](w, h))
+      el.appendChild(face)
+      Object.assign(el.style, { left: (x - w / 2).toFixed(0) + 'px', top: (y - h / 2).toFixed(0) + 'px', width: w.toFixed(0) + 'px', height: h.toFixed(0) + 'px' })
+      el.style.setProperty('--sd', (3 + z * 9).toFixed(1) + 'px'); el.style.setProperty('--sb', (4 + z * 10).toFixed(1) + 'px')
+      cutsEl.appendChild(el)
+      const c = { el, face, y, z, rot, colour, flipped: false, flip: -1, jx: 0, jy: 0, jr: 0 }
+      el.addEventListener('pointerdown', () => { if (c.flip < 0) c.flip = 0 })
+      cuts.push(c)
+    }
+    // the first screen: a stack of cut pieces, overlapping at different heights
+    const hero = narrow
+      ? [[0.72, 0.25, 0.62, 0.62, 'scallop', 'marigold', 0.3, 0], [0.86, 0.36, 0.5, 0.26, 'wave', 'teal', 0.7, -8], [0.5, 0.42, 0.34, 0.5, 'leaf', 'tomato', 1, 24], [0.9, 0.16, 0.26, 0.26, 'blob', 'plum', 0.9, 10], [0.3, 0.5, 0.3, 0.16, 'half', 'sky', 0.5, -6]]
+      : [[0.68, 0.38, 0.5, 0.5, 'scallop', 'marigold', 0.3, 0], [0.8, 0.52, 0.52, 0.22, 'wave', 'teal', 0.7, -8], [0.6, 0.6, 0.24, 0.38, 'leaf', 'tomato', 1, 24], [0.86, 0.24, 0.2, 0.2, 'blob', 'plum', 0.9, 10], [0.52, 0.28, 0.24, 0.13, 'half', 'sky', 0.5, -6], [0.92, 0.72, 0.16, 0.24, 'leaf', 'leaf', 0.8, -30]]
+    for (const [x, y, w, h, s, c, z, r] of hero) place(x * W, y * H, w * u, h * u, s, c, z, r, false)
+    // further down: a piece or two tucked against each sheet, some in front of its edge, some behind
+    const kinds = ['blob', 'leaf', 'scallop', 'half', 'wave'], colours = Object.keys(paper)
+    document.querySelectorAll('[data-anchor]').forEach((el, i) => {
+      const r = el.getBoundingClientRect(), top = r.top + scrollY
+      const left = narrow ? 0.02 : (r.left / W) - 0.03, right = narrow ? 0.98 : (r.right / W) + 0.03
+      const s1 = (0.14 + R() * 0.1) * u
+      place((i % 2 ? left : right) * W, top + R() * r.height * 0.4, s1, s1 * (0.6 + R() * 0.6), kinds[i % kinds.length], colours[(i * 2) % colours.length], 0.4 + R() * 0.6, R() * 50 - 25, i % 2 === 0)
+      const s2 = (0.1 + R() * 0.08) * u
+      place((i % 2 ? right : left) * W, top + r.height * (0.55 + R() * 0.4), s2, s2 * (0.6 + R() * 0.6), kinds[(i + 2) % kinds.length], colours[(i * 2 + 3) % colours.length], 0.4 + R() * 0.6, R() * 50 - 25, false)
+    })
+  }
+  build()
+  document.fonts && document.fonts.ready.then(build)
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 150) })
+
+  const tilt = { x: 0, y: 0 }
+  addEventListener('pointermove', e => { if (e.pointerType === 'mouse') { tilt.x = e.clientX / innerWidth - 0.5; tilt.y = e.clientY / innerHeight - 0.5 } }, { passive: true })
+
+  // stop motion: the pieces only move on the frame, twelve times a second, each time nudged by hand
+  const FRAME = 1000 / 12
+  let last = 0
+  function frame (now) {
+    if (now - last >= FRAME) {
+      last = now
+      const H = innerHeight
+      for (const c of cuts) {
+        const sy = c.y - scrollY
+        const dy = (sy - H * 0.5) * (c.z - 0.6) * 0.35
+        if (!reduce) { c.jx = (Math.random() - 0.5) * 1.4; c.jy = (Math.random() - 0.5) * 1.4; c.jr = (Math.random() - 0.5) * 0.8 }
+        const tx = -tilt.x * 14 * c.z, ty = -tilt.y * 10 * c.z
+        let sx = 1
+        if (c.flip >= 0) {
+          const steps = [0.6, 0.15, -0.15, -0.6, -1]
+          sx = steps[c.flip] * (c.flipped ? -1 : 1)
+          if (c.flip === 2) { c.flipped = !c.flipped; c.face.style.background = c.flipped ? backs[c.colour] : paper[c.colour] }
+          c.flip = c.flip >= steps.length - 1 ? -1 : c.flip + 1
+          if (c.flip < 0) sx = 1
+          sx = Math.abs(sx) < 0.05 ? 0.05 : Math.abs(sx)
+        }
+        c.el.style.transform = `translate(${(tx + c.jx).toFixed(1)}px, ${(dy + ty + c.jy).toFixed(1)}px) rotate(${(c.rot + c.jr).toFixed(2)}deg) scaleX(${sx.toFixed(2)})`
+      }
+    }
+    requestAnimationFrame(frame)
+  }
+  requestAnimationFrame(frame)
+})()
+</script>
+</body>
+</html>

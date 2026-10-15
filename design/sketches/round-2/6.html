@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Round 2, sketch 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..600;1,8..60,400..600&family=Space+Mono&display=swap">
+<style>
+/* the whole site is one printed sheet: six panels, three inks pulled slightly off register. on a desk you hold the page; in your hand you hold one panel at a time. the panel you read snaps into register. */
+:root {
+  --desk: #d6cfc2;
+  --paper: #efe8db;
+  --key: #1f2440;
+  --key-soft: rgba(31, 36, 64, .62);
+  --blue: #2f57c9;
+  --pink: #f0569f;
+  --yellow: #f7c51f;
+  --orange: #f26d3a;
+  --font-display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --font-text: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-mono: "Space Mono", "Courier New", monospace;
+  --reg: 1;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; overflow: hidden; overscroll-behavior: none; background: var(--desk); }
+body { color: var(--key); font-family: var(--font-text); -webkit-font-smoothing: antialiased; touch-action: none; user-select: none; -webkit-user-select: none; }
+
+.stage { position: fixed; inset: 0; overflow: hidden; }
+.sheet { position: absolute; left: 0; top: 0; width: 1400px; height: 1000px; transform-origin: 0 0; background: var(--paper);
+  box-shadow: 0 2px 0 rgba(31, 36, 64, .08), 0 30px 60px -20px rgba(31, 36, 64, .35); transition: transform .8s cubic-bezier(.3, .75, .2, 1); }
+.sheet.cut { transition: none; }
+.sheet::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='.22'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+.panel { position: absolute; left: calc(var(--l) * 1px); top: calc(var(--t) * 1px); width: calc(var(--w) * 1px); height: calc(var(--h) * 1px);
+  border: 3px solid var(--key); overflow: hidden; cursor: zoom-in; background: var(--paper); }
+.panel.on { cursor: zoom-out; }
+.panel.on, .panel.hot { --reg: 0; }
+/* the frame itself was printed twice: once in key, once, slightly off, in blue */
+.panel::before { content: ""; position: absolute; inset: -3px; border: 3px solid var(--blue); mix-blend-mode: multiply; opacity: .55; pointer-events: none;
+  transform: translate(calc(var(--reg) * 5px), calc(var(--reg) * -4px)); transition: transform .7s cubic-bezier(.2, .8, .2, 1); }
+
+.ink { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: multiply; transition: transform .7s cubic-bezier(.2, .8, .2, 1); }
+.ink.b { transform: translate(calc(var(--reg) * 6px + var(--px, 0) * 3px), calc(var(--reg) * -4px + var(--py, 0) * 3px)); }
+.ink.p { transform: translate(calc(var(--reg) * -5px + var(--px, 0) * -4px), calc(var(--reg) * 4px + var(--py, 0) * -4px)); }
+.ink.y { transform: translate(calc(var(--reg) * 3px + var(--px, 0) * 2px), calc(var(--reg) * 6px + var(--py, 0) * 2px)); }
+.ink > i { position: absolute; display: block; opacity: .92;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.2' intercept='-.2'/%3E%3CfeFuncG type='linear' slope='2.2' intercept='-.2'/%3E%3CfeFuncB type='linear' slope='2.2' intercept='-.2'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.2' intercept='-.2'/%3E%3CfeFuncG type='linear' slope='2.2' intercept='-.2'/%3E%3CfeFuncB type='linear' slope='2.2' intercept='-.2'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  -webkit-mask-mode: luminance; mask-mode: luminance; -webkit-mask-size: 160px 160px; mask-size: 160px 160px; }
+.b > i { background: var(--blue); }
+.p > i { background: var(--pink); }
+.y > i { background: var(--yellow); }
+.round { border-radius: 50%; }
+.stripes-v { background: repeating-linear-gradient(90deg, currentColor 0 14px, transparent 14px 30px) !important; color: var(--pink); }
+.stripes-d { background: repeating-linear-gradient(-35deg, currentColor 0 7px, transparent 7px 22px) !important; color: var(--blue); }
+.dots { background: radial-gradient(circle, currentColor 0 5px, transparent 5.5px) 0 0 / 22px 22px !important; color: var(--yellow); }
+
+/* text is the key ink, with a pink ghost beneath it that only shows while the print is loose */
+.text { position: relative; z-index: 2; height: 100%; padding: 24px 30px; display: flex; flex-direction: column; }
+.ghosted { position: relative; }
+.ghosted .ghost { position: absolute; inset: 0; color: var(--pink); mix-blend-mode: multiply; opacity: .8; pointer-events: none;
+  transform: translate(calc(var(--reg) * 5px), calc(var(--reg) * 3px)); transition: transform .7s cubic-bezier(.2, .8, .2, 1); }
+
+.name { margin: 0; font-family: var(--font-display); font-weight: 900; font-size: 164px; line-height: .86; letter-spacing: -.005em; text-transform: uppercase; }
+.place { margin: 14px 0 0; font-family: var(--font-mono); font-size: 18px; letter-spacing: .04em; color: var(--key-soft); }
+.links { margin-top: auto; display: flex; flex-wrap: wrap; gap: 10px 28px; font-family: var(--font-display); font-weight: 700; font-size: 44px; line-height: 1; text-transform: uppercase; letter-spacing: .01em; }
+.links a, .text a { color: var(--key); text-decoration: none; border-bottom: 4px solid var(--pink); padding-bottom: 2px; transition: border-color .3s; }
+.links a:hover, .links a:focus-visible { border-color: var(--blue); }
+a:focus-visible { outline: 3px solid var(--blue); outline-offset: 4px; }
+
+.kicker { margin: 0 0 14px; font-family: var(--font-mono); font-size: 15px; letter-spacing: .14em; text-transform: uppercase; color: var(--key-soft); }
+.roles { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
+.roles li { display: grid; gap: 2px; }
+.roles .org { font-family: var(--font-display); font-weight: 700; font-size: 44px; line-height: .95; text-transform: uppercase; }
+.roles .what { font-size: 20px; line-height: 1.3; }
+.roles .years { font-family: var(--font-mono); font-size: 15px; color: var(--key-soft); margin-top: 2px; }
+.lead { margin: auto 0; font-size: 46px; line-height: 1.12; font-weight: 500; font-style: italic; font-variation-settings: "opsz" 60; text-wrap: balance; }
+.body { margin: 0; font-size: 19px; line-height: 1.5; font-variation-settings: "opsz" 18; }
+.body + .body { margin-top: .9em; }
+
+/* fixed chrome */
+.chrome { position: fixed; z-index: 10; font-family: var(--font-mono); font-size: 13px; letter-spacing: .04em; }
+.back { top: calc(14px + env(safe-area-inset-top, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); color: var(--key); text-decoration: none; opacity: .7; padding: 6px 4px; background: var(--desk); }
+.back:hover, .back:focus-visible { opacity: 1; }
+.bar { left: 50%; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 0); display: flex; gap: 6px; opacity: 0; pointer-events: none; transition: opacity .4s, transform .4s; }
+.bar.show { opacity: 1; pointer-events: auto; }
+.bar button { appearance: none; border: 2px solid var(--key); background: var(--paper); color: var(--key); font: inherit; width: 52px; height: 44px; cursor: pointer; display: grid; place-items: center; padding: 0; }
+.bar button:hover, .bar button:focus-visible { background: var(--yellow); }
+.bar button svg { width: 20px; height: 20px; display: block; }
+.bar button:disabled { opacity: .35; cursor: default; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet, .ink, .panel::before, .ghosted .ghost, .bar { transition: none; }
+}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="sheet cut" id="sheet">
+
+    <article class="panel" style="--l:40;--t:40;--w:620;--h:440" aria-label="Shubham Chandra">
+      <div class="ink y"><i class="round" style="left:300px;top:-180px;width:460px;height:460px"></i></div>
+      <div class="ink b"><i class="round" style="left:-120px;top:250px;width:300px;height:300px"></i><i class="stripes-d" style="left:420px;top:300px;width:260px;height:200px"></i></div>
+      <div class="ink p"><i class="round" style="left:470px;top:60px;width:120px;height:120px"></i></div>
+      <div class="text">
+        <h1 class="name ghosted"><span class="ghost" aria-hidden="true">Shubham<br>Chandra</span>Shubham<br>Chandra</h1>
+        <p class="place">Chicago</p>
+        <nav class="links" aria-label="Contact">
+          <a href="#">Email</a>
+          <a href="#">LinkedIn</a>
+          <a href="#">Curriculum vitae</a>
+        </nav>
+      </div>
+    </article>
+
+    <article class="panel" style="--l:690;--t:40;--w:450;--h:440" aria-label="Before">
+      <div class="ink b"><i style="left:330px;top:-20px;width:70px;height:520px"></i><i style="left:412px;top:120px;width:40px;height:400px"></i></div>
+      <div class="ink y"><i class="dots" style="left:300px;top:0;width:200px;height:140px"></i></div>
+      <div class="ink p"><i class="round" style="left:340px;top:330px;width:90px;height:90px"></i></div>
+      <div class="text">
+        <p class="kicker">Before</p>
+        <ul class="roles">
+          <li><span class="org ghosted"><span class="ghost" aria-hidden="true">Garner Health</span>Garner Health</span><span class="what">Head of Business Operations</span><span class="years">2021–22</span></li>
+          <li><span class="org ghosted"><span class="ghost" aria-hidden="true">NJOY</span>NJOY</span><span class="what">Head of Strategy, Office of the CEO</span><span class="years">2018–21</span></li>
+          <li><span class="org ghosted"><span class="ghost" aria-hidden="true">L.E.K. Consulting</span>L.E.K. Consulting</span><span class="what">Associate</span><span class="years">2016–18</span></li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="panel" style="--l:1170;--t:40;--w:190;--h:440" aria-hidden="true">
+      <div class="ink b"><i style="left:-10px;top:250px;width:220px;height:90px"></i></div>
+      <div class="ink p"><i class="round" style="left:30px;top:120px;width:150px;height:150px"></i></div>
+      <div class="ink y"><i style="left:-10px;top:340px;width:220px;height:120px"></i></div>
+    </article>
+
+    <article class="panel" style="--l:40;--t:510;--w:380;--h:450">
+      <div class="ink y"><i class="round" style="left:-100px;top:-120px;width:400px;height:400px"></i></div>
+      <div class="ink p"><i class="stripes-v" style="left:30px;top:330px;width:400px;height:140px"></i></div>
+      <div class="text">
+        <p class="lead ghosted"><span class="ghost" aria-hidden="true">I do better with things that take a little time to make sense of.</span>I do better with things that take a little time to make sense of.</p>
+      </div>
+    </article>
+
+    <article class="panel" style="--l:450;--t:510;--w:420;--h:450">
+      <div class="ink p"><i class="stripes-v" style="left:-20px;top:350px;width:480px;height:130px"></i></div>
+      <div class="ink b"><i class="round" style="left:290px;top:310px;width:200px;height:200px"></i></div>
+      <div class="ink y"><i class="round" style="left:320px;top:-60px;width:160px;height:160px"></i></div>
+      <div class="text">
+        <p class="body">I’m drawn to interesting textures, small restaurants that don’t advertise themselves, and travel that doesn’t come with a gift shop. I like being in places that aren’t trying to perform for you. Street level feels honest: you’re walking, noticing, adjusting. In Kerala, that’s a fabric market, not a landmark. Heat, noise, color, bargaining, getting a little turned around and not minding it.</p>
+      </div>
+    </article>
+
+    <article class="panel" style="--l:900;--t:510;--w:460;--h:240">
+      <div class="ink b"><i style="left:330px;top:-50px;width:120px;height:120px"></i></div>
+      <div class="ink y"><i style="left:380px;top:0;width:120px;height:120px"></i></div>
+      <div class="ink p"><i class="round" style="left:-50px;top:180px;width:110px;height:110px"></i></div>
+      <div class="text">
+        <p class="body">Back home, I pay attention to craft. Clothes are an easy example: weave, weight, hand feel, drape. I’m not interested in labels as a proxy for taste. I’m interested in the work. Cooking is the same impulse. Start with something solid, then tinker until it tastes like mine.</p>
+      </div>
+    </article>
+
+    <article class="panel" style="--l:900;--t:780;--w:460;--h:180">
+      <div class="ink b"><i class="round" style="left:330px;top:20px;width:190px;height:190px"></i></div>
+      <div class="ink p"><i class="round" style="left:370px;top:60px;width:110px;height:110px"></i></div>
+      <div class="ink y"><i class="dots" style="left:-20px;top:110px;width:200px;height:100px"></i></div>
+      <div class="text">
+        <p class="body">I read a lot of sci-fi, especially the kind that starts fun and ends up making you stare at the ceiling for ten minutes. Consciousness, time, huge structures, weird rules.</p>
+      </div>
+    </article>
+
+  </div>
+</div>
+
+<a class="chrome back" href="../index.html">All sketches</a>
+<nav class="chrome bar" id="bar" aria-label="Panels">
+  <button id="prev" type="button" aria-label="Previous panel"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l-6 6 6 6"/></svg></button>
+  <button id="page" type="button" aria-label="Whole page"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3.5" y="2.5" width="13" height="15"/><path d="M6.5 7h7M6.5 10.5h7M6.5 14h4"/></svg></button>
+  <button id="next" type="button" aria-label="Next panel"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4l6 6-6 6"/></svg></button>
+</nav>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const sheet = document.getElementById('sheet'), stage = document.getElementById('stage'), bar = document.getElementById('bar')
+  const panels = [...document.querySelectorAll('.panel')].filter(p => !p.hasAttribute('aria-hidden'))
+  const SW = 1400, SH = 1000
+  const rectOf = p => ({ l: +p.style.getPropertyValue('--l'), t: +p.style.getPropertyValue('--t'), w: +p.style.getPropertyValue('--w'), h: +p.style.getPropertyValue('--h') })
+  let cur = -1
+  const W = () => innerWidth, H = () => innerHeight
+
+  // the camera: hold the whole sheet, or one panel of it
+  function place () {
+    const zoomed = cur >= 0
+    const r = zoomed ? rectOf(panels[cur]) : { l: 0, t: 0, w: SW, h: SH }
+    const padX = zoomed ? 12 : 28, top = zoomed ? 52 : 44, bottom = zoomed ? 84 : 28
+    const s = Math.min((W() - padX * 2) / r.w, (H() - top - bottom) / r.h)
+    const tx = (W() - r.w * s) / 2 - r.l * s
+    const ty = top + (H() - top - bottom - r.h * s) / 2 - r.t * s
+    sheet.style.transform = `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) scale(${s.toFixed(4)})`
+    panels.forEach((p, i) => { p.classList.toggle('on', i === cur); if (i === cur) p.setAttribute('aria-current', 'true'); else p.removeAttribute('aria-current') })
+    bar.classList.toggle('show', zoomed)
+    document.getElementById('prev').disabled = cur <= 0
+    document.getElementById('next').disabled = cur >= panels.length - 1
+  }
+  const show = i => { cur = Math.max(-1, Math.min(panels.length - 1, i)); place() }
+
+  // in your hand, the sheet is too small to read: start on the first panel
+  const fitScale = Math.min((W() - 56) / SW, (H() - 72) / SH)
+  show(fitScale < .5 ? 0 : -1)
+  requestAnimationFrame(() => requestAnimationFrame(() => { if (!reduce) sheet.classList.remove('cut') }))
+
+  // tap a panel to hold it; tap it again, or the desk, to put it down
+  let down = null, swiped = false
+  stage.addEventListener('pointerdown', e => { down = { x: e.clientX, y: e.clientY, t: performance.now() }; swiped = false })
+  stage.addEventListener('pointerup', e => {
+    if (!down) return
+    const dx = e.clientX - down.x, dy = e.clientY - down.y
+    down = null
+    if (cur >= 0 && Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.4) { swiped = true; show(cur + (dx < 0 ? 1 : -1)); return }
+    if (Math.hypot(dx, dy) > 10) swiped = true
+  })
+  stage.addEventListener('click', e => {
+    if (swiped) { swiped = false; return }
+    if (e.target.closest('a')) return
+    const p = e.target.closest('.panel')
+    if (!p || p.hasAttribute('aria-hidden')) { if (cur >= 0) show(-1); return }
+    const i = panels.indexOf(p)
+    show(i === cur ? -1 : i)
+  })
+  document.getElementById('prev').addEventListener('click', e => { e.stopPropagation(); show(cur - 1) })
+  document.getElementById('next').addEventListener('click', e => { e.stopPropagation(); show(cur + 1) })
+  document.getElementById('page').addEventListener('click', e => { e.stopPropagation(); show(-1) })
+  bar.addEventListener('pointerdown', e => e.stopPropagation())
+  addEventListener('keydown', e => {
+    if (e.key === 'Escape') show(-1)
+    else if (e.key === 'ArrowRight') show(cur + 1)
+    else if (e.key === 'ArrowLeft') show(cur <= 0 ? -1 : cur - 1)
+    else if (e.key === 'Enter' && document.activeElement === document.body) show(0)
+    else return
+    e.preventDefault()
+  })
+  addEventListener('focusin', e => { const p = e.target.closest('.panel'); if (p && cur !== -1 && panels.indexOf(p) !== cur) show(panels.indexOf(p)) })
+  addEventListener('resize', place)
+
+  // under a mouse, the panel you read comes into register; the inks lean toward you a little
+  panels.forEach(p => {
+    p.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') p.classList.add('hot') })
+    p.addEventListener('pointerleave', () => { p.classList.remove('hot'); p.style.removeProperty('--px'); p.style.removeProperty('--py') })
+    p.addEventListener('pointermove', e => {
+      if (e.pointerType !== 'mouse' || reduce) return
+      const r = p.getBoundingClientRect()
+      p.style.setProperty('--px', ((e.clientX - r.left) / r.width * 2 - 1).toFixed(2))
+      p.style.setProperty('--py', ((e.clientY - r.top) / r.height * 2 - 1).toFixed(2))
+    })
+  })
+})()
+</script>
+</body>
+</html>

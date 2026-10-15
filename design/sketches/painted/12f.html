@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Painted words, five bursts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&display=swap">
+<style>
+/* layout: one screen, no scrolling. On the left, a text area. On the right, the parts of his life written in
+   brushstrokes; they deepen in colour as you come near, and a click unfolds a swirl of paint that fills the left. */
+:root {
+  --ground: #a39b92;
+  --ink: #241e19;
+  --ink-soft: #3f362d;
+  --link: #9c3f1b;
+  --font-ui: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-text: "Source Serif 4", Georgia, "Times New Roman", serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--ground); color: var(--ink); }
+body { font-family: var(--font-text); -webkit-font-smoothing: antialiased; }
+canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+#ground { z-index: 0; }
+#wet { z-index: 1; }
+.wordc { position: fixed; z-index: 1; pointer-events: none; transform-origin: 50% 55%; }
+.wordfx { transition: opacity 1.6s ease; }
+#words { z-index: 1; }
+.stage { position: relative; z-index: 2; height: 100%; display: grid; grid-template-columns: 1fr 1fr;
+  padding: calc(40px + env(safe-area-inset-top, 0px)) max(48px, env(safe-area-inset-right, 0px)) calc(40px + env(safe-area-inset-bottom, 0px)) max(56px, env(safe-area-inset-left, 0px)); }
+.text { display: grid; align-content: center; gap: 2.2rem; max-width: 30rem; }
+.name { margin: 0; font-family: var(--font-ui); font-weight: 650; font-size: clamp(1.9rem, 1.3rem + 1.8vw, 2.7rem); letter-spacing: -.014em; line-height: 1.04; }
+.links { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; margin: .7rem 0 0; font-family: var(--font-ui); font-size: .95rem; }
+.links a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--link); text-decoration-thickness: 1.5px; text-underline-offset: .28em; }
+.panel { display: grid; gap: 1rem; transition: opacity .35s ease; }
+.panel.out { opacity: 0; }
+.panel h2 { margin: 0; font-family: var(--font-ui); font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.panel p { margin: 0; font-size: 1.12rem; line-height: 1.6; }
+.panel .lead { font-size: 1.4rem; line-height: 1.35; }
+.roles { list-style: none; margin: 0; padding: 0; display: grid; gap: .7rem; font-family: var(--font-ui); }
+.roles li { display: grid; grid-template-columns: 1fr auto; gap: .1rem 1rem; }
+.roles .what, .roles .when { color: var(--ink-soft); font-size: .92rem; font-variant-numeric: tabular-nums; }
+.roles .what { grid-column: 1 / -1; }
+/* the painted words are drawn on the canvas; these buttons sit over them for keyboards and screen readers */
+.tabs { position: fixed; inset: 0; z-index: 3; pointer-events: none; }
+.tabs button { position: absolute; pointer-events: auto; background: none; border: 0; padding: 0; margin: 0; color: transparent; font: inherit; cursor: pointer; border-radius: 10px; }
+.tabs button:focus-visible { outline: 2px solid var(--link); outline-offset: 6px; }
+.back { position: fixed; z-index: 4; top: calc(14px + env(safe-area-inset-top, 0px)); right: max(14px, env(safe-area-inset-right, 0px)); font-family: var(--font-ui); font-size: .78rem; color: var(--ink-soft); text-decoration: none; background: rgba(240, 233, 220, .85); padding: .32rem .7rem; border-radius: 999px; }
+.grain { position: fixed; inset: -50%; z-index: 5; pointer-events: none; opacity: .3; mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+@media (max-width: 760px) {
+  .stage { grid-template-columns: 1fr; grid-template-rows: 58% 42%; padding: calc(28px + env(safe-area-inset-top, 0px)) 24px calc(16px + env(safe-area-inset-bottom, 0px)); }
+  .text { align-content: start; gap: 1.3rem; }
+  .panel p { font-size: 1.02rem; line-height: 1.55; }
+  .panel .lead { font-size: 1.18rem; }
+}
+</style>
+</head>
+<body>
+<canvas id="ground" aria-hidden="true"></canvas>
+<canvas id="words" aria-hidden="true"></canvas>
+<div id="wordsBox" aria-hidden="true"></div>
+<canvas id="wet" aria-hidden="true"></canvas>
+<a class="back" href="../index.html">All sketches</a>
+<main class="stage">
+  <section class="text">
+    <header>
+      <h1 class="name">Shubham Chandra</h1>
+      <p class="links"><a href="#">Email</a><a href="#">LinkedIn</a><a href="#">Curriculum vitae</a></p>
+    </header>
+    <div class="panel" id="panel" aria-live="polite"></div>
+  </section>
+  <div></div>
+</main>
+<nav class="tabs" id="tabs" aria-label="Parts"></nav>
+<div class="grain" aria-hidden="true"></div>
+
+<script>
+(async () => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const STILL = location.search.includes('still')
+  const dpr = Math.min(2, window.devicePixelRatio || 1)
+  const gc = document.getElementById('ground'), g = gc.getContext('2d')
+  const wc = document.getElementById('words'), w = wc.getContext('2d')
+  const ec = document.getElementById('wet'), e2 = ec.getContext('2d')
+  const wordsBox = document.getElementById('wordsBox')
+  const panel = document.getElementById('panel'), nav = document.getElementById('tabs')
+  const rnd = (a, b) => a + Math.random() * (b - a)
+  const pick = a => a[Math.floor(Math.random() * a.length)]
+  const hex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]
+  const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t)
+  const css = (c, al) => `rgba(${c.map(Math.round).join(',')},${al})`
+  const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v))
+  const ease = p => p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2
+
+  // round 1's palette: a field of warm greys, and judicious bright colours
+  const GREY = ['#a8a097', '#b3aba1', '#9b938a', '#bfb6aa', '#8f8880', '#b3a48b', '#cdc2b2', '#80746a', '#a99a84'].map(hex)
+  // a deep warm ink for the words at rest, so they read against the grey
+  const INK_GREY = ['#4a433c', '#554d45', '#433c36', '#5b5249', '#4e463f'].map(hex)
+  const PALE = hex('#d8d0c4'), GROUND = hex('#a39b92')
+  const ACCENT = ['#e2a136', '#d4532f', '#dc6a84', '#3a63b4', '#2f8d84', '#eac34a', '#7a5bb0', '#e27a3a'].map(hex)
+  const mute = (c, k = 0.28) => mix(c, GROUND, k)
+  const hsh = (i, j) => { let h = Math.imul(i, 374761393) + Math.imul(j, 668265263) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296 }
+  const smo = t => t * t * (3 - 2 * t)
+  const vnoise = (x, y) => { const i = Math.floor(x), j = Math.floor(y), fx = smo(x - i), fy = smo(y - j), a = hsh(i, j), b = hsh(i + 1, j), c = hsh(i, j + 1), d = hsh(i + 1, j + 1); return a + (b - a) * fx + (c - a) * fy + (a - b - c + d) * fx * fy }
+  const TABS = [
+    { id: 'work', label: 'Work', fam: ['#3a63b4', '#2f8d84', '#6f8fd0'], comp: '#e2a136', html: '<h2>Work</h2><ul class="roles"><li><span>Digital Realty</span><span class="when">Now</span><span class="what">Go-to-market strategy and engineering</span></li><li><span>Garner Health</span><span class="when">2021–22</span><span class="what">Head of Business Operations</span></li><li><span>NJOY</span><span class="when">2018–21</span><span class="what">Head of Strategy, Office of the CEO</span></li><li><span>L.E.K. Consulting</span><span class="when">2016–18</span><span class="what">Associate</span></li></ul>' },
+    { id: 'me', label: 'Me', fam: ['#e2a136', '#e27a3a', '#eac34a'], comp: '#3a63b4', html: '<p class="lead">I do better with things that take a little time to make sense of.</p><p>Go-to-market strategy and engineering at Digital Realty, in Chicago. Outside work: small restaurants that don’t advertise themselves, clothes for their weave and drape, cooking until it tastes like mine, and a lot of sci-fi.</p>' },
+    { id: 'contact', label: 'Contact', fam: ['#d4532f', '#dc6a84', '#e2a136'], comp: '#2f8d84', html: '<h2>Contact</h2><p>If you’re building something interesting, or want to talk through startups, markets, or whatever you’re stuck on, write to me.</p><p>shubham.m.chandra@gmail.com</p>' },
+    { id: 'references', label: 'References', fam: ['#7a5bb0', '#3a63b4', '#dc6a84'], comp: '#eac34a', html: '<h2>References</h2><p class="lead">“His innate curiosity, tenacity and structured thinking allowed him to become a key contributor in our early strategy and capital raising initiatives.”</p><p>Greg Doyle, former CFO, NJOY. Two more, from Geremy Bass and Stephanie Fogle.</p>' },
+    { id: 'colophon', label: 'Colophon', fam: ['#2f8d84', '#5f9a6e', '#eac34a'], comp: '#d4532f', html: '<h2>Colophon</h2><p class="lead">Sites, like books, are made objects.</p><p>Every stroke here is painted by the page as you watch. Set in Source Serif 4 and Schibsted Grotesk. Written by hand in HTML, CSS and JavaScript, with no framework.</p>' }
+  ]
+  TABS.forEach(t => { t.rich = t.fam.map(h => mix(hex(h), hex('#a39b92'), 0.12)) })
+
+  // a stroke is never quite the same twice: width, edges, how it lands and how it ends
+  function shapeFor (len, wd, k, sky) {
+    let kind = Math.random()
+    if (sky) kind = kind < 0.5 ? kind * 0.88 : kind < 0.6 ? 0.6 : kind < 0.8 ? 0.8 : 0.95
+    const N = 14, s2 = Math.random() < 0.3 ? rnd(-0.05, 0.05) : 0
+    const prof = kind < 0.45 ? u => (u < 0.22 ? 0.7 + 0.3 * Math.sin(Math.PI / 2 * u / 0.22) : 1 - 0.78 * Math.pow(Math.max(0, u - 0.5) / 0.5, 1.2))
+      : kind < 0.75 ? u => Math.pow(Math.sin(Math.PI * (0.06 + 0.88 * u)), 0.65)
+        : kind < 0.88 ? u => (0.45 + 0.55 * Math.min(1, u / 0.8)) * (u > 0.85 ? 1 - (u - 0.85) / 0.15 * 0.7 : 1)
+          : () => 0.9
+    const mid = u => k * len * 2 * u * (1 - u) + s2 * len * Math.sin(Math.PI * 2 * u)
+    const split = Math.random() < 0.28, u1 = split ? 0.72 : 1
+    const top = [], bot = []
+    for (let i = 0; i <= N; i++) { const u = u1 * i / N, x = -len / 2 + u * len, h = wd / 2 * prof(u); top.push([x, mid(u) - h * (1 + rnd(-0.14, 0.14))]); bot.push([x, mid(u) + h * (1 + rnd(-0.14, 0.14))]) }
+    const body = new Path2D()
+    body.moveTo(top[0][0], top[0][1]); for (const p of top) body.lineTo(p[0], p[1])
+    if (!split) body.lineTo(len / 2 + wd * 0.25, mid(1))
+    for (let i = bot.length - 1; i >= 0; i--) body.lineTo(bot[i][0], bot[i][1])
+    if (Math.random() < (sky ? 0.22 : 0.55)) { const h0 = (bot[0][1] - top[0][1]) / 2, c0 = (bot[0][1] + top[0][1]) / 2; for (let t = 1; t < 6; t++) { const an = Math.PI / 2 + t / 6 * Math.PI; body.lineTo(top[0][0] + Math.cos(an) * h0 * 0.9, c0 - Math.sin(an) * h0) } } else body.lineTo(top[0][0] - wd * rnd(0.05, 0.35), top[0][1])
+    body.closePath()
+    if (split) {
+      const n = 2 + Math.floor(Math.random() * 2)
+      for (let f = 0; f < n; f++) {
+        const v = -0.6 + 1.2 * (f + 0.5) / n + rnd(-0.1, 0.1), fw = wd * rnd(0.16, 0.26), endU = 1 - rnd(0, 0.1), pts = []
+        for (let i = 0; i <= 6; i++) { const u = 0.68 + (endU - 0.68) * i / 6; pts.push([-len / 2 + u * len, mid(u) + v * wd / 2 * (1 + 0.5 * (u - 0.68)), fw * (1 - i / 6.5)]) }
+        body.moveTo(pts[0][0], pts[0][1] - pts[0][2] / 2); for (const p of pts) body.lineTo(p[0], p[1] - p[2] / 2)
+        for (let i = pts.length - 1; i >= 0; i--) body.lineTo(pts[i][0], pts[i][1] + pts[i][2] / 2); body.closePath()
+      }
+    }
+    return body
+  }
+  // one stroke of paint: a thin dark edge where it stands up, the body, and a ridge of light
+  function paint (ctx, x, y, a, sh, col, al, wd) {
+    const c = Math.cos(a), s = Math.sin(a)
+    ctx.setTransform(dpr * c, dpr * s, -dpr * s, dpr * c, dpr * (x + 1.2), dpr * (y + 1.4)); ctx.fillStyle = css(mix(col, [58, 42, 30], 0.3), 0.24 * al); ctx.fill(sh)
+    ctx.setTransform(dpr * c, dpr * s, -dpr * s, dpr * c, dpr * x, dpr * y); ctx.fillStyle = css(col, al); ctx.fill(sh)
+  }
+
+  // a loaded brush dragged along a current: a soft ribbon that bends with it, streaked with the two or three paints
+  // on the brush, ridged where the light from the upper left catches it, and breaking into dry bristle marks at the tail.
+  // lp: the current's points in local coordinates (head at -x, tail at +x); a: the angle it will be laid at.
+  const LIGHT = [-Math.SQRT1_2, -Math.SQRT1_2]
+  function dragStroke (lp, wd, col, col2, al, a) {
+    const n = lp.length, cum = [0]
+    for (let i = 1; i < n; i++) cum.push(cum[i - 1] + Math.hypot(lp[i][0] - lp[i - 1][0], lp[i][1] - lp[i - 1][1]))
+    const tot = cum[n - 1] || 1
+    const nrm = lp.map((p, i) => { const q0 = lp[Math.max(0, i - 1)], q1 = lp[Math.min(n - 1, i + 1)], dx = q1[0] - q0[0], dy = q1[1] - q0[1], d = Math.hypot(dx, dy) || 1; return [-dy / d, dx / d] })
+    // the body: a blunt, loaded landing; it runs out before the bristles do
+    const short = clamp((60 - tot) / 30), head = rnd(0.04, 0.09), uB = rnd(0.64, 0.78) + 0.16 * short, tip = rnd(0.2, 0.45), tl = rnd(0.25, 0.35)
+    const prof = u => (0.35 + 0.65 * Math.min(1, Math.pow(Math.max(u, 0) / head, 0.6))) * (u > uB - tl ? 1 - (1 - tip) * Math.pow(clamp((u - (uB - tl)) / tl), 1.3) : 1) * (1 - 0.24 * u)
+    const ph1 = rnd(0, 6.3), ph2 = rnd(0, 6.3), fq = rnd(0.12, 0.22)
+    const rag = (c, ph) => 1 + 0.07 * Math.sin(c * fq + ph) + 0.04 * Math.sin(c * fq * 2.7 + ph * 1.9)
+    const top = [], bot = []
+    let hy = 0, nB = 0
+    for (let i = 0; i < n; i++) {
+      const u = cum[i] / tot
+      hy = Math.max(hy, Math.abs(lp[i][1]) + wd * 0.6)
+      if (u > uB && nB > 1) continue
+      const h = wd / 2 * prof(u), t1 = h * rag(cum[i], ph1), t2 = h * rag(cum[i], ph2)
+      top.push([lp[i][0] + nrm[i][0] * t1, lp[i][1] + nrm[i][1] * t1]); bot.push([lp[i][0] - nrm[i][0] * t2, lp[i][1] - nrm[i][1] * t2]); nB++
+    }
+    const body = new Path2D()
+    body.moveTo(top[0][0], top[0][1]); for (let i = 1; i < nB; i++) body.lineTo(top[i][0], top[i][1])
+    for (let i = nB - 1; i >= 0; i--) body.lineTo(bot[i][0], bot[i][1])
+    body.closePath()
+    // the paint on the brush: its own colour, the neighbouring one, and a lighter value, streaked along the bristles
+    const lite = mix(col, [250, 243, 226], 0.38), dark = mix(col, [34, 24, 18], 0.22)
+    const nb = 7 + Math.floor(Math.random() * 4), br = []
+    for (let b = 0; b < nb; b++) {
+      const v = -0.84 + 1.68 * (b + 0.5) / nb + rnd(-0.08, 0.08), r = Math.random()
+      const c = r < 0.38 ? mix(col2, col, rnd(0, 0.3)) : r < 0.68 ? mix(lite, col, rnd(0, 0.35)) : r < 0.9 ? dark : col
+      // staggered ends: some stop inside the body, most run on past it as dry streaks
+      const u0 = rnd(0.0, 0.16), u1 = Math.min(1, Math.random() < 0.2 ? rnd(0.5, uB) : rnd(uB + 0.04 * (1 - short), 1.06 - 0.08 * short)), p = new Path2D()
+      let started = false
+      for (let i = 0; i < n; i++) {
+        const u = cum[i] / tot; if (u < u0 || u > u1) continue
+        const off = v * wd / 2 * 0.88 * Math.max(prof(Math.min(u, uB)), Math.min(1, u / head) * 0.75)
+        const px = lp[i][0] + nrm[i][0] * off, py = lp[i][1] + nrm[i][1] * off
+        if (started) p.lineTo(px, py); else { p.moveTo(px, py); started = true }
+      }
+      if (started) br.push({ p, w: rnd(0.9, 2.1), css: css(c, al * rnd(0.6, 0.95)) })
+    }
+    // the ridge: a thin light line on the edge that faces the upper left, a thin dark one on the edge away from it
+    const face = -Math.sin(a) * LIGHT[0] + Math.cos(a) * LIGHT[1], k = 0.4 + 0.6 * Math.abs(face)
+    const litE = face > 0 ? top : bot, shdE = face > 0 ? bot : top
+    const edge = (E, inset) => { const p = new Path2D(), i0 = Math.floor(nB * rnd(0.05, 0.3)), m = Math.max(i0 + 2, Math.floor(nB * rnd(0.6, 0.92))); p.moveTo(E[i0][0] + (lp[i0][0] - E[i0][0]) * inset, E[i0][1] + (lp[i0][1] - E[i0][1]) * inset); for (let i = i0 + 1; i < m; i++) p.lineTo(E[i][0] + (lp[i][0] - E[i][0]) * inset, E[i][1] + (lp[i][1] - E[i][1]) * inset); return p }
+    const hiP = edge(litE, 0.18), loP = edge(shdE, 0.05)
+    const hiC = css(mix(col, [255, 250, 238], 0.55), rnd(0.25, 0.4) * k * al), loC = css(mix(col, [40, 28, 20], 0.55), rnd(0.25, 0.4) * k * al)
+    const fill = css(col, al)
+    const draw = (ctx, x, y, a) => {
+      const c = Math.cos(a), s = Math.sin(a)
+      ctx.setTransform(dpr * c, dpr * s, -dpr * s, dpr * c, dpr * x, dpr * y); ctx.fillStyle = fill; ctx.fill(body)
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round'
+      for (const q of br) { ctx.lineWidth = q.w; ctx.strokeStyle = q.css; ctx.stroke(q.p) }
+      ctx.lineWidth = 1; ctx.strokeStyle = loC; ctx.stroke(loP)
+      ctx.lineWidth = 0.9; ctx.strokeStyle = hiC; ctx.stroke(hiP)
+    }
+    return { draw, hy }
+  }
+
+  let W = 0, H = 0, wide = true, labels = [], textBox = null, current = TABS[1]
+  const pointer = { x: -1e4, y: -1e4 }
+
+  // the ground: round 1's grey field, laid once, quiet
+  function layGround () {
+    g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, gc.width, gc.height)
+    const cell = 30, PALE_GREYS = ['#cdc2b2', '#c6bdb0', '#d4cbbe'].map(hex)
+    for (let y = -cell; y < H + cell; y += cell) {
+      for (let x = -cell; x < W + cell; x += cell) {
+        const px = x + rnd(0, cell), py = y + rnd(0, cell)
+        let a = 0.85 * (Math.sin(px * 0.0042 + 1.3) + Math.cos(py * 0.0037) + 0.6 * Math.sin((px + py) * 0.0019)) + rnd(-0.12, 0.12)
+        let len = rnd(22, 58), wd = rnd(4, 9.5)
+        const edge = Math.abs(px - W / 2) / (W / 2)
+        let col = Math.random() < 0.015 + 0.2 * edge * edge * edge ? mute(pick(ACCENT)) : pick(GREY)
+        let dw = 1e9
+        for (const L of labels) dw = Math.min(dw, Math.hypot(Math.max(L.x + 6 - px, 0, px - (L.x + L.w - 6)), Math.max(L.y + L.h * 0.12 - py, 0, py - (L.y + L.h * 0.9))))
+        if (gatherAt(px, py) > hsh(Math.round(px) * 7, Math.round(py) * 13) * 0.15 + 0.1) continue
+        paint(g, px, py, a, shapeFor(len + wd * 0.6, wd * 1.3, rnd(-0.18, 0.18)), col, 0.9, wd)
+      }
+    }
+  }
+
+  // the painting's own drift, so the words can lean with it
+  const groundAngle = (px, py) => 0.85 * (Math.sin(px * 0.0042 + 1.3) + Math.cos(py * 0.0037) + 0.6 * Math.sin((px + py) * 0.0019))
+  function glyphAt (px, py) {
+    for (const L of labels) {
+      const lx = Math.round(px - L.nx), ly = Math.round(py - L.ny)
+      if (lx < 1 || ly < 1 || lx >= L.nw - 1 || ly >= L.nh - 1) continue
+      const k = ly * L.nw + lx
+      return { a: L.mask[k], gx: L.GX[k], gy: L.GY[k] }
+    }
+    return null
+  }
+  function gatherAt (px, py) {
+    for (const L of labels) { const lx = Math.round(px - L.nx), ly = Math.round(py - L.ny); if (lx >= 0 && ly >= 0 && lx < L.nw && ly < L.nh) return L.G[ly * L.nw + lx] }
+    return 0
+  }
+  const inGlyph = (px, py) => { const q = glyphAt(px, py); return q && q.a > 110 }
+  // near a letter's edge, a stroke turns to run along it, so the paint flows round the word
+  function aroundWords (px, py, a) {
+    let best = null
+    for (const dx of [-9, 0, 9]) for (const dy of [-9, 0, 9]) { const q = glyphAt(px + dx, py + dy); if (q && (q.gx || q.gy) && (!best || Math.hypot(q.gx, q.gy) > Math.hypot(best.gx, best.gy))) best = q }
+    if (!best || Math.hypot(best.gx, best.gy) < 200) return a
+    const ta = Math.atan2(best.gy, best.gx) + Math.PI / 2, d = Math.atan2(Math.sin(2 * (ta - a)), Math.cos(2 * (ta - a))) / 2
+    return a + d * 0.75
+  }
+
+  function boxBlur (src, w, h, r) {
+    const tmp = new Float32Array(w * h), out = new Float32Array(w * h), n = 2 * r + 1
+    for (let y = 0; y < h; y++) { let sum = 0; for (let x = -r; x <= r; x++) sum += src[y * w + Math.min(w - 1, Math.max(0, x))]; for (let x = 0; x < w; x++) { tmp[y * w + x] = sum / n; sum += src[y * w + Math.min(w - 1, x + r + 1)] - src[y * w + Math.max(0, x - r)] } }
+    for (let x = 0; x < w; x++) { let sum = 0; for (let y = -r; y <= r; y++) sum += tmp[Math.min(h - 1, Math.max(0, y)) * w + x]; for (let y = 0; y < h; y++) { out[y * w + x] = sum / n; sum += tmp[Math.min(h - 1, y + r + 1) * w + x] - tmp[Math.max(0, y - r) * w + x] } }
+    return out
+  }
+  // the words are where the painting gathers: near a word its strokes grow more numerous, smaller, darker,
+  // and turn to follow the letters, until inside them they are the letters; painted with the ground around them
+  async function writeWords () {
+    await document.fonts.load('600 80px "Source Serif 4"')
+    labels = []
+    nav.textContent = ''; wordsBox.textContent = ''
+    const fs = wide ? Math.min(100, H / 7.6, W * 0.062) : Math.min(42, W * 0.105)
+    const FONT = `600 ${fs}px "Source Serif 4"`, P = Math.round(fs * 0.55)
+    const off = document.createElement('canvas'), o = off.getContext('2d', { willReadFrequently: true })
+    // on a phone the words flow in rows under the text, wrapping where they run out of room
+    o.font = FONT
+    const flow = []
+    if (!wide) { let cx = 24, row = 0; TABS.forEach(t => { const tw = Math.ceil(o.measureText(t.label).width) + 12; if (cx + tw > W - 20 && cx > 24) { cx = 24 + (row % 2 ? 0 : 18); row++ } flow.push([cx, row]); cx += tw + 40 }) }
+    const rows = flow.length ? flow[flow.length - 1][1] + 1 : 1
+    TABS.forEach((t, i) => {
+      o.font = FONT
+      const tw = Math.ceil(o.measureText(t.label).width) + 12, th = Math.ceil(fs * 1.15)
+      let x, y
+      if (wide) { x = W * 0.56 + [0.03, 0.08, 0, 0.04, 0.015][i] * W; y = H * 0.17 + i * (H * 0.66 / (TABS.length - 1)) - th / 2 }
+      else { x = flow[i][0]; y = H * 0.6 + flow[i][1] * Math.min(H * 0.34 / rows, fs * 2) + 6 }
+      const NW = tw + 2 * P, NH = th + 2 * P, nx = x - P, ny = y - P
+      off.width = NW; off.height = NH
+      o.clearRect(0, 0, NW, NH); o.font = FONT; o.fillStyle = '#000'; o.textBaseline = 'alphabetic'
+      o.fillText(t.label, P + 6, P + th * 0.8)
+      const img = o.getImageData(0, 0, NW, NH).data
+      const mask = new Uint8Array(NW * NH); for (let k = 0; k < mask.length; k++) mask[k] = img[k * 4 + 3]
+      const A = (px, py) => (px < 0 || py < 0 || px >= NW || py >= NH) ? 0 : mask[py * NW + px]
+      const GX = new Float32Array(NW * NH), GY = new Float32Array(NW * NH)
+      for (let yy = 1; yy < NH - 1; yy++) for (let xx = 1; xx < NW - 1; xx++) {
+        GX[yy * NW + xx] = (A(xx + 1, yy - 1) + 2 * A(xx + 1, yy) + A(xx + 1, yy + 1)) - (A(xx - 1, yy - 1) + 2 * A(xx - 1, yy) + A(xx - 1, yy + 1))
+        GY[yy * NW + xx] = (A(xx - 1, yy + 1) + 2 * A(xx, yy + 1) + A(xx + 1, yy + 1)) - (A(xx - 1, yy - 1) + 2 * A(xx, yy - 1) + A(xx + 1, yy - 1))
+      }
+      // how close to a letter: the letters softened outward
+      const rb = Math.max(4, Math.round(fs * 0.12))
+      let B = boxBlur(Float32Array.from(mask), NW, NH, rb); B = boxBlur(B, NW, NH, rb)
+      const rad = Math.max(3, Math.round(fs * 0.075))
+      const along = (sx, sy) => {
+        let jxx = 0, jyy = 0, jxy = 0
+        for (let dy = -rad; dy <= rad; dy += 2) for (let dx = -rad; dx <= rad; dx += 2) {
+          const xx = sx + dx, yy = sy + dy; if (xx < 0 || yy < 0 || xx >= NW || yy >= NH) continue
+          const gx = GX[yy * NW + xx], gy = GY[yy * NW + xx]; jxx += gx * gx; jyy += gy * gy; jxy += gx * gy
+        }
+        if (jxx + jyy < 1e5) return -Math.PI / 2
+        return 0.5 * Math.atan2(2 * jxy, jxx - jyy) + Math.PI / 2
+      }
+      const strokes = [], step = Math.max(2.6, fs * 0.05), far = step * step / 760
+      for (let py = 0; py < NH; py += step) {
+        for (let px = 0; px < NW; px += step) {
+          const sx = Math.min(NW - 2, Math.max(1, Math.round(px + rnd(0, step)))), sy = Math.min(NH - 2, Math.max(1, Math.round(py + rnd(0, step))))
+          const k = sy * NW + sx, inL = mask[k] > 110, l = inL ? 1 : smo(clamp((B[k] / 255 - 0.02) / 0.42)) * 0.85
+          if (!inL && l < (hsh(sx * 7 + i, sy * 13) * 0.15 + 0.1)) continue
+          if (!inL && l > 0.72) continue
+          if (Math.random() > far + (1 - far) * Math.pow(l, 1.3)) continue
+          const fa = groundAngle(nx + sx, ny + sy)
+          let la
+          if (inL) la = along(sx, sy)
+          else { const bx = B[k + 1] - B[k - 1], by = B[k + NW] - B[k - NW]; la = Math.hypot(bx, by) > 0.4 ? Math.atan2(by, bx) + Math.PI / 2 : fa }
+          const dd = Math.atan2(Math.sin(2 * (la - fa)), Math.cos(2 * (la - fa))) / 2
+          const a = inL ? la + dd * 0.25 + rnd(-0.08, 0.08) : fa + dd * Math.pow(l, 0.7) + rnd(-0.1, 0.1)
+          const len = inL ? fs * rnd(0.16, 0.27) : rnd(22, 58) * (1 - 0.45 * l), wd = inL ? fs * rnd(0.06, 0.088) : rnd(4, 9.5) * (1 - 0.3 * l)
+          strokes.push({ x: sx, y: sy, a, sh: shapeFor(len + wd * 0.6 * (1 - l), wd * (1.3 - 0.3 * l), rnd(-0.14, 0.14)), grey: inL ? pick(INK_GREY) : mix(pick(GREY), pick(INK_GREY), 0.3 * Math.pow(l, 1.5)), rich: mix(pick(t.rich), [46, 30, 26], inL ? 0.38 : 0.1), l, lag: Math.random() * 0.35, wd })
+        }
+      }
+      // the ground round the word first, gathering inward, and the letters last, laid into it while it is wet
+      strokes.sort((p, q) => (p.l + Math.random() * 0.25) - (q.l + Math.random() * 0.25))
+      const cv = document.createElement('canvas'); cv.className = 'wordc'
+      cv.width = Math.round(NW * dpr); cv.height = Math.round(NH * dpr)
+      Object.assign(cv.style, { left: nx + 'px', top: ny + 'px', width: NW + 'px', height: NH + 'px' })
+      wordsBox.appendChild(cv)
+      const b = document.createElement('button')
+      b.type = 'button'; b.textContent = t.label; b.setAttribute('aria-pressed', t === current ? 'true' : 'false')
+      Object.assign(b.style, { left: x + 'px', top: y + 'px', width: tw + 'px', height: th + 'px' })
+      b.addEventListener('click', () => choose(t))
+      b.addEventListener('focus', () => { lab.focus = true }); b.addEventListener('blur', () => { lab.focus = false })
+      nav.appendChild(b)
+      const G = new Float32Array(NW * NH); for (let k = 0; k < G.length; k++) G[k] = mask[k] > 110 ? 1 : smo(clamp((B[k] / 255 - 0.02) / 0.42)) * 0.85
+      const fx = document.createElement('canvas'); fx.className = 'wordc wordfx'; fx.width = cv.width; fx.height = cv.height
+      Object.assign(fx.style, { left: nx + 'px', top: ny + 'px', width: NW + 'px', height: NH + 'px' })
+      wordsBox.appendChild(fx)
+      const lab = { t, x, y, w: tw, h: th, nx, ny, nw: NW, nh: NH, G, strokes, cv, ctx: cv.getContext('2d'), fs, fx, fxc: fx.getContext('2d'), mask, GX, GY, p: 0, target: 0, focus: false, burst: 0, button: b, dirty: true }
+      labels.push(lab)
+    })
+  }
+
+  // a word's colour comes up through it from your side first, strongest in the letters, fading into the paint round them
+  function drawLabel (L) {
+    const c = L.ctx
+    c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, L.cv.width, L.cv.height)
+    for (const s of L.strokes) {
+      const near = clamp(1 - Math.hypot(L.nx + s.x - pointer.x, L.ny + s.y - pointer.y) / (L.w * 1.3))
+      const t = clamp((L.p - s.lag * (1 - near)) / 0.6) * (0.15 + 0.85 * s.l)
+      paint(c, s.x, s.y, s.a, s.sh, t <= 0 ? s.grey : mix(s.grey, s.rich, ease(t)), 0.93, s.wd)
+    }
+  }
+  function drawWords () { for (const L of labels) { drawLabel(L); L.dirty = false } }
+
+  // the burst: the word's own strokes are where the painting starts. Some strokes in the letters light up and run
+  // out of the word as currents, flung outward and caught by the drift. Every later current is laid beside one
+  // already there, so the whole left side grows out of the word, as a painter works outward from the first marks.
+  let queue = []
+  // each book bursts its own way. Me: a sunburst. Work: a wake streaming back through the years. Contact: a fan,
+  // reaching out. References: a galaxy, other people's words drawn round into one great swirl. Colophon: a weave
+  // of two crossing currents, for how the thing is made.
+  const FAN = { thJ: 0.45, nV: [7, 12], mainR: [0.14, 0.2], radial: 2.6, radialR: 0.2, bias: 0.3, steer0: 0.035, steerMax: 0.28, steerRamp: 520, spinP: 0.3, spinAmp: 0.085, wav: 1, cross: 0, sepK: 1, srcMax: 110 }
+  const BURST = {
+    contact: FAN,
+    me: { ...FAN, thJ: 0.6, nV: [3, 6], radial: 4.6, radialR: 0.5, bias: 0.04, steer0: 0, steerMax: 0.12, steerRamp: 1500, spinP: 0.08, spinAmp: 0.03, wav: 0.6, srcMax: 150 },
+    work: { ...FAN, thJ: 0.08, nV: [0, 1], noMain: true, radial: 1.1, radialR: 0.12, bias: 1.3, steer0: 0.12, steerMax: 0.4, steerRamp: 300, spinP: 0, wav: 0.9, longK: 1.7 },
+    // weave: no swirls; a cloth with a gentle drape. weaveSp is the thread spacing (px, desktop); the word's fringe of
+    // loose threads reaches radialR before the cloth takes over
+    colophon: { ...FAN, thJ: 0.3, nV: [0, 0], noMain: true, radial: 2.2, radialR: 0.15, cross: Math.PI / 2, spinP: 0, spinAmp: 0, weave: true, weaveSp: 18, weaveUnder: true },
+    references: { ...FAN, nV: [2, 4], mainR: [0.3, 0.37], galaxy: true, radial: 1.6, radialR: 0.14, bias: 0.4, steer0: 0.08, steerMax: 0.42, steerRamp: 360, spinP: 1, spinAmp: 0.05 }
+  }
+  function swirl (L, reach = 1) {
+    const B = BURST[L.t.id] || FAN
+    const ox = L.x + L.w / 2, oy = L.y + L.h / 2, seed = Math.random() * 100, fs = L.fs
+    const LW = wide ? W * 0.64 : W, LH = wide ? H : H * 0.66, S = Math.min(LW, LH)
+    // the drift runs away from the word, a little uphill; how many swirls, how big, which way they turn is new each time
+    const theta0 = wide ? Math.PI + 0.18 * (B.thJ > 0.2 ? 1 : 0) + rnd(-B.thJ, B.thJ) : -Math.PI / 2 + rnd(-B.thJ - 0.1, B.thJ + 0.1)
+    const pareto = (min, alpha) => min / Math.pow(1 - Math.random() * 0.97, 1 / alpha)
+    const awayFromWord = (x, y, R) => Math.hypot(Math.max(L.x - x, 0, x - L.x - L.w), Math.max(L.y - y, 0, y - L.y - L.h)) > R * 1.1 + 30
+    const vort = []
+    for (let tries = 0; tries < 60 && !vort.length && !B.noMain; tries++) {
+      const v = { x: wide ? LW * (B.galaxy ? rnd(0.3, 0.45) : rnd(0.3, 0.72)) : LW * rnd(0.25, 0.75), y: wide ? LH * (B.galaxy ? rnd(0.38, 0.6) : rnd(0.22, 0.78)) : LH * (B.galaxy ? rnd(0.35, 0.5) : rnd(0.3, 0.7)), R: S * rnd(B.mainR[0], B.mainR[1]), d: Math.random() < 0.5 ? 1 : -1, ring: false, inward: B.galaxy ? rnd(0.2, 0.3) : rnd(0.15, 0.35), halo: true }
+      if (B.galaxy || awayFromWord(v.x, v.y, v.R)) vort.push(v)
+    }
+    const nV = Math.max(B.noMain ? 0 : 1, Math.round((wide ? 1 : 0.6) * rnd(B.nV[0], B.nV[1] + 0.99)))
+    for (let i = vort.length ? 1 : 0; i < nV; i++) {
+      const R = Math.min(S * 0.16, pareto(S * 0.028, 1.5))
+      let x, y, tries = 0
+      do { x = rnd(0, LW); y = rnd(0, LH); tries++ } while (tries < 60 && (vort.some(v => Math.hypot(v.x - x, v.y - y) < (v.R + R) * 1.15) || !awayFromWord(x, y, R)))
+      vort.push({ x, y, R, d: Math.random() < 0.5 ? 1 : -1, ring: Math.random() < 0.45, inward: rnd(0.08, 0.4), halo: Math.random() < 0.5 })
+    }
+    vort.forEach(v => { v.pop = mix(Math.random() < 0.6 ? hex(L.t.comp) : pick(ACCENT), GROUND, 0.35) })
+    const seams = Array.from({ length: 1 + Math.floor(Math.random() * 2) }, () => ({ x: rnd(0, LW), y: rnd(0, LH), R: S * rnd(0.09, 0.15) }))
+    const voids = Array.from({ length: Math.floor(Math.random() * 2) + 1 }, () => ({ x: rnd(LW * 0.05, LW * 0.8), y: rnd(LH * 0.05, LH * 0.95), rx: S * rnd(0.05, 0.1), ry: S * rnd(0.035, 0.07), t: rnd(-0.6, 0.6) }))
+    // near the word the current points straight out of it, like a burst; further off the drift and the swirls take over
+    const ea = L.w * 0.5 + 24, eb = L.h * 0.5 + 24
+    // ── weave (Colophon) ── the cloth. (U, V) are the cloth's own coordinates: U runs along the weft, away from the
+    // word; V across it, along the warp. A slow drape bends both, so the threads wave like hand-woven cloth rather than
+    // a ruled grid. Weft thread i lies at V = (i + 0.5) sp, warp thread j at U = (j + 0.5) sp, and at each crossing
+    // (i, j) one of them is on top: the warp when i + j is odd. The field is built from this map, so the bands and the
+    // threads agree by construction. Near the word both families still burst out of the letters: the cloth's fringe.
+    if (B.weave) vort.length = 0
+    const WV = B.weave ? { sp: B.weaveSp * (wide ? 1 : 0.8), a1: rnd(30, 46), l1: rnd(240, 320), p1: rnd(0, 6.3), a2: rnd(18, 30), l2: rnd(220, 300), p2: rnd(0, 6.3), a3: rnd(40, 60), c: Math.cos(theta0), s: Math.sin(theta0) } : null
+    const cloth = (x, y) => {
+      const dx = x - ox, dy = y - oy, u = dx * WV.c + dy * WV.s, v = -dx * WV.s + dy * WV.c
+      return [u + WV.a2 * Math.sin(v / WV.l2 + WV.p2), v + WV.a1 * Math.sin(u / WV.l1 + WV.p1) + WV.a3 * (vnoise(x / 320 + seed, y / 320 + 7) - 0.5)]
+    }
+    const clothGrad = (x, y, k) => [(cloth(x + 2, y)[k] - cloth(x - 2, y)[k]) / 4, (cloth(x, y + 2)[k] - cloth(x, y - 2)[k]) / 4]
+    // an orientation, not a direction: the weave's consumers (trace, the sources' steering) read it either way round
+    const weaveField = (x, y, fm) => {
+      const gr = clothGrad(x, y, fm ? 0 : 1)
+      let tx = -gr[1], ty = gr[0]; const tn = Math.hypot(tx, ty) || 1; tx /= tn; ty /= tn
+      const gx = (x - ox) / (ea * ea), gy = (y - oy) / (eb * eb), gn = Math.hypot(gx, gy) || 1
+      const dW = Math.hypot(Math.max(L.x - x, 0, x - L.x - L.w), Math.max(L.y - y, 0, y - L.y - L.h))
+      const sw = B.radial * Math.exp(-((dW / (S * B.radialR)) ** 2)), rx = gx / gn, ry = gy / gn
+      if (tx * rx + ty * ry < 0) { tx = -tx; ty = -ty }
+      return { a: Math.atan2(ty + ry * sw, tx + rx * sw), coreV: null, rr: 9, sw }
+    }
+    // ── end weave ──
+    const fieldAt = (x, y, fm = 0) => {
+      if (B.weave) return weaveField(x, y, fm)
+      const u = x * Math.cos(theta0) + y * Math.sin(theta0), v = -x * Math.sin(theta0) + y * Math.cos(theta0)
+      const wav = B.wav * (0.55 * Math.sin(v / 140 + seed) + 0.3 * Math.sin(u / 420 + v / 260 + seed * 1.7) + (vnoise(x / 260 + seed, y / 260) - 0.5) * 0.9)
+      let vx = Math.cos(theta0 + wav), vy = Math.sin(theta0 + wav), coreV = null, rr = 9
+      const gx = (x - ox) / (ea * ea), gy = (y - oy) / (eb * eb), gn = Math.hypot(gx, gy) || 1
+      const dW = Math.hypot(Math.max(L.x - x, 0, x - L.x - L.w), Math.max(L.y - y, 0, y - L.y - L.h))
+      const sw = B.radial * Math.exp(-((dW / (S * B.radialR)) ** 2))
+      vx += gx / gn * sw; vy += gy / gn * sw
+      for (const q of vort) {
+        const dx = x - q.x, dy = y - q.y, r = Math.hypot(dx, dy) || 1
+        if (r > q.R * 4) continue
+        const sp = (r < q.R ? r / q.R : Math.pow(q.R / r, 1.4)) * 2.6 * Math.exp(-((r / (q.R * 3.2)) ** 2))
+        vx += (-dy / r * q.d - (q.ring ? 0 : dx / r * q.inward)) * sp
+        vy += (dx / r * q.d - (q.ring ? 0 : dy / r * q.inward)) * sp
+        if (r < q.R * 1.2 && r / q.R < rr) { coreV = q; rr = r / q.R }
+      }
+      let a = Math.atan2(vy, vx)
+      for (const sm of seams) if (Math.hypot(x - sm.x, y - sm.y) < sm.R) a = Math.round(a / (Math.PI / 10)) * (Math.PI / 10)
+      return { a: a + fm * B.cross, coreV, rr }
+    }
+    const ownAt = (x, y) => { const lx = Math.round(x - L.nx), ly = Math.round(y - L.ny); return (lx >= 0 && ly >= 0 && lx < L.nw && ly < L.nh) ? L.G[ly * L.nw + lx] : 0 }
+    const glyph = (x, y) => { const lx = Math.round(x - L.nx), ly = Math.round(y - L.ny); return lx >= 0 && ly >= 0 && lx < L.nw && ly < L.nh && L.mask[ly * L.nw + lx] > 110 }
+    const inRegion = (x, y) => {
+      if (x < -10 || y < -10 || x > W + 10 || y > H + 10) return false
+      const lin = wide ? clamp((W * 0.9 - x) / (W * 0.52)) : clamp((H * 0.92 - y) / (H * 0.4))
+      const side = smo(clamp(lin * 1.3 - 0.15 + (vnoise(x / 130 + seed, y / 130) - 0.5) * 0.75))
+      const dW = Math.hypot(Math.max(L.x - x, 0, x - L.x - L.w), Math.max(L.y - y, 0, y - L.y - L.h))
+      let p = Math.max(side, clamp(1.3 - dW / (wide ? 320 : 260)))
+      if (reach < 1) p *= clamp(1 - Math.hypot(x - ox, y - oy) / (520 * reach))
+      if (gatherAt(x, y) > (wide ? 0.3 : 0.55) || ownAt(x, y) > 0.3) return false
+      for (const vd of voids) { const c = Math.cos(vd.t), sn = Math.sin(vd.t), dx = x - vd.x, dy = y - vd.y; if (((dx * c + dy * sn) / vd.rx) ** 2 + ((-dx * sn + dy * c) / vd.ry) ** 2 < 1) return false }
+      return p > hsh(Math.round(x / 9) + 3, Math.round(y / 9) + 5) * 0.85 + 0.08
+    }
+    const CG = 4, gw = Math.ceil(W / CG) + 2, gh = Math.ceil(H / CG) + 2, occs = [new Int32Array(gw * gh).fill(-1), new Int32Array(gw * gh).fill(-1)]
+    const sepAt = (x, y) => B.weave ? WV.sp : B.sepK * (wide ? 10.5 : 9.5) * (0.8 + 0.55 * vnoise(x / 200 + seed * 3, y / 200))
+    const free = (x, y, d, line, fm = 0) => {
+      const occ = occs[fm]
+      const r = Math.ceil(d / CG), cx = Math.floor(x / CG) + 1, cy = Math.floor(y / CG) + 1
+      for (let j = -r; j <= r; j++) for (let i = -r; i <= r; i++) {
+        const k = (cy + j) * gw + cx + i; if (k < 0 || k >= occ.length) continue
+        const o = occ[k]; if (o >= 0 && o !== line && (i * i + j * j) * CG * CG < d * d) return false
+      }
+      return true
+    }
+    const mark = (pts, id, fm = 0) => { const occ = occs[fm]; for (const [px, py] of pts) { if (ownAt(px, py) > 0.3) continue; const k = (Math.floor(py / CG) + 1) * gw + Math.floor(px / CG) + 1; if (k >= 0 && k < occ.length) occ[k] = id } }
+    const trace = (sx, sy, line, fm = 0) => {
+      const pts = [[sx, sy]]; let si = 0
+      for (const dir of [1, -1]) {
+        let x = sx, y = sy, pa = null
+        for (let n = 0; n < 300; n++) {
+          let a = fieldAt(x, y, fm).a
+          if (B.weave) { if (pa !== null && Math.cos(a - pa) < 0) a += Math.PI; pa = a } // weave: keep going the same way round
+          const nx = x + Math.cos(a) * 3 * dir, ny = y + Math.sin(a) * 3 * dir
+          if (!inRegion(nx, ny) || !free(nx, ny, sepAt(nx, ny) * 0.55, line, fm)) break
+          x = nx; y = ny
+          if (dir > 0) pts.push([x, y]); else { pts.unshift([x, y]); si++ }
+        }
+      }
+      return { pts, si }
+    }
+
+    const fam = L.t.rich.slice().sort((p, q) => (p[0] + p[1] + p[2]) - (q[0] + q[1] + q[2]))
+    const seq = [fam[0], fam[1], fam[2], mix(fam[2], PALE, 0.45)], comp = mix(hex(L.t.comp), GROUND, 0.12)
+    const lines = [], out = []
+    const reachK = reach < 1 ? 0.75 : 1
+
+    // 1. the sources: strokes in the letters, spaced apart, each leaving its letter along its own direction
+    const minGap = Math.max(5, fs * 0.11), cand = L.strokes.filter(st => st.l === 1)
+    for (let j = cand.length - 1; j > 0; j--) { const q = Math.floor(Math.random() * (j + 1)); const tmp = cand[j]; cand[j] = cand[q]; cand[q] = tmp }
+    const srcs = [], why = { glyph: 0, short: 0, stuck: 0 }
+    for (const st of cand) { if (srcs.length >= (wide ? B.srcMax : Math.round(B.srcMax * 0.55))) break; if (srcs.some(q => (q.x - st.x) ** 2 + (q.y - st.y) ** 2 < minGap * minGap)) continue; srcs.push(st) }
+    for (const st of srcs) {
+      let x = L.nx + st.x, y = L.ny + st.y
+      let ux = (x - ox) / (ea * ea), uy = (y - oy) / (eb * eb); const un = Math.hypot(ux, uy) || 1; ux /= un; uy /= un
+      if (wide) ux -= 0.3; else uy -= 0.3
+      let h = st.a; if (Math.cos(h) * ux + Math.sin(h) * uy < 0) h += Math.PI
+      let n = 0; while (glyph(x, y) && n++ < 50) { x += Math.cos(h) * 2; y += Math.sin(h) * 2 }
+      if (n >= 50) { why.stuck++; continue }
+      const id = lines.length, pts = [[x, y]], fm = B.cross ? srcs.indexOf(st) % 2 : 0
+      const spin = B.galaxy ? -vort[0].d * rnd(0.3, 1) * B.spinAmp : Math.random() < B.spinP ? rnd(-B.spinAmp, B.spinAmp) : rnd(-0.02, 0.02)
+      let sAcc = 0, bad = false
+      for (let k = 0; k < 330 * reachK; k++) {
+        let f = fieldAt(x, y, fm).a; const steer = Math.min(B.steerMax, B.steer0 + sAcc / B.steerRamp)
+        if (B.weave && Math.cos(f - h) < 0) f += Math.PI // weave: steer to whichever way along the thread is nearer
+        h += Math.atan2(Math.sin(f - h), Math.cos(f - h)) * steer + spin * Math.exp(-sAcc / 160)
+        const nx = x + Math.cos(h) * 3, ny = y + Math.sin(h) * 3
+        if (glyph(nx, ny)) { bad = sAcc < 60; break }
+        if (ownAt(nx, ny) <= 0.3 && (!inRegion(nx, ny) || !free(nx, ny, sepAt(nx, ny) * 0.55, id, fm))) break
+        x = nx; y = ny; sAcc += 3; pts.push([x, y])
+      }
+      if (bad || pts.length < 7) { why[bad ? 'glyph' : 'short']++; continue }
+      mark(pts, id, fm)
+      const t0 = rnd(0.05, 0.4) * reachK, tm = pts.map((p, i) => t0 + 0.12 + 2.5 * reachK * Math.pow(i * 3 / 900, 1.3))
+      // weave: each family keeps to its own paints: the weft teal and sage, the warp mustard (now and then a rust thread)
+      lines.push({ pts, tm, si: 0, gen: 0, ci: B.weave ? (fm ? rnd(2, 3) : rnd(0, 1.2)) : Math.floor(Math.random() * 3), st, t0, fm, rust: B.weave && fm && Math.random() < 0.08 })
+    }
+    // 2. every other current is laid beside one already there, from where and when that one passed
+    for (let qi = 0; qi < lines.length; qi++) {
+      const P = lines[qi]
+      for (let i = 1; i < P.pts.length - 1; i += 2) {
+        const [px, py] = P.pts[i], a = Math.atan2(P.pts[i + 1][1] - P.pts[i - 1][1], P.pts[i + 1][0] - P.pts[i - 1][0])
+        for (const sd of Math.random() < 0.5 ? [1, -1] : [-1, 1]) {
+          const sp = sepAt(px, py)
+          let cx = px - Math.sin(a) * sp * sd, cy = py + Math.cos(a) * sp * sd
+          // weave: in the cloth, lay the neighbour exactly on the next thread's band, so the over-under alternates
+          if (B.weave && weaveField(cx, cy, P.fm).sw < 0.35) {
+            const k = P.fm ? 0 : 1, cP = cloth(px, py)[k], cC = cloth(cx, cy)[k], tgt = (Math.floor(cP / sp) + (cC > cP ? 1 : -1) + 0.5) * sp
+            const gr = clothGrad(cx, cy, k), g2 = gr[0] * gr[0] + gr[1] * gr[1] || 1
+            cx += gr[0] * (tgt - cC) / g2; cy += gr[1] * (tgt - cC) / g2
+          }
+          if (!inRegion(cx, cy) || !free(cx, cy, sp * 0.85, -2, P.fm)) continue
+          const id = lines.length, { pts, si } = trace(cx, cy, id, P.fm)
+          if (pts.length < 5) continue
+          mark(pts, id, P.fm)
+          // the painter wanders: some patches wait a while before the paint reaches them
+          const lag = 0.9 * Math.pow(vnoise(cx / 240 + seed * 2, cy / 240), 2) * clamp(P.gen / 5)
+          const ts = P.tm[i] + rnd(0.03, 0.11) + lag, v = rnd(260, 400)
+          const tm = pts.map((p, j) => ts + Math.abs(j - si) * 3 / v)
+          const ci = B.weave ? clamp(P.ci + rnd(-0.35, 0.35), P.fm ? 2 : 0, P.fm ? 3 : 1.3) : Math.random() < 0.32 ? Math.max(0, Math.min(3, P.ci + (Math.random() < 0.5 ? -1 : 1))) : P.ci
+          lines.push({ pts, tm, si, gen: P.gen + 1, fm: P.fm, ci, rust: B.weave && P.fm && Math.random() < 0.08 })
+        }
+      }
+    }
+    // the burst should own the first third; stretch everything after it so the rest arrives slowly
+    const tb = 2.3 * reachK, ends = lines.filter(l => l.gen > 0 && !(B.weave && l.fm)).map(l => Math.max(...l.tm)).sort((p, q) => p - q)
+    const tEnd = ends.length ? ends[Math.floor(ends.length * 0.96)] : tb + 1
+    const remap = t => t <= tb ? t : tb + (t - tb) * (6.6 * reachK - tb) / Math.max(0.5, tEnd - tb)
+
+    // 3. the brush dragged along each current: long strokes that bend with it, each laid over the tail of the one
+    // before. The colour drifts slowly, along the current and across its neighbours, so bands of colour move together
+    // ── weave (Colophon): when the weft lands ── a coarse grid of when the weft's strokes start and when they are dry,
+    // so the warp can be laid under it (before) and over it (after it has committed, even while the page animates)
+    const GT = 12, gW = Math.ceil(W / GT) + 2, gH = Math.ceil(H / GT) + 2
+    const tS = B.weave ? new Float32Array(gW * gH).fill(Infinity) : null, tE = B.weave ? new Float32Array(gW * gH).fill(-Infinity) : null
+    const cellOf = (x, y) => (Math.floor(y / GT) + 1) * gW + Math.floor(x / GT) + 1
+    const wvNote = (seg, t0, t1) => { for (const [x, y] of seg) { const k = cellOf(x, y); if (k < 0 || k >= tS.length) continue; tS[k] = Math.min(tS[k], t0); tE[k] = Math.max(tE[k], t1) } }
+    const wvNear = (seg, grid, fn, init) => { let r = init; for (const [x, y] of seg) { const k = cellOf(x, y); for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) { const q = k + j * gW + i; if (q >= 0 && q < grid.length) r = fn(r, grid[q]) } } return r }
+    // ── end weave ──
+    const jumbo = !B.weave && Math.random() < 0.4 ? pick(lines.filter(l => l.gen > 0 && l.pts.length > 60)) : null
+    const seqAt = cp => { const f = Math.floor(cp), u = cp - f; return mix(seq[Math.min(3, f)], seq[Math.min(3, f + 1)], u) }
+    const run = (ln, pts, tm, src) => {
+      const big = ln === jumbo ? 1.35 : 1, lseed = Math.random() * 50
+      let i = 0
+      while (i < pts.length - 2) {
+        const own0 = ownAt(pts[i][0], pts[i][1]) > 0.08
+        const want = (own0 ? rnd(14, 26) : B.weave ? (ln.fm ? rnd(50, 110) : rnd(70, 150)) : rnd(30, 100) * Math.min(1.25, B.longK || 1)) * big
+        let j = i + 1, turn = 0, prev = Math.atan2(pts[i + 1][1] - pts[i][1], pts[i + 1][0] - pts[i][0])
+        while (j < pts.length - 1 && (j - i) * 3 < want) {
+          const a = Math.atan2(pts[j + 1][1] - pts[j][1], pts[j + 1][0] - pts[j][0])
+          turn += Math.atan2(Math.sin(a - prev), Math.cos(a - prev)); prev = a
+          if (Math.abs(turn) > 1.05) break
+          if ((ownAt(pts[j + 1][0], pts[j + 1][1]) > 0.08) !== own0) break
+          j++
+        }
+        // never leave a stub at the end of a current
+        if (pts.length - 1 - j < 5 && !own0 && pts.slice(j).every(q => ownAt(q[0], q[1]) <= 0.08)) j = pts.length - 1
+        const n = j - i + 1, next = i + Math.max(2, Math.round((j - i) * rnd(0.6, 0.8)))
+        const seg = pts.slice(i, j + 1)
+        if (n < 3 || (own0 && seg.some((q, k) => k % 2 === 0 && glyph(q[0], q[1])))) { i = j < pts.length - 1 ? next : pts.length; continue }
+        const p0 = pts[i], p1 = pts[j], a0 = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]), pm = pts[(i + j) >> 1]
+        const mx = (p0[0] + p1[0]) / 2, my = (p0[1] + p1[1]) / 2, chord = Math.hypot(p1[0] - p0[0], p1[1] - p0[1])
+        const sep = sepAt(pm[0], pm[1]), f = fieldAt(pm[0], pm[1]), arc = ((i + j) / 2) * 3
+        // weave: each family's colour drifts only within its own paints
+        const cpK = B.weave ? 0.5 : 1, cpLo = B.weave && ln.fm ? 1.9 : 0, cpHi = B.weave && !ln.fm ? 1.15 : 3
+        const cp = clamp(ln.ci + cpK * (2.4 * (vnoise(pm[0] / 230 + seed * 5, pm[1] / 230) - 0.5) + 1.4 * (vnoise(lseed + arc / 300, 3.3) - 0.5)), cpLo, cpHi)
+        let col = seqAt(cp), col2 = seqAt(clamp(cp + (cp > 2.3 ? -1 : 1) * rnd(0.7, 1.1) * cpK, 0, 3))
+        const r = Math.random()
+        if (!src && r < 0.012) { col = comp; col2 = mix(comp, col2, 0.5) } else if (!src && r < 0.05) { col2 = comp } else if (r < (src ? 0.04 : 0.075)) { col = pick(GREY); col2 = mix(col, col2, 0.3) }
+        if (ln.rust) { col = mix(comp, col, 0.15); col2 = mix(comp, col2, 0.4) }
+        if (f.coreV && f.coreV.halo) {
+          const rr = f.rr + rnd(-0.06, 0.06)
+          const hc = rr < 0.3 ? mix(seq[3], PALE, 0.5) : rr < 0.55 ? mix(seq[3], PALE, 0.15) : rr < 0.72 && Math.random() < 0.7 ? f.coreV.pop : rr < 0.95 ? seq[2] : null
+          if (hc) { col2 = mix(hc, col, 0.4); col = hc }
+        }
+        const tb2 = textBox, qx = Math.max(tb2.x0 - mx, 0, mx - tb2.x1), qy = Math.max(tb2.y0 - my, 0, my - tb2.y1)
+        const quiet = clamp(1 - (Math.hypot(qx, qy) + rnd(-14, 14)) / 56)
+        const deep = src ? mix(ln.st.rich, [46, 30, 26], 0.38) : null
+        const finish = c => { if (src) c = mix(deep, c, clamp(arc / 70)); c = mute(c, src ? 0.08 : 0.2); return mix(c, PALE, 0.68 * quiet) }
+        col = finish(col); col2 = finish(col2)
+        // a source starts as thin as the letter it came from and fills out as it goes
+        const grow = src ? clamp(arc / 160) : 1
+        const wd = (0.9 + 0.3 * vnoise(lseed * 3 + arc / 170, 9.1)) * (src ? (fs * 0.075 * (1 - grow) + sep * grow) : sep) * (big > 1 ? 1.3 : 1) * (B.weave && ln.fm ? 0.62 : 1)
+        const lat = rnd(-0.06, 0.06) * sep, ox = mx - Math.sin(a0) * lat, oy = my + Math.cos(a0) * lat
+        const c0 = Math.cos(-a0), s0 = Math.sin(-a0)
+        const lp = seg.map(q => { const dx = q[0] - mx, dy = q[1] - my; return [dx * c0 - dy * s0, dx * s0 + dy * c0] })
+        const al = 0.94 - 0.12 * quiet, { draw, hy } = dragStroke(lp, wd, col, col2, al, a0)
+        let t = Math.min(7.4 * reachK, remap(tm[i]))
+        if (f.coreV && f.coreV.halo && f.rr < 0.5) t = Math.max(t, 5.6 * reachK + rnd(0, 1.0))
+        out.push({ x: ox, y: oy, a: a0, len: chord, wd, col, al, t, dur: 180 + chord * 4, draw, hy, L: own0 ? L : null })
+        if (B.weave && !ln.fm) wvNote(seg, t, t + (180 + chord * 4) / 1000) // weave: the weft lies here from t, dry by then
+        i = j < pts.length - 1 ? next : pts.length
+      }
+    }
+    // ── weave (Colophon): the warp ── where a warp thread crosses the cloth it is painted as floats: short strokes laid
+    // over the weft threads it passes over, once they are dry, and gaps where it passes under, so the weft runs on
+    // unbroken there. Beneath everything, before the weft lands, a thin dark run of the same thread shows between the
+    // weft threads, so each float reads as one thread surfacing. In the fringe by the word, or where no weft has come,
+    // the warp is painted as an ordinary current.
+    const emit = (seg, wd, col, col2, al, t, dur) => {
+      const p0 = seg[0], p1 = seg[seg.length - 1], a0 = Math.atan2(p1[1] - p0[1], p1[0] - p0[0])
+      const mx = (p0[0] + p1[0]) / 2, my = (p0[1] + p1[1]) / 2, chord = Math.hypot(p1[0] - p0[0], p1[1] - p0[1])
+      const c0 = Math.cos(-a0), s0 = Math.sin(-a0)
+      const lp = seg.map(q => { const dx = q[0] - mx, dy = q[1] - my; return [dx * c0 - dy * s0, dx * s0 + dy * c0] })
+      const { draw, hy } = dragStroke(lp, wd, col, col2, al, a0)
+      out.push({ x: mx, y: my, a: a0, len: chord, wd, col, al, t, dur: dur || 180 + chord * 4, draw, hy, L: null })
+    }
+    // a float: one stretch of warp thread lying on the weft. The brush is dragged a little further than the float and
+    // cut square at both ends, where the thread turns down under the next weft; the ends darken with the turn, and the
+    // float casts a small shadow on the weft it lies across
+    const emitFloat = (ext, core, wd, col, col2, al, t) => {
+      const p0 = core[0], p1 = core[core.length - 1], a0 = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]), chord = Math.hypot(p1[0] - p0[0], p1[1] - p0[1])
+      const mx = (p0[0] + p1[0]) / 2, my = (p0[1] + p1[1]) / 2, c0 = Math.cos(-a0), s0 = Math.sin(-a0), hl = chord / 2 + 1
+      const lp = ext.map(q => { const dx = q[0] - mx, dy = q[1] - my; return [dx * c0 - dy * s0, dx * s0 + dy * c0] })
+      const d = dragStroke(lp, wd, col, col2, al, a0), dk = mix(col, [44, 32, 24], 0.62), shC = css([46, 34, 26], 0.22 * al)
+      const draw = (ctx, x, y, a) => {
+        const c = Math.cos(a), s = Math.sin(a), hw = wd * 0.47
+        ctx.save()
+        ctx.setTransform(dpr * c, dpr * s, -dpr * s, dpr * c, dpr * (x + 1.2), dpr * (y + 1.6)); ctx.fillStyle = shC; ctx.fillRect(-hl, -hw, 2 * hl, 2 * hw)
+        ctx.setTransform(dpr * c, dpr * s, -dpr * s, dpr * c, dpr * x, dpr * y); ctx.beginPath(); ctx.rect(-hl, -wd * 2, 2 * hl, wd * 4); ctx.clip()
+        d.draw(ctx, x, y, a)
+        ctx.setTransform(dpr * c, dpr * s, -dpr * s, dpr * c, dpr * x, dpr * y)
+        const gr = ctx.createLinearGradient(-hl, 0, hl, 0)
+        gr.addColorStop(0, css(dk, 0.6 * al)); gr.addColorStop(0.22, css(dk, 0)); gr.addColorStop(0.78, css(dk, 0)); gr.addColorStop(1, css(dk, 0.6 * al))
+        ctx.fillStyle = gr; ctx.fillRect(-hl, -hw, 2 * hl, 2 * hw)
+        ctx.restore()
+      }
+      out.push({ x: mx, y: my, a: a0, len: chord, wd, col, al, t, dur: 160 + chord * 4, draw, hy: d.hy, L: null })
+    }
+    const wovenRun = (ln, pts) => {
+      const n = pts.length, sp = WV.sp, lseed = Math.random() * 50
+      const mid = pts[n >> 1], jL = Math.floor(cloth(mid[0], mid[1])[0] / sp)
+      const over = pts.map(p => ((Math.floor(cloth(p[0], p[1])[1] / sp) + jL) % 2 + 2) % 2 === 1)
+      const colAt = (p, arc) => {
+        const cp = clamp(ln.ci + 0.5 * (2.4 * (vnoise(p[0] / 230 + seed * 5, p[1] / 230) - 0.5) + 1.4 * (vnoise(lseed + arc / 300, 3.3) - 0.5)), 1.9, 3)
+        let c1 = seqAt(cp), c2 = seqAt(clamp(cp - rnd(0.35, 0.6), 0, 3))
+        if (ln.rust) { c1 = mix(comp, c1, 0.15); c2 = mix(comp, c2, 0.4) }
+        const qx = Math.max(textBox.x0 - p[0], 0, p[0] - textBox.x1), qy = Math.max(textBox.y0 - p[1], 0, p[1] - textBox.y1)
+        const quiet = clamp(1 - (Math.hypot(qx, qy) + rnd(-14, 14)) / 56), fin = c => mix(mute(c, 0.2), PALE, 0.68 * quiet)
+        return [fin(c1), fin(c2), 0.94 - 0.12 * quiet]
+      }
+      // each stretch of the thread is either over the weft (a float, laid after the weft is dry) or under it (a thin
+      // dark run, laid just before the weft that covers it, seen only in the gaps between weft threads)
+      for (let i = 0; i < n;) {
+        let j = i; while (j + 1 < n && over[j + 1] === over[i]) j++
+        const seg = pts.slice(Math.max(0, i - 1), Math.min(n, j + 2))
+        if (seg.length >= 3) {
+          const [c1, c2, al] = colAt(seg[seg.length >> 1], i * 3)
+          if (over[i]) emitFloat(pts.slice(Math.max(0, i - 4), Math.min(n, j + 6)), seg, sp * rnd(0.72, 0.84), c1, c2, al, wvNear(seg, tE, Math.max, -Infinity) + 0.03)
+          else if (B.weaveUnder) {
+            // laid just before the weft thread that crosses right here, not the earliest one nearby, so it doesn't show early
+            let tu = seg.reduce((r, q) => { const k = cellOf(q[0], q[1]); return k >= 0 && k < tS.length ? Math.min(r, tS[k]) : r }, Infinity)
+            if (!Number.isFinite(tu)) tu = wvNear(seg, tS, Math.min, Infinity)
+            const dk = c => mix(c, [38, 28, 22], 0.45); emit(seg, sp * 0.4, dk(c1), dk(c2), al, tu - 0.02, 90)
+          }
+        }
+        i = j + 1
+      }
+    }
+    const warpRun = (ln, pts, tm, src) => {
+      const n = pts.length, woven = pts.map(p => weaveField(p[0], p[1], 1).sw < 0.35 && wvNear([p], tS, Math.min, Infinity) < Infinity)
+      for (let i = 0; i < n - 1;) {
+        let j = i; while (j + 1 < n && woven[j + 1] === woven[i]) j++
+        const sub = pts.slice(i, j + 2), subT = tm.slice(i, j + 2)
+        if (sub.length >= 3) { if (woven[i]) wovenRun(ln, sub); else run(ln, sub, subT, src && i === 0) }
+        i = j + 1
+      }
+    }
+    const runL = (ln, pts, tm, src) => B.weave && ln.fm ? warpRun(ln, pts, tm, src) : run(ln, pts, tm, src)
+    // ── end weave ──
+    // weave: all the weft first, so the warp knows where and when it lies
+    for (const ln of B.weave ? [...lines.filter(l => !l.fm), ...lines.filter(l => l.fm)] : lines) {
+      if (ln.gen === 0) {
+        // the letter stroke itself lights up first, then the current runs out of it
+        const st = ln.st
+        out.push({ x: L.nx + st.x, y: L.ny + st.y, a: st.a, sh: st.sh, len: 0, wd: st.wd, col: mix(st.rich, [46, 30, 26], 0.38), al: 0.96, t: ln.t0, dur: 200, L })
+        runL(ln, ln.pts, ln.tm, true)
+        // and a little paint flicks off the end of the longer ones
+        if (ln.pts.length > 50) {
+          const e = ln.pts[ln.pts.length - 1], q = ln.pts[ln.pts.length - 4], ha = Math.atan2(e[1] - q[1], e[0] - q[0])
+          for (let k = 0, n = 1 + Math.floor(Math.random() * 3); k < n; k++) {
+            const da = ha + rnd(-0.5, 0.5), dd = rnd(10, 30)
+            out.push({ x: e[0] + Math.cos(da) * dd, y: e[1] + Math.sin(da) * dd, a: da + rnd(-0.3, 0.3), len: rnd(5, 13), wd: rnd(2.2, 4.2), col: mute(pick(seq), 0.1), al: 0.9, t: remap(ln.tm[ln.tm.length - 1]) + rnd(0.05, 0.3), dur: 160 })
+          }
+        }
+      } else {
+        runL(ln, ln.pts.slice(ln.si), ln.tm.slice(ln.si), false)
+        if (ln.si > 1) runL(ln, ln.pts.slice(0, ln.si + 1).reverse(), ln.tm.slice(0, ln.si + 1).reverse(), false)
+      }
+    }
+    out.sort((m, k) => m.t - k.t)
+    queue = out; queue.t0 = performance.now(); queue.i = 0
+    const nSrc = lines.filter(l => l.gen === 0).length
+    queue.stats = { sources: nSrc, tried: srcs.length, lines: lines.length, strokes: out.length, maxGen: Math.max(...lines.map(l => l.gen)), why, firstThird: out.filter(m => m.t <= tb).length / out.length, tEnd: out.length ? out[out.length - 1].t : 0 }
+  }
+
+  let wet = []
+  function commit (m) {
+    if (m.draw) { if (m.L) m.draw(m.L.fxc, m.x - m.L.nx, m.y - m.L.ny, m.a); else m.draw(g, m.x, m.y, m.a); return }
+    if (m.L) paint(m.L.fxc, m.x - m.L.nx, m.y - m.L.ny, m.a, m.sh, m.col, m.al, m.wd); else paint(g, m.x, m.y, m.a, m.sh, m.col, m.al, m.wd)
+  }
+  function stepQueue (now) {
+    const el = reduce ? 1e9 : (now - queue.t0) / 1000
+    while (queue.i < queue.length && queue[queue.i].t <= el) {
+      const m = queue[queue.i++]
+      if (!m.draw) m.sh = m.sh || shapeFor(m.len + m.wd * 0.4, m.wd * 1.15, m.k ?? rnd(-0.16, 0.16), true); m.born = now
+      if (reduce) commit(m); else wet.push(m)
+    }
+    if (queue.i >= queue.length) queue = []
+  }
+  // the brush moving: each stroke grows from where it landed toward its tail, fading in as it goes
+  function drawWet (now) {
+    e2.setTransform(1, 0, 0, 1, 0, 0); e2.clearRect(0, 0, ec.width, ec.height)
+    for (let i = wet.length - 1; i >= 0; i--) {
+      const m = wet[i], p = Math.min(1, (now - m.born) / m.dur)
+      if (p >= 1) { commit(m); wet.splice(i, 1); continue }
+      const e = 1 - Math.pow(1 - p, 2.2), L2 = m.len + m.wd * (m.draw ? 1 : 0.6), hy = m.draw ? m.hy + 2 : m.wd * 2.5, c = Math.cos(m.a), sn = Math.sin(m.a)
+      e2.save()
+      e2.setTransform(dpr * c, dpr * sn, -dpr * sn, dpr * c, dpr * m.x, dpr * m.y)
+      e2.beginPath(); e2.rect(-L2 / 2 - m.wd, -hy, (L2 + m.wd * 2) * e, hy * 2); e2.clip()
+      e2.globalAlpha = Math.min(1, p * 2.2)
+      if (m.draw) m.draw(e2, m.x, m.y, m.a); else paint(e2, m.x, m.y, m.a, m.sh, m.col, m.al, m.wd)
+      e2.restore()
+    }
+  }
+
+  function showPanel (t) { panel.innerHTML = t.html }
+  function choose (t) {
+    const L = labels.find(l => l.t === t)
+    labels.forEach(l => l.button.setAttribute('aria-pressed', l.t === t ? 'true' : 'false'))
+    L.burst = 1
+    for (const l of labels) if (l !== L && l.fxUsed) { l.fxUsed = false; l.fx.style.opacity = 0; setTimeout(() => { l.fxc.setTransform(1, 0, 0, 1, 0, 0); l.fxc.clearRect(0, 0, l.fx.width, l.fx.height); l.fx.style.opacity = 1 }, 1700) }
+    L.fxUsed = true
+    if (!reduce) for (const c of [L.cv, L.fx]) c.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.045) rotate(-0.6deg)' }, { transform: 'scale(1)' }], { duration: 560, easing: 'cubic-bezier(.3,1.5,.5,1)' })
+    measureText(t)
+    if (t !== current) {
+      current = t
+      panel.classList.add('out')
+      setTimeout(() => { showPanel(t); panel.classList.remove('out') }, reduce ? 0 : 520)
+    }
+    swirl(L)
+  }
+
+  // the words' own footprint: the header and the part's text, as they will stand once it has changed
+  function measureText (t) {
+    const keep = panel.innerHTML
+    if (t) panel.innerHTML = t.html
+    const a = document.querySelector('.text header').getBoundingClientRect(), b = panel.getBoundingClientRect()
+    if (t) panel.innerHTML = keep
+    textBox = { x0: Math.min(a.left, b.left) - 16, y0: a.top - 14, x1: Math.max(a.right, b.right) + 16, y1: b.bottom + 14 }
+  }
+
+  async function build () {
+    W = innerWidth; H = innerHeight; wide = W > 760
+    for (const c of [gc, wc, ec]) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr) }
+    await writeWords()
+    layGround()
+    showPanel(current)
+    measureText()
+    drawWords()
+  }
+
+  addEventListener('pointermove', e => { pointer.x = e.clientX; pointer.y = e.clientY }, { passive: true })
+  addEventListener('pointerdown', e => { pointer.x = e.clientX; pointer.y = e.clientY }, { passive: true })
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 200) })
+
+  await build()
+  // on arrival, the first word unfolds a small swirl by itself, to show what the words do
+  if (!STILL) setTimeout(() => { const L = labels[1]; L.burst = 1; L.fxUsed = true; swirl(L, 0.45) }, reduce ? 0 : 1300)
+
+  let lastPulse = performance.now(), pulsing = null
+  function frame (now) {
+    // the words breathe: now and then one warms a little on its own, so you can tell they answer
+    if (!reduce && now - lastPulse > 3400) { lastPulse = now; pulsing = { L: pick(labels), until: now + 1300 } }
+    let changed = false
+    for (const L of labels) {
+      const dx = Math.max(L.x - pointer.x, 0, pointer.x - (L.x + L.w)), dy = Math.max(L.y - pointer.y, 0, pointer.y - (L.y + L.h))
+      let tgt = clamp(1 - Math.hypot(dx, dy) / (wide ? 200 : 120))
+      if (L.focus) tgt = 1
+      if (L.t === current) tgt = Math.max(tgt, 0.5)
+      if (pulsing && pulsing.L === L && now < pulsing.until) tgt = Math.max(tgt, 0.38)
+      if (L.burst > 0) { tgt = 1; L.burst *= 0.985; if (L.burst < 0.3) L.burst = 0 }
+      const np = L.p + (tgt - L.p) * (reduce ? 1 : 0.07)
+      if (Math.abs(np - L.p) > 0.002) L.dirty = true
+      L.p = np
+    }
+    for (const L of labels) if (L.dirty) { drawLabel(L); L.dirty = false }
+    if (queue.length && !STILL) stepQueue(now)
+    if (wet.length || ec.dirty) { drawWet(now); ec.dirty = wet.length > 0 }
+    requestAnimationFrame(frame)
+  }
+  requestAnimationFrame(frame)
+  window.__painted = { choose: id => choose(TABS.find(t => t.id === id)), settle: () => { if (queue.length) { queue.t0 = -1e12; stepQueue(performance.now()) } for (const m of wet) m.born = -1e9; drawWet(performance.now()) }, labels: () => labels.length,
+    at: T => { while (queue.i < queue.length && queue[queue.i].t <= T) { const m = queue[queue.i++]; if (!m.draw) m.sh = m.sh || shapeFor(m.len + m.wd * 0.4, m.wd * 1.15, m.k ?? 0, true); commit(m) } },
+    stats: () => queue.stats }
+})()
+</script>
+</body>
+</html>

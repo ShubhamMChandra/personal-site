@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mood board</title>
+<meta name="robots" content="noindex">
+<style>
+  /* Deliberately neutral: the board should not inherit the current site's look. */
+  :root {
+    --bg: #f4f4f2; --fg: #1a1a1a; --muted: #6b6b6b; --card: #fff; --line: #e2e2df;
+    --chip: #ebebe8; --warn: #b4540a; --dim: .45;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #161616; --fg: #ececec; --muted: #9a9a9a; --card: #1f1f1f; --line: #2c2c2c; --chip: #2a2a2a; --warn: #e8914a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.45 system-ui, -apple-system, sans-serif; padding: 24px 16px 80px; }
+  header { max-width: 1200px; margin: 0 auto 28px; }
+  h1 { font-size: 20px; font-weight: 600; margin: 0 0 4px; }
+  .register { font-size: 28px; font-weight: 500; letter-spacing: -.01em; margin: 12px 0 4px; }
+  .brief { color: var(--muted); max-width: 70ch; white-space: pre-wrap; }
+  .placeholder { opacity: .5; font-style: italic; }
+  .meta { color: var(--muted); font-size: 13px; margin-top: 12px; }
+  .filters { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .chip { background: var(--chip); border: 0; color: inherit; font: inherit; font-size: 12px; padding: 3px 9px; border-radius: 999px; cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+  h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); max-width: 1200px; margin: 36px auto 12px; }
+  .grid { max-width: 1200px; margin: 0 auto; display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
+  .card.hidden { display: none; }
+  .card button.img { all: unset; cursor: zoom-in; display: block; aspect-ratio: 4 / 3; background: var(--chip); }
+  .card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .body { padding: 10px 12px 12px; display: grid; gap: 6px; font-size: 13px; }
+  .name { font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: var(--muted); word-break: break-all; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tags span { background: var(--chip); font-size: 11px; padding: 1px 7px; border-radius: 999px; }
+  .field b { font-weight: 600; color: var(--muted); margin-right: 4px; }
+  .todo { color: var(--warn); font-size: 12px; }
+  .notme .card { opacity: var(--dim); } .notme .card:hover { opacity: 1; }
+  dialog { border: 0; padding: 0; background: transparent; max-width: 96vw; max-height: 96vh; }
+  dialog::backdrop { background: rgba(0,0,0,.85); }
+  dialog img { max-width: 96vw; max-height: 88vh; display: block; }
+  dialog p { color: #ddd; font-size: 13px; margin: 8px 0 0; text-align: center; }
+  .empty { max-width: 1200px; margin: 40px auto; color: var(--muted); }
+  code { font-family: ui-monospace, Menlo, monospace; font-size: 12px; background: var(--chip); padding: 1px 5px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Mood board</h1>
+  <div class="register" id="register"></div>
+  <div class="brief" id="brief"></div>
+  <div class="meta" id="meta"></div>
+  <div class="filters" id="filters"></div>
+</header>
+<main id="main"></main>
+<dialog id="zoom"><img alt=""><p></p></dialog>
+
+<script>
+  // notes.md is the only source of truth. Edit it, reload.
+  async function load () {
+    const res = await fetch('notes.md', { cache: 'no-store' })
+    if (!res.ok) throw new Error(`notes.md: ${res.status}`)
+    return parse(await res.text())
+  }
+
+  // Parses:  # Section  /  ## image.jpg  /  key: value  /  free text
+  function parse (md) {
+    const doc = { register: '', brief: '', board: [], notme: [] }
+    let section = ''
+    let entry = null
+    const text = []
+    const flushText = () => {
+      const t = text.join('\n').replace(/<!--[\s\S]*?-->/g, '').trim()
+      if (section === 'register') doc.register = t
+      if (section === 'brief') doc.brief = t
+      text.length = 0
+    }
+    md = md.replace(/<!--[\s\S]*?-->/g, '')
+    for (const raw of md.split('\n')) {
+      const line = raw.replace(/\s+$/, '')
+      let m
+      if ((m = line.match(/^# +(.+)$/))) {
+        flushText(); entry = null
+        section = m[1].trim().toLowerCase().replace(/\s+/g, '')
+        continue
+      }
+      if ((m = line.match(/^## +(.+)$/))) {
+        entry = { file: m[1].trim(), fields: {}, note: [] }
+        ;(section === 'notme' ? doc.notme : doc.board).push(entry)
+        continue
+      }
+      if (entry) {
+        if ((m = line.match(/^([a-z-]+):\s*(.*)$/i))) entry.fields[m[1].toLowerCase()] = m[2].trim()
+        else if (line.trim() && !/^<!--|-->$/.test(line.trim())) entry.note.push(line.trim())
+      } else {
+        text.push(line)
+      }
+    }
+    flushText()
+    return doc
+  }
+
+  function tagsOf (e) {
+    return (e.fields.tags || '').split(',').map(s => s.trim().toLowerCase()).filter(Boolean)
+  }
+
+  function card (e, notme) {
+    const tags = tagsOf(e)
+    const main = notme ? e.fields['why-not'] : e.fields.like
+    const el = document.createElement('article')
+    el.className = 'card'
+    el.dataset.tags = tags.join(' ')
+    el.innerHTML = `
+      <button class="img" type="button" aria-label="Enlarge ${esc(e.file)}">
+        <img loading="lazy" src="images/${encodeURIComponent(e.file)}" alt="">
+      </button>
+      <div class="body">
+        <div class="name">${esc(e.file)}</div>
+        ${tags.length ? `<div class="tags">${tags.map(t => `<span>${esc(t)}</span>`).join('')}</div>` : ''}
+        ${main ? `<div class="field"><b>${notme ? 'why not' : 'like'}</b>${esc(main)}</div>` : '<div class="todo">unannotated</div>'}
+        ${e.fields.not && !notme ? `<div class="field"><b>not</b>${esc(e.fields.not)}</div>` : ''}
+        ${e.note.length ? `<div class="field">${esc(e.note.join(' '))}</div>` : ''}
+        ${e.fields.source ? `<div class="field"><b>source</b>${esc(e.fields.source)}</div>` : ''}
+      </div>`
+    el.querySelector('button').addEventListener('click', () => {
+      const d = document.getElementById('zoom')
+      d.querySelector('img').src = `images/${encodeURIComponent(e.file)}`
+      d.querySelector('p').textContent = main ? `${e.file} — ${main}` : e.file
+      d.showModal()
+    })
+    return el
+  }
+
+  function esc (s) {
+    return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
+  }
+
+  function render (doc) {
+    const reg = document.getElementById('register')
+    const brief = document.getElementById('brief')
+    const isPlaceholder = s => /^\(.*\)$/s.test(s)
+    reg.textContent = doc.register || 'Register: not yet'
+    reg.classList.toggle('placeholder', !doc.register || isPlaceholder(doc.register))
+    brief.textContent = doc.brief || ''
+    brief.classList.toggle('placeholder', isPlaceholder(doc.brief))
+
+    const todo = doc.board.filter(e => !e.fields.like).length
+    document.getElementById('meta').textContent =
+      `${doc.board.length} on the board · ${doc.notme.length} not me` + (todo ? ` · ${todo} unannotated` : '')
+
+    const main = document.getElementById('main')
+    main.innerHTML = ''
+    if (!doc.board.length && !doc.notme.length) {
+      main.innerHTML = `<p class="empty">No images yet. Drop files into <code>design/moodboard/images/</code>, run <code>npm run moodboard:sync</code>, then annotate <code>notes.md</code>.</p>`
+      return
+    }
+    const section = (title, list, notme) => {
+      if (!list.length) return
+      const h = document.createElement('h2'); h.textContent = title
+      const g = document.createElement('div'); g.className = 'grid' + (notme ? ' notme' : '')
+      list.forEach(e => g.appendChild(card(e, notme)))
+      main.append(h, g)
+    }
+    section('Board', doc.board, false)
+    section('Not me', doc.notme, true)
+
+    // Tag filter: click a chip to show only cards carrying that tag.
+    const counts = new Map()
+    for (const e of [...doc.board, ...doc.notme]) for (const t of tagsOf(e)) counts.set(t, (counts.get(t) || 0) + 1)
+    const filters = document.getElementById('filters')
+    filters.innerHTML = ''
+    let active = null
+    for (const [t, n] of [...counts].sort((a, b) => b[1] - a[1])) {
+      const b = document.createElement('button')
+      b.className = 'chip'; b.type = 'button'; b.textContent = `${t} ${n}`; b.setAttribute('aria-pressed', 'false')
+      b.addEventListener('click', () => {
+        active = active === t ? null : t
+        filters.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(c === b && active !== null)))
+        document.querySelectorAll('.card').forEach(c => c.classList.toggle('hidden', active !== null && !c.dataset.tags.split(' ').includes(active)))
+      })
+      filters.appendChild(b)
+    }
+  }
+
+  document.getElementById('zoom').addEventListener('click', e => e.target.tagName !== 'IMG' && e.currentTarget.close())
+  load().then(render).catch(err => {
+    document.getElementById('main').innerHTML = `<p class="empty">Could not load notes.md (${esc(err.message)}). Serve this folder over http, e.g. the project's dev server at <code>/design/moodboard/</code>.</p>`
+  })
+</script>
+</body>
+</html>

@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Painted words, slow and woven in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&display=swap">
+<style>
+/* layout: one screen, no scrolling. On the left, a text area. On the right, the parts of his life written in
+   brushstrokes; they deepen in colour as you come near, and a click unfolds a swirl of paint that fills the left. */
+:root {
+  --ground: #a39b92;
+  --ink: #241e19;
+  --ink-soft: #3f362d;
+  --link: #9c3f1b;
+  --font-ui: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-text: "Source Serif 4", Georgia, "Times New Roman", serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--ground); color: var(--ink); }
+body { font-family: var(--font-text); -webkit-font-smoothing: antialiased; }
+canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+#ground { z-index: 0; }
+#wet { z-index: 1; }
+#words { z-index: 1; }
+.stage { position: relative; z-index: 2; height: 100%; display: grid; grid-template-columns: 1fr 1fr;
+  padding: calc(40px + env(safe-area-inset-top, 0px)) max(48px, env(safe-area-inset-right, 0px)) calc(40px + env(safe-area-inset-bottom, 0px)) max(56px, env(safe-area-inset-left, 0px)); }
+.text { display: grid; align-content: center; gap: 2.2rem; max-width: 30rem; }
+.name { margin: 0; font-family: var(--font-ui); font-weight: 650; font-size: clamp(1.9rem, 1.3rem + 1.8vw, 2.7rem); letter-spacing: -.014em; line-height: 1.04; }
+.links { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; margin: .7rem 0 0; font-family: var(--font-ui); font-size: .95rem; }
+.links a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--link); text-decoration-thickness: 1.5px; text-underline-offset: .28em; }
+.panel { display: grid; gap: 1rem; transition: opacity .35s ease; }
+.panel.out { opacity: 0; }
+.panel h2 { margin: 0; font-family: var(--font-ui); font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.panel p { margin: 0; font-size: 1.12rem; line-height: 1.6; }
+.panel .lead { font-size: 1.4rem; line-height: 1.35; }
+.roles { list-style: none; margin: 0; padding: 0; display: grid; gap: .7rem; font-family: var(--font-ui); }
+.roles li { display: grid; grid-template-columns: 1fr auto; gap: .1rem 1rem; }
+.roles .what, .roles .when { color: var(--ink-soft); font-size: .92rem; font-variant-numeric: tabular-nums; }
+.roles .what { grid-column: 1 / -1; }
+/* the painted words are drawn on the canvas; these buttons sit over them for keyboards and screen readers */
+.tabs { position: fixed; inset: 0; z-index: 3; pointer-events: none; }
+.tabs button { position: absolute; pointer-events: auto; background: none; border: 0; padding: 0; margin: 0; color: transparent; font: inherit; cursor: pointer; border-radius: 10px; }
+.tabs button:focus-visible { outline: 2px solid var(--link); outline-offset: 6px; }
+.back { position: fixed; z-index: 4; top: calc(14px + env(safe-area-inset-top, 0px)); right: max(14px, env(safe-area-inset-right, 0px)); font-family: var(--font-ui); font-size: .78rem; color: var(--ink-soft); text-decoration: none; background: rgba(240, 233, 220, .85); padding: .32rem .7rem; border-radius: 999px; }
+.grain { position: fixed; inset: -50%; z-index: 5; pointer-events: none; opacity: .3; mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+@media (max-width: 760px) {
+  .stage { grid-template-columns: 1fr; grid-template-rows: 58% 42%; padding: calc(28px + env(safe-area-inset-top, 0px)) 24px calc(16px + env(safe-area-inset-bottom, 0px)); }
+  .text { align-content: start; gap: 1.3rem; }
+  .panel p { font-size: 1.02rem; line-height: 1.55; }
+  .panel .lead { font-size: 1.18rem; }
+}
+</style>
+</head>
+<body>
+<canvas id="ground" aria-hidden="true"></canvas>
+<canvas id="wet" aria-hidden="true"></canvas>
+<canvas id="words" aria-hidden="true"></canvas>
+<a class="back" href="../index.html">All sketches</a>
+<main class="stage">
+  <section class="text">
+    <header>
+      <h1 class="name">Shubham Chandra</h1>
+      <p class="links"><a href="#">Email</a><a href="#">LinkedIn</a><a href="#">Curriculum vitae</a></p>
+    </header>
+    <div class="panel" id="panel" aria-live="polite"></div>
+  </section>
+  <div></div>
+</main>
+<nav class="tabs" id="tabs" aria-label="Parts"></nav>
+<div class="grain" aria-hidden="true"></div>
+
+<script>
+(async () => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const dpr = Math.min(2, window.devicePixelRatio || 1)
+  const gc = document.getElementById('ground'), g = gc.getContext('2d')
+  const wc = document.getElementById('words'), w = wc.getContext('2d')
+  const ec = document.getElementById('wet'), e2 = ec.getContext('2d')
+  const panel = document.getElementById('panel'), nav = document.getElementById('tabs')
+  const rnd = (a, b) => a + Math.random() * (b - a)
+  const pick = a => a[Math.floor(Math.random() * a.length)]
+  const hex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]
+  const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t)
+  const css = (c, al) => `rgba(${c.map(Math.round).join(',')},${al})`
+  const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v))
+  const ease = p => p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2
+
+  // round 1's palette: a field of warm greys, and judicious bright colours
+  const GREY = ['#a8a097', '#b3aba1', '#9b938a', '#bfb6aa', '#8f8880', '#b3a48b', '#cdc2b2', '#80746a', '#a99a84'].map(hex)
+  // a deep warm ink for the words at rest, so they read against the grey
+  const INK_GREY = ['#4a433c', '#554d45', '#433c36', '#5b5249', '#4e463f'].map(hex)
+  const PALE = hex('#d8d0c4'), GROUND = hex('#a39b92')
+  const ACCENT = ['#e2a136', '#d4532f', '#dc6a84', '#3a63b4', '#2f8d84', '#eac34a', '#7a5bb0', '#e27a3a'].map(hex)
+  const mute = (c, k = 0.28) => mix(c, GROUND, k)
+  const hsh = (i, j) => { let h = Math.imul(i, 374761393) + Math.imul(j, 668265263) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296 }
+  const smo = t => t * t * (3 - 2 * t)
+  const vnoise = (x, y) => { const i = Math.floor(x), j = Math.floor(y), fx = smo(x - i), fy = smo(y - j), a = hsh(i, j), b = hsh(i + 1, j), c = hsh(i, j + 1), d = hsh(i + 1, j + 1); return a + (b - a) * fx + (c - a) * fy + (a - b - c + d) * fx * fy }
+  const TABS = [
+    { id: 'now', label: 'Now', fam: ['#e2a136', '#e27a3a', '#d4532f'], html: '<p class="lead">I do better with things that take a little time to make sense of.</p><p>Go-to-market strategy and engineering at Digital Realty, in Chicago.</p>' },
+    { id: 'before', label: 'Before', fam: ['#3a63b4', '#2f8d84', '#7a5bb0'], html: '<h2>Before</h2><ul class="roles"><li><span>Garner Health</span><span class="when">2021–22</span><span class="what">Head of Business Operations</span></li><li><span>NJOY</span><span class="when">2018–21</span><span class="what">Head of Strategy, Office of the CEO</span></li><li><span>L.E.K. Consulting</span><span class="when">2016–18</span><span class="what">Associate</span></li></ul>' },
+    { id: 'places', label: 'Places', fam: ['#d4532f', '#dc6a84', '#e2a136'], html: '<h2>Places</h2><p>Small restaurants that don’t advertise themselves, and travel that doesn’t come with a gift shop. I like being in places that aren’t trying to perform for you. In Kerala, that’s a fabric market, not a landmark.</p>' },
+    { id: 'craft', label: 'Craft', fam: ['#eac34a', '#2f8d84', '#e27a3a'], html: '<h2>Craft</h2><p>Clothes are an easy example: weave, weight, hand feel, drape. Cooking is the same impulse. Start with something solid, then tinker until it tastes like mine.</p>' },
+    { id: 'reading', label: 'Reading', fam: ['#7a5bb0', '#3a63b4', '#dc6a84'], html: '<h2>Reading</h2><p>A lot of sci-fi, especially the kind that starts fun and ends up making you stare at the ceiling for ten minutes.</p>' }
+  ]
+  TABS.forEach(t => { t.rich = t.fam.map(h => mix(hex(h), hex('#a39b92'), 0.12)) })
+
+  // a stroke is never quite the same twice: width, edges, how it lands and how it ends
+  function shapeFor (len, wd, k) {
+    const N = 14, s2 = Math.random() < 0.3 ? rnd(-0.05, 0.05) : 0, kind = Math.random()
+    const prof = kind < 0.45 ? u => (u < 0.22 ? 0.7 + 0.3 * Math.sin(Math.PI / 2 * u / 0.22) : 1 - 0.78 * Math.pow(Math.max(0, u - 0.5) / 0.5, 1.2))
+      : kind < 0.75 ? u => Math.pow(Math.sin(Math.PI * (0.06 + 0.88 * u)), 0.65)
+        : kind < 0.88 ? u => (0.45 + 0.55 * Math.min(1, u / 0.8)) * (u > 0.85 ? 1 - (u - 0.85) / 0.15 * 0.7 : 1)
+          : () => 0.9
+    const mid = u => k * len * 2 * u * (1 - u) + s2 * len * Math.sin(Math.PI * 2 * u)
+    const split = Math.random() < 0.28, u1 = split ? 0.72 : 1
+    const top = [], bot = []
+    for (let i = 0; i <= N; i++) { const u = u1 * i / N, x = -len / 2 + u * len, h = wd / 2 * prof(u); top.push([x, mid(u) - h * (1 + rnd(-0.14, 0.14))]); bot.push([x, mid(u) + h * (1 + rnd(-0.14, 0.14))]) }
+    const body = new Path2D()
+    body.moveTo(top[0][0], top[0][1]); for (const p of top) body.lineTo(p[0], p[1])
+    if (!split) body.lineTo(len / 2 + wd * 0.25, mid(1))
+    for (let i = bot.length - 1; i >= 0; i--) body.lineTo(bot[i][0], bot[i][1])
+    if (Math.random() < 0.55) { const h0 = (bot[0][1] - top[0][1]) / 2, c0 = (bot[0][1] + top[0][1]) / 2; for (let t = 1; t < 6; t++) { const an = Math.PI / 2 + t / 6 * Math.PI; body.lineTo(top[0][0] + Math.cos(an) * h0 * 0.9, c0 - Math.sin(an) * h0) } } else body.lineTo(top[0][0] - wd * rnd(0.05, 0.35), top[0][1])
+    body.closePath()
+    if (split) {
+      const n = 2 + Math.floor(Math.random() * 2)
+      for (let f = 0; f < n; f++) {
+        const v = -0.6 + 1.2 * (f + 0.5) / n + rnd(-0.1, 0.1), fw = wd * rnd(0.16, 0.26), endU = 1 - rnd(0, 0.1), pts = []
+        for (let i = 0; i <= 6; i++) { const u = 0.68 + (endU - 0.68) * i / 6; pts.push([-len / 2 + u * len, mid(u) + v * wd / 2 * (1 + 0.5 * (u - 0.68)), fw * (1 - i / 6.5)]) }
+        body.moveTo(pts[0][0], pts[0][1] - pts[0][2] / 2); for (const p of pts) body.lineTo(p[0], p[1] - p[2] / 2)
+        for (let i = pts.length - 1; i >= 0; i--) body.lineTo(pts[i][0], pts[i][1] + pts[i][2] / 2); body.closePath()
+      }
+    }
+    return body
+  }
+  // one stroke of paint: a thin dark edge where it stands up, the body, and a ridge of light
+  function paint (ctx, x, y, a, sh, col, al, wd) {
+    const c = Math.cos(a), s = Math.sin(a)
+    ctx.setTransform(dpr * c, dpr * s, -dpr * s, dpr * c, dpr * (x + 1.2), dpr * (y + 1.4)); ctx.fillStyle = css(mix(col, [58, 42, 30], 0.3), 0.24 * al); ctx.fill(sh)
+    ctx.setTransform(dpr * c, dpr * s, -dpr * s, dpr * c, dpr * x, dpr * y); ctx.fillStyle = css(col, al); ctx.fill(sh)
+  }
+
+  let W = 0, H = 0, wide = true, labels = [], textBox = null, current = TABS[0]
+  const pointer = { x: -1e4, y: -1e4 }
+
+  // the ground: round 1's grey field, laid once, quiet
+  function layGround () {
+    g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, gc.width, gc.height)
+    const cell = 30, PALE_GREYS = ['#cdc2b2', '#c6bdb0', '#d4cbbe'].map(hex)
+    for (let y = -cell; y < H + cell; y += cell) {
+      for (let x = -cell; x < W + cell; x += cell) {
+        const px = x + rnd(0, cell), py = y + rnd(0, cell)
+        let a = 0.85 * (Math.sin(px * 0.0042 + 1.3) + Math.cos(py * 0.0037) + 0.6 * Math.sin((px + py) * 0.0019)) + rnd(-0.12, 0.12)
+        let len = rnd(22, 58), wd = rnd(4, 9.5)
+        const edge = Math.abs(px - W / 2) / (W / 2)
+        let col = Math.random() < 0.015 + 0.2 * edge * edge * edge ? mute(pick(ACCENT)) : pick(GREY)
+        let dw = 1e9
+        for (const L of labels) dw = Math.min(dw, Math.hypot(Math.max(L.x + 6 - px, 0, px - (L.x + L.w - 6)), Math.max(L.y + L.h * 0.12 - py, 0, py - (L.y + L.h * 0.9))))
+        if (inGlyph(px, py)) continue
+        a = aroundWords(px, py, a)
+        paint(g, px, py, a, shapeFor(len + wd * 0.6, wd * 1.3, rnd(-0.18, 0.18)), col, 0.9, wd)
+      }
+    }
+  }
+
+  // the painting's own drift, so the words can lean with it
+  const groundAngle = (px, py) => 0.85 * (Math.sin(px * 0.0042 + 1.3) + Math.cos(py * 0.0037) + 0.6 * Math.sin((px + py) * 0.0019))
+  function glyphAt (px, py) {
+    for (const L of labels) {
+      const lx = Math.round(px - L.x), ly = Math.round(py - L.y)
+      if (lx < 1 || ly < 1 || lx >= L.w - 1 || ly >= L.h - 1) continue
+      const k = ly * L.w + lx
+      return { a: L.mask[k], gx: L.GX[k], gy: L.GY[k] }
+    }
+    return null
+  }
+  const inGlyph = (px, py) => { const q = glyphAt(px, py); return q && q.a > 110 }
+  // near a letter's edge, a stroke turns to run along it, so the paint flows round the word
+  function aroundWords (px, py, a) {
+    let best = null
+    for (const dx of [-9, 0, 9]) for (const dy of [-9, 0, 9]) { const q = glyphAt(px + dx, py + dy); if (q && (q.gx || q.gy) && (!best || Math.hypot(q.gx, q.gy) > Math.hypot(best.gx, best.gy))) best = q }
+    if (!best || Math.hypot(best.gx, best.gy) < 200) return a
+    const ta = Math.atan2(best.gy, best.gx) + Math.PI / 2, d = Math.atan2(Math.sin(2 * (ta - a)), Math.cos(2 * (ta - a))) / 2
+    return a + d * 0.75
+  }
+
+  // the words, written in strokes: each letter sampled and filled with short strokes that follow its edges
+  async function writeWords () {
+    await document.fonts.load('600 80px "Source Serif 4"')
+    labels = []
+    nav.textContent = ''
+    const fs = wide ? Math.min(104, H / 7.4, W * 0.066) : Math.min(52, W * 0.13)
+    const FONT = `600 ${fs}px "Source Serif 4"`
+    const off = document.createElement('canvas'), o = off.getContext('2d', { willReadFrequently: true })
+    TABS.forEach((t, i) => {
+      o.font = FONT
+      const tw = Math.ceil(o.measureText(t.label).width) + 12, th = Math.ceil(fs * 1.15)
+      let x, y
+      if (wide) { x = W * 0.56 + [0, 0.05, 0.015, 0.07, 0.03][i] * W; y = H * 0.17 + i * (H * 0.66 / (TABS.length - 1)) - th / 2 }
+      else { const col = i % 2, row = Math.floor(i / 2); x = 24 + col * (W - 48) / 2 + (row % 2 ? 10 : 0); y = H * 0.6 + row * (H * 0.36 / 3) + 6 }
+      off.width = tw; off.height = th
+      o.clearRect(0, 0, tw, th); o.font = FONT; o.fillStyle = '#000'; o.textBaseline = 'alphabetic'
+      o.fillText(t.label, 6, th * 0.8)
+      const img = o.getImageData(0, 0, tw, th).data
+      const A = (px, py) => (px < 0 || py < 0 || px >= tw || py >= th) ? 0 : img[(py * tw + px) * 4 + 3]
+      // which way each letter's stroke runs here: the dominant edge direction over a small window, turned along it
+      const GX = new Float32Array(tw * th), GY = new Float32Array(tw * th)
+      for (let yy = 1; yy < th - 1; yy++) for (let xx = 1; xx < tw - 1; xx++) {
+        GX[yy * tw + xx] = (A(xx + 1, yy - 1) + 2 * A(xx + 1, yy) + A(xx + 1, yy + 1)) - (A(xx - 1, yy - 1) + 2 * A(xx - 1, yy) + A(xx - 1, yy + 1))
+        GY[yy * tw + xx] = (A(xx - 1, yy + 1) + 2 * A(xx, yy + 1) + A(xx + 1, yy + 1)) - (A(xx - 1, yy - 1) + 2 * A(xx, yy - 1) + A(xx + 1, yy - 1))
+      }
+      const rad = Math.max(3, Math.round(fs * 0.075))
+      const along = (sx, sy) => {
+        let jxx = 0, jyy = 0, jxy = 0
+        for (let dy = -rad; dy <= rad; dy += 2) for (let dx = -rad; dx <= rad; dx += 2) {
+          const xx = sx + dx, yy = sy + dy; if (xx < 0 || yy < 0 || xx >= tw || yy >= th) continue
+          const gx = GX[yy * tw + xx], gy = GY[yy * tw + xx]; jxx += gx * gx; jyy += gy * gy; jxy += gx * gy
+        }
+        if (jxx + jyy < 1e5) return -Math.PI / 2
+        return 0.5 * Math.atan2(2 * jxy, jxx - jyy) + Math.PI / 2
+      }
+      const strokes = [], step = Math.max(2.6, fs * 0.05)
+      for (let py = 0; py < th; py += step) {
+        for (let px = 0; px < tw; px += step) {
+          const sx = Math.round(px + rnd(0, step)), sy = Math.round(py + rnd(0, step))
+          if (A(sx, sy) < 150) continue
+          const len = fs * rnd(0.22, 0.38), wd = fs * rnd(0.065, 0.095)
+          const la = along(sx, sy), fa = groundAngle(x + sx, y + sy), d2 = Math.atan2(Math.sin(2 * (fa - la)), Math.cos(2 * (fa - la))) / 2
+          strokes.push({ x: x + sx, y: y + sy, a: la + d2 * 0.3 + rnd(-0.1, 0.1), sh: shapeFor(len, wd, rnd(-0.12, 0.12)), grey: pick(INK_GREY), rich: mix(pick(t.rich), [40, 30, 24], 0.12), lag: Math.random() * 0.35, wd })
+        }
+      }
+      const b = document.createElement('button')
+      b.type = 'button'; b.textContent = t.label; b.setAttribute('aria-pressed', t === current ? 'true' : 'false')
+      Object.assign(b.style, { left: x + 'px', top: y + 'px', width: tw + 'px', height: th + 'px' })
+      b.addEventListener('click', () => choose(t))
+      b.addEventListener('focus', () => { lab.focus = true }); b.addEventListener('blur', () => { lab.focus = false })
+      nav.appendChild(b)
+      const lab = { t, x, y, w: tw, h: th, strokes, p: 0, target: 0, focus: false, burst: 0, button: b, mask: Uint8Array.from({ length: tw * th }, (_, k) => img[k * 4 + 3]), GX, GY }
+      labels.push(lab)
+    })
+  }
+
+  // drawing the words: each stroke deepens from grey to its colour, nearest your hand first
+  function drawWords () {
+    w.setTransform(1, 0, 0, 1, 0, 0); w.clearRect(0, 0, wc.width, wc.height)
+    for (const L of labels) {
+      for (const s of L.strokes) {
+        const near = clamp(1 - Math.hypot(s.x - pointer.x, s.y - pointer.y) / (L.w * 1.3))
+        const t = clamp((L.p - s.lag * (1 - near)) / 0.6)
+        const col = t <= 0 ? s.grey : mix(s.grey, s.rich, ease(t))
+        paint(w, s.x, s.y, s.a, s.sh, col, 0.95, s.wd)
+      }
+    }
+  }
+
+  // the swirl: a field of strokes that curls round the word you chose and arrives in spiral arms,
+  // outward from the word, until the left side is a fresh canvas in that word's colours
+  let queue = []
+  function swirl (L, reach = 1) {
+    const ox = L.x + L.w / 2, oy = L.y + L.h / 2, cell = wide ? 12 : 11, seed = Math.random() * 100
+    const LW = wide ? W * 0.55 : W, LH = wide ? H : H * 0.62
+    // the swirls: a big one opening from the side nearest the word, and a few smaller ones, each turning its own way
+    const vort = [{ x: wide ? LW * rnd(0.62, 0.8) : LW * rnd(0.3, 0.7), y: wide ? oy + rnd(-60, 60) : LH * rnd(0.6, 0.8), R: Math.min(LW, LH) * rnd(0.26, 0.34), s: 2.4, d: Math.random() < 0.5 ? 1 : -1, glow: true }]
+    const n = wide ? 3 + Math.floor(Math.random() * 3) : 2 + Math.floor(Math.random() * 2)
+    for (let i = 0; i < n; i++) vort.push({ x: rnd(LW * 0.08, LW * 0.92), y: rnd(LH * 0.08, LH * 0.92), R: Math.min(LW, LH) * rnd(0.08, 0.2), s: rnd(1.2, 2.2), d: Math.random() < 0.5 ? 1 : -1, glow: Math.random() < 0.6 })
+    const ph = rnd(0, 6.3)
+    const field = (x, y) => {
+      // a wandering current, like a long wave across the sky
+      const base = 0.75 * Math.sin(y / 150 + x / 300 + ph) + 0.35 * Math.sin(x / 110 - y / 230 + ph * 1.7) + (vnoise(x / 220 + seed, y / 220) - 0.5) * 1.6
+      let vx = Math.cos(base), vy = Math.sin(base), core = 0, ring = 0
+      for (const v of vort) {
+        const dx = x - v.x, dy = y - v.y, r = Math.hypot(dx, dy) || 1, k = v.s * Math.exp(-((r / v.R) ** 2))
+        vx += -dy / r * v.d * k; vy += dx / r * v.d * k
+        if (r < v.R * 0.45 && v.glow) core = Math.max(core, 1 - r / (v.R * 0.45))
+        if (r < v.R * 1.2) ring = Math.max(ring, Math.sin(r / (v.R * 0.11)) * Math.exp(-r / v.R))
+      }
+      return { a: Math.atan2(vy, vx), core, ring, speed: Math.hypot(vx, vy) }
+    }
+    const out = []
+    for (let y = -cell; y < H + cell; y += cell) {
+      for (let x = -cell; x < W + cell; x += cell) {
+        const px = x + rnd(0, cell), py = y + rnd(0, cell)
+        const dx = px - ox, dy = py - oy, r = Math.hypot(dx, dy)
+        const side = wide ? clamp((W * 0.6 - px) / (W * 0.12)) : clamp((H * 0.66 - py) / (H * 0.1))
+        const fromWord = clamp(1 - r / (wide ? 190 : 130))
+        // denser in some places, sparser in others
+        const dens = 0.72 + 0.28 * vnoise(px / 90 + seed * 2, py / 90)
+        let p = Math.max(side, fromWord) * dens * (reach < 1 ? clamp(1 - r / (520 * reach)) * 0.55 : 1)
+        if (Math.random() > p || inGlyph(px, py)) continue
+        const f = field(px, py)
+        const th = Math.atan2(dy, dx), turns = ((th + Math.PI * 2) % (Math.PI * 2)) / (Math.PI * 2)
+        // colour in bands that follow the swirls; light in the hearts of the swirls; grey worked through it
+        const band = vnoise(px / 70 + seed, py / 70) * 0.6 + 0.4 * (0.5 + 0.5 * f.ring)
+        const q = Math.random()
+        let col
+        if (f.core > 0.15 && Math.random() < 0.35 + 0.5 * f.core) col = mix(mute(L.t.rich[0], 0.15), PALE, 0.35 + 0.45 * f.core)
+        else if (q < 0.24) col = pick(GREY)
+        else if (q < 0.33) col = mix(mute(pick(L.t.rich)), PALE, 0.45)
+        else col = mute(L.t.rich[Math.min(2, Math.max(0, Math.floor(clamp((band - 0.25) / 0.5) * 3)))])
+        const tb = textBox, ox2 = Math.max(tb.x0 - px, 0, px - tb.x1), oy2 = Math.max(tb.y0 - py, 0, py - tb.y1)
+        const quiet = clamp(1 - (Math.hypot(ox2, oy2) + rnd(-14, 14)) / 56)
+        col = mix(col, PALE, 0.68 * quiet)
+        // short, tight strokes in the hearts of the swirls; longer ones out in the currents
+        const tight = f.core > 0 ? 0.55 + 0.45 * (1 - f.core) : 1
+        const len = rnd(16, 42) * tight * (0.8 + 0.25 * Math.min(1.6, f.speed)), wd = rnd(4, 11.5) * (0.75 + 0.25 * tight)
+        // the order a painter works in: a few long gestures first, sweeping out from the word; then areas
+        // blocked in here and there, nearer ones a little sooner; the light and the bright notes last
+        const accent = f.core > 0.15 || Math.random() < 0.05
+        let t
+        if (!accent && len > 28 && Math.random() < 0.16) t = 0.05 + r / 1500 + rnd(0, 0.15)
+        else if (accent) t = 1.45 + rnd(0, 0.65)
+        else {
+          const P = 150, pi = Math.floor(px / P + hsh(Math.floor(py / P) + 7, 3) * 0.6), pj = Math.floor(py / P + hsh(pi + 11, 5) * 0.6)
+          t = 0.3 + 1.05 * (0.35 * clamp(r / 1100) + 0.65 * hsh(pi + Math.round(seed), pj)) + rnd(0, 0.32)
+        }
+        t *= reach < 1 ? 0.7 : 1
+        const gesture = !accent && len > 28 && t < 0.4
+        out.push({ x: px, y: py, a: aroundWords(px, py, f.a + rnd(-0.14, 0.14)), len, wd, col, al: 0.95 - 0.13 * quiet, t: t * 2.9, dur: gesture ? rnd(800, 1200) : rnd(420, 760) })
+      }
+    }
+    out.sort((m, k) => m.t - k.t)
+    queue = out; queue.t0 = performance.now(); queue.i = 0
+  }
+  let wet = []
+  function stepQueue (now) {
+    const el = reduce ? 1e9 : (now - queue.t0) / 1000
+    while (queue.i < queue.length && queue[queue.i].t <= el) {
+      const m = queue[queue.i++]
+      m.sh = shapeFor(m.len + m.wd * 0.6, m.wd * 1.25, rnd(-0.16, 0.16)); m.born = now
+      if (reduce) paint(g, m.x, m.y, m.a, m.sh, m.col, m.al, m.wd); else wet.push(m)
+    }
+    if (queue.i >= queue.length) queue = []
+  }
+  // the brush moving: each stroke grows from where it landed toward its tail, fading in as it goes
+  function drawWet (now) {
+    e2.setTransform(1, 0, 0, 1, 0, 0); e2.clearRect(0, 0, ec.width, ec.height)
+    for (let i = wet.length - 1; i >= 0; i--) {
+      const m = wet[i], p = Math.min(1, (now - m.born) / m.dur)
+      if (p >= 1) { paint(g, m.x, m.y, m.a, m.sh, m.col, m.al, m.wd); wet.splice(i, 1); continue }
+      const e = 1 - Math.pow(1 - p, 2.2), L2 = m.len + m.wd * 0.6, c = Math.cos(m.a), sn = Math.sin(m.a)
+      e2.save()
+      e2.setTransform(dpr * c, dpr * sn, -dpr * sn, dpr * c, dpr * m.x, dpr * m.y)
+      e2.beginPath(); e2.rect(-L2 / 2 - m.wd, -m.wd * 2.5, (L2 + m.wd * 2) * e, m.wd * 5); e2.clip()
+      e2.globalAlpha = Math.min(1, p * 2.2)
+      paint(e2, m.x, m.y, m.a, m.sh, m.col, m.al, m.wd)
+      e2.restore()
+    }
+  }
+
+  function showPanel (t) { panel.innerHTML = t.html }
+  function choose (t) {
+    const L = labels.find(l => l.t === t)
+    labels.forEach(l => l.button.setAttribute('aria-pressed', l.t === t ? 'true' : 'false'))
+    L.burst = 1
+    measureText(t)
+    if (t !== current) {
+      current = t
+      panel.classList.add('out')
+      setTimeout(() => { showPanel(t); panel.classList.remove('out') }, reduce ? 0 : 520)
+    }
+    swirl(L)
+  }
+
+  // the words' own footprint: the header and the part's text, as they will stand once it has changed
+  function measureText (t) {
+    const keep = panel.innerHTML
+    if (t) panel.innerHTML = t.html
+    const a = document.querySelector('.text header').getBoundingClientRect(), b = panel.getBoundingClientRect()
+    if (t) panel.innerHTML = keep
+    textBox = { x0: Math.min(a.left, b.left) - 16, y0: a.top - 14, x1: Math.max(a.right, b.right) + 16, y1: b.bottom + 14 }
+  }
+
+  async function build () {
+    W = innerWidth; H = innerHeight; wide = W > 760
+    for (const c of [gc, wc, ec]) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr) }
+    await writeWords()
+    layGround()
+    showPanel(current)
+    measureText()
+    drawWords()
+  }
+
+  addEventListener('pointermove', e => { pointer.x = e.clientX; pointer.y = e.clientY }, { passive: true })
+  addEventListener('pointerdown', e => { pointer.x = e.clientX; pointer.y = e.clientY }, { passive: true })
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 200) })
+
+  await build()
+  // on arrival, the first word unfolds a small swirl by itself, to show what the words do
+  setTimeout(() => { const L = labels[0]; L.burst = 1; swirl(L, 0.45) }, reduce ? 0 : 1300)
+
+  let lastPulse = performance.now(), pulsing = null
+  function frame (now) {
+    // the words breathe: now and then one warms a little on its own, so you can tell they answer
+    if (!reduce && now - lastPulse > 3400) { lastPulse = now; pulsing = { L: pick(labels), until: now + 1300 } }
+    let changed = false
+    for (const L of labels) {
+      const dx = Math.max(L.x - pointer.x, 0, pointer.x - (L.x + L.w)), dy = Math.max(L.y - pointer.y, 0, pointer.y - (L.y + L.h))
+      let tgt = clamp(1 - Math.hypot(dx, dy) / (wide ? 200 : 120))
+      if (L.focus) tgt = 1
+      if (L.t === current) tgt = Math.max(tgt, 0.5)
+      if (pulsing && pulsing.L === L && now < pulsing.until) tgt = Math.max(tgt, 0.38)
+      if (L.burst > 0) { tgt = 1; L.burst *= 0.985; if (L.burst < 0.3) L.burst = 0 }
+      const np = L.p + (tgt - L.p) * (reduce ? 1 : 0.07)
+      if (Math.abs(np - L.p) > 0.002) changed = true
+      L.p = np
+    }
+    if (changed) drawWords()
+    if (queue.length) stepQueue(now)
+    if (wet.length || ec.dirty) { drawWet(now); ec.dirty = wet.length > 0 }
+    requestAnimationFrame(frame)
+  }
+  requestAnimationFrame(frame)
+  window.__painted = { choose: id => choose(TABS.find(t => t.id === id)), settle: () => { if (queue.length) { queue.t0 = -1e12; stepQueue(performance.now()) } for (const m of wet) m.born = -1e9; drawWet(performance.now()) }, labels: () => labels.length }
+})()
+</script>
+</body>
+</html>
