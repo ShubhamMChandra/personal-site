@@ -441,9 +441,12 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
   }
   function stepPlanner () {
     if (!planner) {
-      // on a phone only two plans are held at once (each is thousands of shapes); on a computer, all five
-      if (Object.keys(plans).length >= (wide ? TABS.length : 2)) return
-      const t = [current, ...TABS].find(t => !plans[t.id]); if (!t) return
+      // a plan only serves a full burst: a touch on any word but the open one, or the open word's first touch. Once
+      // the open word has been touched, its next touch is the smaller burst, so a plan for it would sit unused
+      const usable = t => !(t === current && labels.find(l => l.t === t).full)
+      for (const id in plans) if (!usable(TABS.find(t => t.id === id))) delete plans[id]
+      // a plan is a few hundred to two thousand strokes, so every word a touch could open holds one, phones included
+      const t = [current, ...TABS].find(t => !plans[t.id] && usable(t)); if (!t) return
       const L = labels.find(l => l.t === t), id = t.id
       planner = { id, gen: swirlSteps(L, 1, p => { plans[id] = p }) }
     }
