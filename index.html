@@ -1235,7 +1235,44 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
   setTimeout(() => document.body.classList.add('ready'), 2500)
   await build()
   // on arrival, the open word unfolds by itself, just as a touch would, to show what the words do
-  if (!STILL) setTimeout(() => choose(current, true), reduce ? 0 : 500)
+  let arrived = false
+  if (!STILL) setTimeout(() => { choose(current, true); arrived = true }, reduce ? 0 : 500)
+
+  // scrolling turns the page: down opens the next part, up the one before, for a reader who doesn't think to click.
+  // Nothing scrolls here, so the gesture is read by hand. It waits for the arrival above, which would otherwise
+  // unfold a part the reader has already left
+  function turn (dir) {
+    const t = TABS[TABS.indexOf(current) + dir]
+    if (arrived && t) choose(t)
+  }
+  if (!STILL) {
+    // one flick, one part: a trackpad flick keeps sending wheel events for a second or so as it coasts. The first
+    // ~50px turns the page; the next turn waits for the wheel to rest 200ms and for 900ms to pass, so the swirl is seen
+    let acc = 0, lastWheel = 0, lastTurn = -1e9, armed = true
+    addEventListener('wheel', e => {
+      if (e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return
+      const now = performance.now()
+      if (now - lastWheel > 200 && now - lastTurn > 900) { armed = true; acc = 0 }
+      lastWheel = now
+      if (!armed) return
+      acc += e.deltaY * (e.deltaMode ? 16 : 1)
+      if (Math.abs(acc) > 50) { armed = false; lastTurn = now; turn(Math.sign(acc)) }
+    }, { passive: true })
+    // a phone: a quick swipe up turns to the next part, as a scroll down would. Touch events, because a pan cancels
+    // the pointer events above
+    let swipe = null
+    addEventListener('touchstart', e => { const p = e.touches[0]; swipe = e.touches.length === 1 ? { x: p.clientX, y: p.clientY, at: performance.now() } : null }, { passive: true })
+    addEventListener('touchend', e => {
+      if (!swipe) return
+      const p = e.changedTouches[0], dx = swipe.x - p.clientX, dy = swipe.y - p.clientY
+      if (Math.abs(dy) > 50 && Math.abs(dy) > 1.5 * Math.abs(dx) && performance.now() - swipe.at < 800) turn(Math.sign(dy))
+      swipe = null
+    }, { passive: true })
+    addEventListener('keydown', e => {
+      const dir = { ArrowDown: 1, PageDown: 1, ArrowUp: -1, PageUp: -1 }[e.key]
+      if (dir && !e.repeat && !e.altKey && !e.metaKey && !e.ctrlKey) turn(dir)
+    })
+  }
   // the other words shimmer now and then, a light band crossing each in turn down the column, so you can tell they open
   const shimmer0 = performance.now() + 1800
 
