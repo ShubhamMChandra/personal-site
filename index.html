@@ -52,13 +52,13 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
 @keyframes wordin { from { opacity: 0 } }
 .wordfx { transition: opacity 1.6s ease; }
 #words { z-index: 1; }
-.stage { position: relative; z-index: 2; height: 100%; display: grid; grid-template-columns: 1fr 1fr;
+.stage { position: relative; z-index: 2; height: 100%; display: grid; grid-template-columns: 55fr 45fr;
   padding: calc(40px + env(safe-area-inset-top, 0px)) max(48px, env(safe-area-inset-right, 0px)) calc(40px + env(safe-area-inset-bottom, 0px)) max(56px, env(safe-area-inset-left, 0px)); }
-.text { display: grid; align-content: center; gap: 2.2rem; max-width: 34rem; text-shadow: 0 0 1px rgba(252, 249, 243, 1), 1.5px 0 1px rgba(252, 249, 243, .6), -1.5px 0 1px rgba(252, 249, 243, .6), 0 1.5px 1px rgba(252, 249, 243, .6), 0 -1.5px 1px rgba(252, 249, 243, .6), 0 0 5px rgba(232, 226, 216, .7), 0 0 14px rgba(216, 208, 196, .4); }
+.text { display: grid; align-content: center; gap: 2.2rem; max-width: calc(34rem + 5vw); text-shadow: 0 0 1px rgba(252, 249, 243, 1), 1.5px 0 1px rgba(252, 249, 243, .6), -1.5px 0 1px rgba(252, 249, 243, .6), 0 1.5px 1px rgba(252, 249, 243, .6), 0 -1.5px 1px rgba(252, 249, 243, .6), 0 0 5px rgba(232, 226, 216, .7), 0 0 14px rgba(216, 208, 196, .4); }
 .name { margin: 0; font-family: var(--font-ui); font-weight: 650; font-size: clamp(1.9rem, 1.3rem + 1.8vw, 2.7rem); letter-spacing: -.014em; line-height: 1.04; }
 .links { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; margin: .7rem 0 0; font-family: var(--font-ui); font-size: 1.06rem; font-weight: 550; }
 .links a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--link); text-decoration-thickness: 1.5px; text-underline-offset: .28em; }
-.panel { display: grid; gap: 1em; font-size: calc(1.15rem * var(--fit, 1)); transition: opacity .35s ease; }
+.panel { display: grid; gap: 1em; font-size: calc(1.2rem * var(--fit, 1)); transition: opacity .35s ease; }
 .panel.out { opacity: 0; }
 .panel h2 { margin: 0; font-family: var(--font-ui); font-size: .78em; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
 .panel p { margin: 0; font-size: 1.15em; line-height: 1.6; font-weight: 600; }
@@ -147,17 +147,17 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
   const smo = t => t * t * (3 - 2 * t)
   const vnoise = (x, y) => { const i = Math.floor(x), j = Math.floor(y), fx = smo(x - i), fy = smo(y - j), a = hsh(i, j), b = hsh(i + 1, j), c = hsh(i, j + 1), d = hsh(i + 1, j + 1); return a + (b - a) * fx + (c - a) * fy + (a - b - c + d) * fx * fy }
   const TABS = [
-    { id: 'work', label: 'Work', fam: ['#3a63b4', '#2f8d84', '#6f8fd0'], comp: '#e2a136',
-      html: '<h2>Work</h2><ul class="roles"><li><span>Digital Realty</span><span class="when">2025–</span><span class="what">Go-to-market strategy and engineering</span></li><li><span>Advisory</span><span class="when">2022–</span><span class="what">Hedge funds on technology, startups on go-to-market</span></li><li><span>Garner Health</span><span class="when">2021–22</span><span class="what">Head of Business Operations. Joined at 38 people, left at 200.</span></li><li><span>NJOY</span><span class="when">2018–21</span><span class="what">Head of Strategy, Office of the CEO, through a $2.8B acquisition</span></li><li><span>L.E.K. Consulting</span><span class="when">2016–18</span><span class="what">Associate, fourteen engagements</span></li></ul>',
-      more: '<h2>Work</h2><ul class="roles close"><li><span>Digital Realty</span><span class="when">2025–</span><span class="what">Go-to-market strategy and engineering.</span></li><li><span>Advisory</span><span class="when">2022–</span><span class="what">Research on AI and enterprise software for a $55B crossover fund, behind $400M of its decisions. Between, interim roles at A.Team and Better.com.</span></li><li><span>Garner Health</span><span class="when">2021–22</span><span class="what">The first operations hire. Built marketing and recruiting from nothing while the company grew five times over.</span></li><li><span>NJOY</span><span class="when">2018–21</span><span class="what">Strategy and fundraising in the CEO’s office: four rounds, a launch in eleven countries, then the $2.8B acquisition.</span></li><li><span>L.E.K. Consulting</span><span class="when">2016–18</span><span class="what">Growth strategy and private-equity diligence, for investors making eight- and nine-figure decisions.</span></li></ul>' },
     { id: 'me', label: 'Me', fam: ['#e2a136', '#e27a3a', '#eac34a'], comp: '#3a63b4',
       html: '<p>Go-to-market strategy and engineering at Digital Realty. I live in Chicago and still advise a few funds and startups</p><p class="lead">I do better with things that take a little time to make sense of.</p><p>Mostly that means going and looking, and staying a while</p>',
       more: '<p class="lead">I do better with things that take a little time to make sense of.</p><p>I like places that aren’t trying to perform for you. In Kerala, that’s a fabric market, not a landmark: heat, noise, colour, bargaining, getting a little turned around and not minding it.</p><p>At home it’s craft. Clothes are the easy example: weave, weight, hand feel, drape. Cooking is the same impulse. Start with something solid, then tinker until it tastes like mine.</p><p>I read sci-fi that starts fun and ends with me staring at the ceiling. And after years of writing specs, I learned to write the code: a master’s in computer science at UChicago, finished in 2025.</p>' },
-    { id: 'contact', label: 'Contact', fam: ['#d4532f', '#dc6a84', '#e2a136'], comp: '#2f8d84',
-      html: '<h2>Contact</h2><p>If you’re building something interesting, or want to talk through startups, markets, or whatever you’re stuck on, write to me. Email works best.</p><p>shubham.m.chandra@gmail.com</p>' },
-    { id: 'references', label: 'References', fam: ['#7a5bb0', '#3a63b4', '#dc6a84'], comp: '#eac34a',
+    { id: 'work', label: 'Work', start: 1, fam: ['#3a63b4', '#2f8d84', '#6f8fd0'], comp: '#e2a136',
+      html: '<h2>Work</h2><ul class="roles"><li><span>Digital Realty</span><span class="when">2025–</span><span class="what">Go-to-market strategy and engineering</span></li><li><span>Advisory</span><span class="when">2022–</span><span class="what">Hedge funds on technology, startups on go-to-market</span></li><li><span>Garner Health</span><span class="when">2021–22</span><span class="what">Head of Business Operations. Joined at 38 people, left at 200.</span></li><li><span>NJOY</span><span class="when">2018–21</span><span class="what">Head of Strategy, Office of the CEO, through a $2.8B acquisition</span></li><li><span>L.E.K. Consulting</span><span class="when">2016–18</span><span class="what">Associate, fourteen engagements</span></li></ul>',
+      more: '<h2>Work</h2><ul class="roles close"><li><span>Digital Realty</span><span class="when">2025–</span><span class="what">Go-to-market strategy and engineering.</span></li><li><span>Advisory</span><span class="when">2022–</span><span class="what">Research on AI and enterprise software for a $55B crossover fund, behind $400M of its decisions. Between, interim roles at A.Team and Better.com.</span></li><li><span>Garner Health</span><span class="when">2021–22</span><span class="what">The first operations hire. Built marketing and recruiting from nothing while the company grew five times over.</span></li><li><span>NJOY</span><span class="when">2018–21</span><span class="what">Strategy and fundraising in the CEO’s office: four rounds, a launch in eleven countries, then the $2.8B acquisition.</span></li><li><span>L.E.K. Consulting</span><span class="when">2016–18</span><span class="what">Growth strategy and private-equity diligence, for investors making eight- and nine-figure decisions.</span></li></ul>' },
+    { id: 'references', label: 'References', start: 1, fam: ['#7a5bb0', '#3a63b4', '#dc6a84'], comp: '#eac34a',
       html: '<h2>References</h2><ul class="roles"><li><span>Geremy Bass</span><span class="what">Former interim CPO, Zoho. “He makes people around him better.”</span></li><li><span>Greg Doyle</span><span class="what">Former CFO, NJOY. “Curiosity, tenacity and structured thinking.”</span></li><li><span>Stephanie Fogle</span><span class="what">CHRO, Parsley Health. “An incredible sense of quiet confidence.”</span></li></ul>',
       more: '<h2>References</h2><blockquote><p>“He makes connections across disciplines, learns with incredible speed, and improves most things that enter his sphere. More importantly, he makes people around him better.”</p><footer>Geremy Bass, friend of ten years, former interim CPO at Zoho</footer></blockquote><blockquote><p>“His innate curiosity, tenacity and structured thinking allowed him to become a key contributor in our early strategy and capital raising initiatives.”</p><footer>Greg Doyle, former CFO, NJOY</footer></blockquote><blockquote><p>“He brought an incredible sense of quiet confidence to every meeting and every project.”</p><footer>Stephanie Fogle, CHRO, Parsley Health</footer></blockquote>' },
+    { id: 'contact', label: 'Contact', fam: ['#d4532f', '#dc6a84', '#e2a136'], comp: '#2f8d84',
+      html: '<h2>Contact</h2><p>If you’re building something interesting, or want to talk through startups, markets, or whatever you’re stuck on, write to me. Email works best.</p><p>shubham.m.chandra@gmail.com</p>' },
     { id: 'why', label: 'Why?', fam: ['#2f8d84', '#5f9a6e', '#eac34a'], comp: '#d4532f',
       html: '<h2>Why?</h2><p>When I was 12, <a href="https://en.wikipedia.org/wiki/StumbleUpon" target="_blank" rel="noopener">StumbleUpon</a> was my front door to the internet. I kept hitting refresh and found an internet full of art: unmonetized, unglamorous, built by enthusiasts, for enthusiasts. It sparked wonder.</p><p>When I was 17, my college gave us free admission to the Art Institute of Chicago, where Seurat’s <a href="https://www.artic.edu/artworks/27992/a-sunday-on-la-grande-jatte-1884" target="_blank" rel="noopener"><i>A Sunday on La Grande Jatte</i></a> hung. Over the years I spent hours in front of it, inspecting every stroke.</p><p>Everything we do is art. This site brings those two loves together: every pixel here is a little of who I am.</p><p>I appreciate you, for visiting, and for every pixelated brushstroke that makes you unique.</p><p class="fin">fin.</p>',
       more: '<h2>How it’s made</h2><p>The paint starts in the letters of the word you touch. Some of their strokes run out as currents, and every other current is laid beside one already there, so the page grows out of the word. Each current is one drag of a loaded brush that runs dry and is reloaded.</p><p>Each part bursts its own way: a sunburst, a wake, a fan, a galaxy, a weave. No two visits paint the same picture.</p><p>Set in Source Serif 4 and Schibsted Grotesk. Written by hand in HTML, CSS and JavaScript, with no framework.</p>' }
@@ -207,7 +207,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     if (tx.hi) { ctx.fillStyle = css(tx.hiCol, tx.ridge * al); ctx.fill(tx.hi) }
   }
 
-  let W = 0, H = 0, wide = true, labels = [], textBox = null, current = TABS.find(t => '#' + t.id === location.hash) || TABS[1]
+  let W = 0, H = 0, wide = true, labels = [], textBox = null, current = TABS.find(t => '#' + t.id === location.hash) || TABS[0]
   const pointer = { x: -1e4, y: -1e4 }
 
   // the ground is laid from a fixed sequence of random numbers, restarted at each cell, so it can be laid twice
@@ -1101,8 +1101,9 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
   }
 
   // two depths: the first touch shows a glance; the word stays wet, glinting now and then, because there is more in it.
-  // Touch it again for the closer look, painted with a smaller burst from the same word; then the word dries
-  let depth = 0
+  // Touch it again for the closer look, painted with a smaller burst from the same word; then the word dries.
+  // A part with `start: 1` opens on its closer look, and the glance is the second touch
+  let depth = current.start || 0
   const textOf = (t, d) => d && t.more ? t.more : t.html
   function showPanel (t) { panel.innerHTML = textOf(t, depth); panel.classList.toggle('deep', depth === 1); fitPanel() }
   // the text always fits on one screen: it steps down a little in size if it would run into the painted words.
@@ -1125,7 +1126,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     if (!reduce) for (const c of [L.cv, L.fx]) c.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.045) rotate(-0.6deg)' }, { transform: 'scale(1)' }], { duration: 560, easing: 'cubic-bezier(.3,1.5,.5,1)' })
     const again = t === current && L.full
     L.full = true
-    depth = again && t.more ? 1 - depth : 0
+    depth = again && t.more ? 1 - depth : t.start || 0
     textCol = cols[t.id][depth]
     if (depth === 1) primeIn(textCol)
     L.glintAt = performance.now() + 2600
@@ -1236,7 +1237,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
       if (L.t === current) tgt = Math.max(tgt, 0.5)
       if (pulsing && pulsing.L === L && now < pulsing.until) tgt = Math.max(tgt, 0.38)
       // wet: the chosen word glints while there is a closer look to have
-      const wet = !reduce && L.t === current && depth === 0 && L.t.more && L.burst === 0 && L.glintAt
+      const wet = !reduce && L.t === current && depth === (L.t.start || 0) && L.t.more && L.burst === 0 && L.glintAt
       const order = labels.filter(l => l.t !== current).indexOf(L)
       // a slow band: 2.4s to cross a word; the open word glints every 8s, the others every 14s, 0.9s apart down the column
       const gph = wet ? (now - L.glintAt) % 8000 : !reduce && order >= 0 && now > shimmer0 + order * 900 ? (now - shimmer0 - order * 900) % 14000 : 1e9
