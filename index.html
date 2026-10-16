@@ -444,7 +444,14 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
   // throws the plans away
   let building = null, planner = null
   const plans = {}
-  function startPlan (p) { queue = p; queue.t0 = performance.now(); queue.i = 0 }
+  // the patches whose pale paint may still show on the ground, a bit per section and depth (zoneBit). A painting's
+  // fills are kept only over these, so a plan made ahead fits whatever came before it; the check is one pass over the
+  // plan at the touch. Once a painting has been laid in full, only its own patch is left
+  let onGround = 0
+  function startPlan (p) {
+    if (p.key) { const keep = p.filter(m => !m.near || (m.near & onGround & ~p.key)); keep.stats = p.stats; keep.key = p.key; p = keep }
+    queue = p; queue.t0 = performance.now(); queue.i = 0
+  }
   function swirl (L, reach = 1) {
     if (reach === 1 && plans[L.t.id] && !STILL) { const p = plans[L.t.id]; delete plans[L.t.id]; building = null; startPlan(p); return }
     if (planner && planner.id === L.t.id) planner = null
@@ -1160,6 +1167,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
       lay(pts, wd * 0.55, Infinity)
     }
     out.sort((m, k) => m.t - k.t)
+    out.key = zoneBit(L.t, sink ? 0 : depth)
     const nSrc = lines.filter(l => l.gen === 0).length
     out.stats = { sources: nSrc, tried: srcs.length, lines: lines.length, strokes: out.length, maxGen: Math.max(...lines.map(l => l.gen)), why, breaks: breaks.concat(jumbo ? ['jumbo'] : []), cover: nCover, firstThird: out.filter(m => m.t <= tb).length / out.length, tEnd: out.length ? out[out.length - 1].t : 0 }
     if (sink) sink(out); else startPlan(out)
@@ -1175,7 +1183,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
       m.sh = m.sh || shapeFor(m.len + m.wd * 0.4, m.wd * 1.15, m.k ?? rnd(-0.16, 0.16), true); m.born = now
       if (reduce) commit(m); else wet.push(m)
     }
-    if (queue.i >= queue.length) queue = []
+    if (queue.i >= queue.length) { if (queue.key) onGround = queue.key; queue = [] }
   }
   // the brush moving: each stroke grows from where it landed toward its tail, fading in as it goes
   function drawWet (now) {
@@ -1231,6 +1239,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
       setTimeout(() => { showPanel(t); panel.classList.remove('out') }, reduce ? 0 : 520)
     }
     swirl(L, again ? 0.55 : 1)
+    onGround |= zoneBit(t, depth)
   }
 
   // the words' own footprint: the header and the part's text, as they will stand once it has changed
@@ -1316,6 +1325,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     measureColumn()
     seeded(layGround)
     seeded(primeColumn)
+    onGround = zoneBit(current, depth)
     showPanel(current)
     measureText()
     drawWords()
