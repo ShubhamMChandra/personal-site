@@ -1248,7 +1248,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     const t = TABS[TABS.indexOf(current) + dir]
     if (arrived && t) { rush = 0; choose(t); heading = dir }
   }
-  // a scroll runs the painting at the speed of the scroll: each pixel moves it ~22ms ahead, so an ordinary flick
+  // a scroll runs the painting at the speed of the scroll: each pixel moves it ~19ms ahead, so an ordinary flick
   // finishes a part. Once the paint is down, scrolling on turns the page. Scrolling back the way the reader came
   // turns back at once, without waiting for the paint
   // The time a scroll asks for is spent over the next frames, at most 0.8s of painting a frame, so a fast scroll
@@ -1267,7 +1267,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     if (!arrived || !dy) return
     const dir = Math.sign(dy), there = TABS[TABS.indexOf(current) + dir]
     if (Math.sign(acc) !== dir) acc = 0
-    if (painting() && (dir === heading || !there)) { acc = 0; hurry(Math.abs(dy) * 22); return }
+    if (painting() && (dir === heading || !there)) { acc = 0; hurry(Math.abs(dy) * 19); return }
     acc += dy
     if (Math.abs(acc) > 50) { acc = 0; turn(dir) }
   }
