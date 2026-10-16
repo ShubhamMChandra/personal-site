@@ -1162,7 +1162,26 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     }
     depth = keep
     textCol = cols[current.id][depth]
+    measureZones()
   }
+  // how far a section's pale patch can show past its lines: the quiet strokes fade out over 56px (±14), the primed
+  // ground over 48px (±12). Each section and depth gets a bit, set on a coarse grid wherever its patch can reach, so a
+  // painting can tell which old patches a stroke would paint over
+  const REACH = 60, ZC = 8
+  let zones = null, zw = 0, zh = 0
+  const zoneBit = (t, d) => 1 << (TABS.indexOf(t) * 2 + d)
+  function measureZones () {
+    zw = Math.ceil(W / ZC) + 1; zh = Math.ceil(H / ZC) + 1; zones = new Uint16Array(zw * zh)
+    for (const t of TABS) for (const d of [0, 1]) {
+      const c = cols[t.id][d], bit = zoneBit(t, d)
+      if (c) for (const p of c.parts) {
+        for (let y = Math.max(0, Math.floor((p.y0 - REACH) / ZC)); y < Math.min(zh, Math.ceil((p.y1 + REACH) / ZC)); y++) {
+          for (let x = Math.max(0, Math.floor((p.x0 - REACH) / ZC)); x < Math.min(zw, Math.ceil((p.x1 + REACH) / ZC)); x++) if (boxDist((x + 0.5) * ZC, (y + 0.5) * ZC, p) < REACH) zones[y * zw + x] |= bit
+        }
+      }
+    }
+  }
+  const zoneAt = (x, y) => { const zx = Math.floor(x / ZC), zy = Math.floor(y / ZC); return zx >= 0 && zy >= 0 && zx < zw && zy < zh ? zones[zy * zw + zx] : 0 }
   // the text's own shape: a box for each line, as long as that line, so a short line gets a short patch and the
   // space beside it keeps its paint. `parts` are the lines; x0..y1 is their outline
   function boxNow () {
