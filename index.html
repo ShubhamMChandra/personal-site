@@ -1148,7 +1148,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     textBox = { x0: Math.min(a.left, b.left) - 16, y0: a.top - 14, x1: Math.max(a.right, b.right) + 16, y1: b.bottom + 14 }
   }
 
-  // the area each section's text takes, at each depth. The paint stays pale only under the open section's text; a
+  // the shape each section's text takes, at each depth. The paint stays pale only under the open section's text; a
   // swirl paints over the rest of the old pale patch and quiets round the new text, so the patch fits what it covers
   let textCol = null
   const cols = {}
@@ -1163,11 +1163,34 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     depth = keep
     textCol = cols[current.id][depth]
   }
+  // the text's own shape: a box for each line, as long as that line, so a short line gets a short patch and the
+  // space beside it keeps its paint. `parts` are the lines; x0..y1 is their outline
   function boxNow () {
-    const hd = document.querySelector('.text header').getBoundingClientRect(), b = panel.getBoundingClientRect()
-    return { x0: Math.min(hd.left, b.left) - 18, y0: hd.top - 16, x1: Math.max(hd.right, b.right) + 18, y1: b.bottom + 16 }
+    const range = document.createRange(), rows = []
+    const walk = document.createTreeWalker(document.querySelector('.text'), NodeFilter.SHOW_TEXT)
+    for (let n; (n = walk.nextNode());) {
+      if (!n.textContent.trim()) continue
+      range.selectNodeContents(n)
+      for (const r of range.getClientRects()) {
+        if (!r.width) continue
+        // the pieces of one line (a link inside a sentence, a date beside a role) make one box
+        const row = rows.find(q => r.top < q.y1 - 2 && r.bottom > q.y0 + 2)
+        if (row) { row.x0 = Math.min(row.x0, r.left); row.x1 = Math.max(row.x1, r.right); row.y0 = Math.min(row.y0, r.top); row.y1 = Math.max(row.y1, r.bottom) } else rows.push({ x0: r.left, y0: r.top, x1: r.right, y1: r.bottom })
+      }
+    }
+    if (!rows.length) return null
+    const parts = rows.map(q => ({ x0: q.x0 - 18, y0: q.y0 - 16, x1: q.x1 + 18, y1: q.y1 + 16 }))
+    return { parts, x0: Math.min(...parts.map(p => p.x0)), y0: Math.min(...parts.map(p => p.y0)), x1: Math.max(...parts.map(p => p.x1)), y1: Math.max(...parts.map(p => p.y1)) }
   }
-  const colDist = (x, y, c = textCol) => c ? Math.hypot(Math.max(c.x0 - x, 0, x - c.x1), Math.max(c.y0 - y, 0, y - c.y1)) : 1e9
+  const boxDist = (x, y, c) => Math.hypot(Math.max(c.x0 - x, 0, x - c.x1), Math.max(c.y0 - y, 0, y - c.y1))
+  // past 80px from the outline nothing is quieted, so only nearer points need the nearest line
+  const colDist = (x, y, c = textCol) => {
+    if (!c) return 1e9
+    const d = boxDist(x, y, c)
+    if (d > 80 || !c.parts) return d
+    let m = 1e9; for (const p of c.parts) m = Math.min(m, boxDist(x, y, p))
+    return m
+  }
   async function build () {
     for (const k in plans) delete plans[k]
     planner = null
