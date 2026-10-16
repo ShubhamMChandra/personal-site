@@ -45,7 +45,8 @@ body:not(.ready) :is(#ground, #words, #wordsBox, .stage) { opacity: 0; }
 canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 #ground { z-index: 0; }
 #wet { z-index: 1; }
-.wordc { position: fixed; z-index: 1; pointer-events: none; transform-origin: 50% 55%; }
+.wordc { position: fixed; z-index: 1; pointer-events: none; transform-origin: 50% 55%; animation: wordin .5s ease backwards; }
+@keyframes wordin { from { opacity: 0 } }
 .wordfx { transition: opacity 1.6s ease; }
 #words { z-index: 1; }
 .stage { position: relative; z-index: 2; height: 100%; display: grid; grid-template-columns: 1fr 1fr;
@@ -204,12 +205,22 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
   let W = 0, H = 0, wide = true, labels = [], textBox = null, current = TABS.find(t => '#' + t.id === location.hash) || TABS[1]
   const pointer = { x: -1e4, y: -1e4 }
 
+  // the ground is laid from a fixed sequence of random numbers, restarted at each cell, so it can be laid twice
+  // stroke for stroke: once at once on arrival, and again when the words are built, now leaving room for them
+  const groundSeed = Math.floor(Math.random() * 1e9)
+  function seeded (lay) {
+    const keep = Math.random; let s = 0
+    Math.random = () => { s = (s + 0x6D2B79F5) | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296 }
+    try { lay((x, y) => { s = (groundSeed + Math.round(x) * 73856093 + Math.round(y) * 19349663) | 0 }) } finally { Math.random = keep }
+  }
+
   // the ground: round 1's grey field, laid once, quiet
-  function layGround () {
+  function layGround (cellSeed = () => {}) {
     g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, gc.width, gc.height)
     const cell = 30, PALE_GREYS = ['#cdc2b2', '#c6bdb0', '#d4cbbe'].map(hex), CALM = ['#b3aba1', '#bfb6aa', '#cdc2b2', '#b9ae9e'].map(hex)
     for (let y = -cell; y < H + cell; y += cell) {
       for (let x = -cell; x < W + cell; x += cell) {
+        cellSeed(x, y)
         const px = x + rnd(0, cell), py = y + rnd(0, cell)
         let a = 0.85 * (Math.sin(px * 0.0042 + 1.3) + Math.cos(py * 0.0037) + 0.6 * Math.sin((px + py) * 0.0019)) + rnd(-0.12, 0.12)
         let len = rnd(22, 58), wd = rnd(4, 9.5)
@@ -217,8 +228,6 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
         const calm = clamp(1 - (colDist(px, py) + rnd(-12, 12)) / 60)
         let col = Math.random() < (0.015 + 0.2 * edge * edge * edge) * (1 - calm) ? mute(pick(ACCENT)) : pick(GREY)
         if (calm > 0) col = mix(col, mix(pick(CALM), PALE, 0.5), calm)
-        let dw = 1e9
-        for (const L of labels) dw = Math.min(dw, Math.hypot(Math.max(L.x + 6 - px, 0, px - (L.x + L.w - 6)), Math.max(L.y + L.h * 0.12 - py, 0, py - (L.y + L.h * 0.9))))
         if (gatherAt(px, py) > hsh(Math.round(px) * 7, Math.round(py) * 13) * 0.15 + 0.1) continue
         paint(g, px, py, a, shapeFor(len + wd * 0.6, wd * 1.3, rnd(-0.18, 0.18)), col, 0.9, wd, calm > 0.3 ? { streaks: [] } : undefined)
       }
@@ -227,11 +236,12 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
 
   // under the words the painter primes the canvas: a closer, paler layer of strokes, so no dark ground shows
   // between the strokes behind the text. The paint stays; only its gaps close
-  function primeColumn () {
+  function primeColumn (cellSeed = () => {}) {
     if (!textCol) return
     const CALM = ['#b3aba1', '#bfb6aa', '#cdc2b2', '#b9ae9e'].map(hex), st = 13
     for (let y = textCol.y0 - 40; y < textCol.y1 + 40; y += st) {
       for (let x = textCol.x0 - 40; x < textCol.x1 + 40; x += st) {
+        cellSeed(x * 3 + 1, y * 3 + 1)
         const px = x + rnd(0, st), py = y + rnd(0, st), calm = clamp(1 - (colDist(px, py) + rnd(-12, 12)) / 48)
         if (calm <= 0) continue
         const len = rnd(22, 48), wd = rnd(5, 9.5)
@@ -1117,15 +1127,18 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
   const cols = {}
   function measureColumn () {
     // the text is centred, so a longer text moves the name up: each section and depth is measured as it stands
-    const keep = depth, head = document.querySelector('.text header')
+    const keep = depth
     for (const t of TABS) for (const d of [0, 1]) {
       depth = d; panel.innerHTML = textOf(t, d); panel.classList.toggle('deep', d === 1); fitPanel()
-      const hd = head.getBoundingClientRect(), b = panel.getBoundingClientRect()
       cols[t.id] = cols[t.id] || []
-      cols[t.id][d] = { x0: Math.min(hd.left, b.left) - 18, y0: hd.top - 16, x1: Math.max(hd.right, b.right) + 18, y1: b.bottom + 16 }
+      cols[t.id][d] = boxNow()
     }
     depth = keep
     textCol = cols[current.id][depth]
+  }
+  function boxNow () {
+    const hd = document.querySelector('.text header').getBoundingClientRect(), b = panel.getBoundingClientRect()
+    return { x0: Math.min(hd.left, b.left) - 18, y0: hd.top - 16, x1: Math.max(hd.right, b.right) + 18, y1: b.bottom + 16 }
   }
   const colDist = (x, y, c = textCol) => c ? Math.hypot(Math.max(c.x0 - x, 0, x - c.x1), Math.max(c.y0 - y, 0, y - c.y1)) : 1e9
   async function build () {
@@ -1133,12 +1146,12 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     planner = null
     W = innerWidth; H = innerHeight; wide = W > 760
     for (const c of [gc, wc, ec]) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr) }
-    // the words to read come first; the painted words follow as soon as they are built
-    if (!labels.length) showPanel(current)
+    // on arrival the text and the ground come at once; the painted words follow as soon as they are built
+    if (!labels.length) { showPanel(current); textCol = boxNow(); seeded(layGround); seeded(primeColumn); document.body.classList.add('ready') }
     await writeWords()
     measureColumn()
-    layGround()
-    primeColumn()
+    seeded(layGround)
+    seeded(primeColumn)
     showPanel(current)
     measureText()
     drawWords()
