@@ -463,7 +463,9 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
       const lin = wide ? clamp((W * 0.9 - x) / (W * 0.52)) : clamp((H * 0.92 - y) / (H * 0.4))
       const side = smo(clamp(lin * 1.3 - 0.15 + (vnoise(x / 130 + seed, y / 130) - 0.5) * 0.75))
       const dW = Math.hypot(Math.max(L.x - x, 0, x - L.x - L.w), Math.max(L.y - y, 0, y - L.y - L.h))
-      let p = Math.max(side, clamp(1.3 - dW / (wide ? 320 : 260)))
+      // weave on a phone: its word sits on the bottom row, so its own reach must carry the cloth across the other
+      // words' rows to where the top side takes over; at 260 it fades out first, leaving a band of holes it can't cross
+      let p = Math.max(side, clamp(1.3 - dW / (wide ? 320 : B.weave ? 480 : 260)))
       if (reach < 1) p *= clamp(1 - Math.hypot(x - ox, y - oy) / (520 * reach))
       if (gatherAt(x, y) > (wide ? 0.3 : 0.55) || ownAt(x, y) > 0.3) return false
       for (const vd of voids) { const c = Math.cos(vd.t), sn = Math.sin(vd.t), dx = x - vd.x, dy = y - vd.y; if (((dx * c + dy * sn) / vd.rx) ** 2 + ((-dx * sn + dy * c) / vd.ry) ** 2 < 1) return false }
@@ -548,7 +550,9 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
             const gr = clothGrad(cx, cy, k), g2 = gr[0] * gr[0] + gr[1] * gr[1] || 1
             cx += gr[0] * (tgt - cC) / g2; cy += gr[1] * (tgt - cC) / g2
           }
-          if (!inRegion(cx, cy) || !free(cx, cy, sp * 0.85, -2, P.fm)) continue
+          // the occupancy grid counts distance in whole 4px cells, so on a phone (spacing 14.4px) the next thread can read
+          // as 3 cells, 12px, inside 0.85 of the spacing, and a straight row then refuses every seed along it: test under that
+          if (!inRegion(cx, cy) || !free(cx, cy, sp * (B.weave && !wide ? 0.78 : 0.85), -2, P.fm)) continue
           const id = lines.length, { pts, si } = trace(cx, cy, id, P.fm)
           if (pts.length < 5) continue
           mark(pts, id, P.fm)
