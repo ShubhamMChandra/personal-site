@@ -21,10 +21,13 @@
 <meta name="twitter:title" content="Shubham Chandra · GTM Strategy &amp; Engineering, Digital Realty">
 <meta name="twitter:description" content="GTM strategy and engineering at Digital Realty. Research for a $55B hedge fund, a $2.8B exit, and teams scaled 5x.">
 <meta name="twitter:image" content="https://shubhamchandra.com/assets/og-image.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&display=swap">
+<link rel="preload" href="/assets/fonts/source-serif-4-v15-latin.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+/* fonts: self-hosted Latin subsets of Google Fonts' variable files (OFL, see assets/fonts/OFL.txt). The serif roman is
+   preloaded because the painted words wait on it. A changed file gets a new name: assets/fonts/ is cached as immutable. */
+@font-face { font-family: 'Source Serif 4'; font-style: normal; font-weight: 300 700; font-display: swap; src: url(/assets/fonts/source-serif-4-v15-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Source Serif 4'; font-style: italic; font-weight: 300 700; font-display: swap; src: url(/assets/fonts/source-serif-4-v15-latin-italic.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Schibsted Grotesk'; font-style: normal; font-weight: 400 900; font-display: swap; src: url(/assets/fonts/schibsted-grotesk-v7-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 /* layout: one screen, no scrolling. On the left, a text area. On the right, the parts of his life written in
    brushstrokes; they deepen in colour as you come near, and a click unfolds a swirl of paint that fills the left. */
 :root {
