@@ -1118,6 +1118,8 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
   // Touch it again for the closer look, painted with a smaller burst from the same word; then the word dries.
   // A part with `start: 1` opens on its closer look, and the glance is the second touch
   let depth = current.start || 0
+  // the way the reader is moving through the parts: down (1), unless a scroll up brought them here
+  let heading = 1
   const textOf = (t, d) => d && t.more ? t.more : t.html
   function showPanel (t) { panel.innerHTML = textOf(t, depth); panel.classList.toggle('deep', depth === 1); fitPanel() }
   // the text always fits on one screen: it steps down a little in size if it would run into the painted words.
@@ -1132,6 +1134,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
   }
   // arrive: the page opens its first word as if it had been touched, without swapping the text already showing
   function choose (t, arrive = false) {
+    heading = 1
     const L = labels.find(l => l.t === t)
     labels.forEach(l => l.button.setAttribute('aria-pressed', l.t === t ? 'true' : 'false'))
     L.burst = 1
@@ -1243,31 +1246,48 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
   // unfold a part the reader has already left
   function turn (dir) {
     const t = TABS[TABS.indexOf(current) + dir]
-    if (arrived && t) choose(t)
+    if (arrived && t) { rush = 0; choose(t); heading = dir }
+  }
+  // a scroll runs the painting at the speed of the scroll: each pixel moves it ~22ms ahead, so an ordinary flick
+  // finishes a part. Once the paint is down, scrolling on turns the page. Scrolling back the way the reader came
+  // turns back at once, without waiting for the paint
+  // The time a scroll asks for is spent over the next frames, at most 0.8s of painting a frame, so a fast scroll
+  // never lays a whole painting in one frame
+  const painting = () => building || queue.length || wet.length
+  let rush = 0
+  function hurry (ms) { rush += ms }
+  function spendRush () {
+    if (!painting()) { rush = 0; return }
+    const s = Math.min(rush, 800); rush -= s
+    if (queue.length) queue.t0 -= s
+    for (const m of wet) m.born -= s
+  }
+  let acc = 0
+  function scrolled (dy) {
+    if (!arrived || !dy) return
+    const dir = Math.sign(dy), there = TABS[TABS.indexOf(current) + dir]
+    if (Math.sign(acc) !== dir) acc = 0
+    if (painting() && (dir === heading || !there)) { acc = 0; hurry(Math.abs(dy) * 22); return }
+    acc += dy
+    if (Math.abs(acc) > 50) { acc = 0; turn(dir) }
   }
   if (!STILL) {
-    // one flick, one part: a trackpad flick keeps sending wheel events for a second or so as it coasts. The first
-    // ~50px turns the page; the next turn waits for the wheel to rest 200ms and for 900ms to pass, so the swirl is seen
-    let acc = 0, lastWheel = 0, lastTurn = -1e9, armed = true
     addEventListener('wheel', e => {
       if (e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return
-      const now = performance.now()
-      if (now - lastWheel > 200 && now - lastTurn > 900) { armed = true; acc = 0 }
-      lastWheel = now
-      if (!armed) return
-      acc += e.deltaY * (e.deltaMode ? 16 : 1)
-      if (Math.abs(acc) > 50) { armed = false; lastTurn = now; turn(Math.sign(acc)) }
+      scrolled(e.deltaY * (e.deltaMode ? 16 : 1))
     }, { passive: true })
-    // a phone: a quick swipe up turns to the next part, as a scroll down would. Touch events, because a pan cancels
-    // the pointer events above
-    let swipe = null
-    addEventListener('touchstart', e => { const p = e.touches[0]; swipe = e.touches.length === 1 ? { x: p.clientX, y: p.clientY, at: performance.now() } : null }, { passive: true })
-    addEventListener('touchend', e => {
-      if (!swipe) return
-      const p = e.changedTouches[0], dx = swipe.x - p.clientX, dy = swipe.y - p.clientY
-      if (Math.abs(dy) > 50 && Math.abs(dy) > 1.5 * Math.abs(dx) && performance.now() - swipe.at < 800) turn(Math.sign(dy))
-      swipe = null
+    // a phone: a finger dragged up reads as a scroll down, as it moves, at twice its distance since a finger
+    // doesn't coast the way a trackpad does. Touch events, because a pan cancels the pointer events above
+    let finger = null
+    addEventListener('touchstart', e => { const p = e.touches[0]; finger = e.touches.length === 1 ? { x: p.clientX, y: p.clientY } : null }, { passive: true })
+    addEventListener('touchmove', e => {
+      if (!finger || e.touches.length !== 1) return
+      const p = e.touches[0], dx = finger.x - p.clientX, dy = finger.y - p.clientY
+      if (Math.abs(dy) < Math.abs(dx)) return
+      finger = { x: p.clientX, y: p.clientY }
+      scrolled(dy * 2)
     }, { passive: true })
+    addEventListener('touchend', () => { finger = null }, { passive: true })
     addEventListener('keydown', e => {
       const dir = { ArrowDown: 1, PageDown: 1, ArrowUp: -1, PageUp: -1 }[e.key]
       if (dir && !e.repeat && !e.altKey && !e.metaKey && !e.ctrlKey) turn(dir)
@@ -1303,6 +1323,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     for (const L of labels) if (L.dirty) { drawLabel(L); L.dirty = false }
     if (building) stepBuild()
     else if (!STILL && !queue.length && !wet.length) stepPlanner()
+    if (rush) spendRush()
     if (queue.length && !STILL) stepQueue(now)
     if (wet.length || ec.dirty) { drawWet(now); ec.dirty = wet.length > 0 }
     requestAnimationFrame(frame)
