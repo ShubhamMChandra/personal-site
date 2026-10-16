@@ -1256,7 +1256,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     requestAnimationFrame(frame)
   }
   requestAnimationFrame(frame)
-  window.__painted = { choose: id => choose(TABS.find(t => t.id === id)), settle: () => { if (queue.length) { queue.t0 = -1e12; stepQueue(performance.now()) } for (const m of wet) m.born = -1e9; drawWet(performance.now()) }, labels: () => labels.length,
+  window.__painted = { choose: id => choose(TABS.find(t => t.id === id)), settle: () => { if (queue.length) { queue.t0 = -1e12; stepQueue(performance.now()) } wet.sort((m, k) => (m.t + m.dur / 1000) - (k.t + k.dur / 1000)); for (const m of wet) commit(m); wet.length = 0; drawWet(performance.now()) }, labels: () => labels.length,
     at: T => { while (queue.i < queue.length && queue[queue.i].t <= T) { const m = queue[queue.i++]; m.sh = m.sh || shapeFor(m.len + m.wd * 0.4, m.wd * 1.15, m.k ?? 0, true); commit(m) } },
     stats: () => queue.stats }
 })()
