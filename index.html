@@ -42,6 +42,9 @@
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; overflow: hidden; background: var(--ground); color: var(--ink); }
 body { font-family: var(--font-text); -webkit-font-smoothing: antialiased; }
+/* the text and the painting arrive together: nothing shows on the bare ground while the paint is being laid */
+#ground, #words, #wordsBox, .stage { transition: opacity .6s ease; }
+body:not(.ready) :is(#ground, #words, #wordsBox, .stage) { opacity: 0; }
 canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 #ground { z-index: 0; }
 #wet { z-index: 1; }
@@ -50,24 +53,24 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
 #words { z-index: 1; }
 .stage { position: relative; z-index: 2; height: 100%; display: grid; grid-template-columns: 1fr 1fr;
   padding: calc(40px + env(safe-area-inset-top, 0px)) max(48px, env(safe-area-inset-right, 0px)) calc(40px + env(safe-area-inset-bottom, 0px)) max(56px, env(safe-area-inset-left, 0px)); }
-.text { display: grid; align-content: center; gap: 2.2rem; max-width: 34rem; text-shadow: 1px 0 0 rgba(240, 235, 226, .5), -1px 0 0 rgba(240, 235, 226, .5), 0 1px 0 rgba(240, 235, 226, .5), 0 -1px 0 rgba(240, 235, 226, .5), 0 0 1.5px rgba(234, 228, 218, .95), 0 0 5px rgba(224, 217, 206, .75), 0 0 14px rgba(216, 208, 196, .45); }
+.text { display: grid; align-content: center; gap: 2.2rem; max-width: 34rem; text-shadow: 0 0 1px rgba(252, 249, 243, 1), 1.5px 0 1px rgba(252, 249, 243, .6), -1.5px 0 1px rgba(252, 249, 243, .6), 0 1.5px 1px rgba(252, 249, 243, .6), 0 -1.5px 1px rgba(252, 249, 243, .6), 0 0 5px rgba(232, 226, 216, .7), 0 0 14px rgba(216, 208, 196, .4); }
 .name { margin: 0; font-family: var(--font-ui); font-weight: 650; font-size: clamp(1.9rem, 1.3rem + 1.8vw, 2.7rem); letter-spacing: -.014em; line-height: 1.04; }
-.links { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; margin: .7rem 0 0; font-family: var(--font-ui); font-size: 1rem; }
+.links { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; margin: .7rem 0 0; font-family: var(--font-ui); font-size: 1.06rem; font-weight: 550; }
 .links a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--link); text-decoration-thickness: 1.5px; text-underline-offset: .28em; }
-.panel { display: grid; gap: 1em; font-size: calc(1.09rem * var(--fit, 1)); transition: opacity .35s ease; }
+.panel { display: grid; gap: 1em; font-size: calc(1.15rem * var(--fit, 1)); transition: opacity .35s ease; }
 .panel.out { opacity: 0; }
 .panel h2 { margin: 0; font-family: var(--font-ui); font-size: .78em; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
-.panel p { margin: 0; font-size: 1.15em; line-height: 1.6; font-weight: 450; }
+.panel p { margin: 0; font-size: 1.15em; line-height: 1.6; font-weight: 600; }
 .panel .lead { font-size: 1.4em; line-height: 1.35; }
-.roles { list-style: none; margin: 0; padding: 0; display: grid; gap: .7rem; font-family: var(--font-ui); }
+.roles { list-style: none; margin: 0; padding: 0; display: grid; gap: .7rem; font-family: var(--font-ui); font-weight: 550; }
 .roles li { display: grid; grid-template-columns: 1fr auto; gap: .1rem 1rem; }
 .roles .what, .roles .when { color: var(--ink-soft); font-size: .96em; }
 .roles .when { font-variant-numeric: tabular-nums; }
 .roles .what { grid-column: 1 / -1; }
 .roles.close { gap: .85rem; }
-.roles.close .what { color: var(--ink); font-family: var(--font-text); font-size: 1.02em; line-height: 1.5; font-weight: 450; }
+.roles.close .what { color: var(--ink); font-family: var(--font-text); font-size: 1.02em; line-height: 1.5; font-weight: 600; }
 .panel blockquote { margin: 0; display: grid; gap: .3rem; }
-.panel blockquote p { font-size: 1.07em; line-height: 1.5; font-weight: 450; }
+.panel blockquote p { font-size: 1.07em; line-height: 1.5; font-weight: 600; }
 .panel a { color: inherit; text-decoration: underline; text-decoration-color: var(--link); text-decoration-thickness: 1.5px; text-underline-offset: .2em; }
 .panel .fin { font-style: italic; color: var(--ink-soft); }
 .panel footer { font-family: var(--font-ui); font-size: .84em; color: var(--ink-soft); }
@@ -80,7 +83,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
 @media (max-width: 760px) {
   .stage { grid-template-columns: 1fr; grid-template-rows: 58% 42%; padding: calc(28px + env(safe-area-inset-top, 0px)) 24px calc(16px + env(safe-area-inset-bottom, 0px)); }
   .text { align-content: start; gap: 1.3rem; }
-  .panel { font-size: calc(1rem * var(--fit, 1)); }
+  .panel { font-size: calc(1.06rem * var(--fit, 1)); }
   .panel p { font-size: 1.02em; line-height: 1.55; }
   .panel .lead { font-size: 1.18em; }
   .panel.deep p, .panel.deep blockquote p, .roles.close .what { font-size: .9em; line-height: 1.45; }
@@ -439,11 +442,11 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     while (planner && performance.now() < end) if (planner.gen.next().done) planner = null
   }
   function * swirlSteps (L, reach = 1, sink = null) {
+    // a swirl quiets round the text of the section it opens (a plan made ahead is always for its first depth)
+    const quietBox = (cols[L.t.id] || [])[sink ? 0 : depth]
     const B = BURST[L.t.id] || FAN
     const ox = L.x + L.w / 2, oy = L.y + L.h / 2, seed = Math.random() * 100, fs = L.fs
     const LW = wide ? W * 0.64 : W, LH = wide ? H : H * 0.66, S = Math.min(LW, LH)
-    // a swirl quiets round the text of the section it opens (a plan made ahead is always for its first depth)
-    const quietBox = (cols[L.t.id] || [])[sink ? 0 : depth]
     // the drift runs away from the word, a little uphill; how many swirls, how big, which way they turn is new each time
     const theta0 = wide ? Math.PI + 0.18 * (B.thJ > 0.2 ? 1 : 0) + rnd(-B.thJ, B.thJ) : -Math.PI / 2 + rnd(-B.thJ - 0.1, B.thJ + 0.1)
     const pareto = (min, alpha) => min / Math.pow(1 - Math.random() * 0.97, 1 / alpha)
@@ -1115,10 +1118,10 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
   // the area each section's text takes, at each depth. The paint stays pale only under the open section's text; a
   // swirl paints over the rest of the old pale patch and quiets round the new text, so the patch fits what it covers
   let textCol = null
+  const cols = {}
   function measureColumn () {
     // the text is centred, so a longer text moves the name up: each section and depth is measured as it stands
     const keep = depth, head = document.querySelector('.text header')
-  const cols = {}
     for (const t of TABS) for (const d of [0, 1]) {
       depth = d; panel.innerHTML = textOf(t, d); panel.classList.toggle('deep', d === 1); fitPanel()
       const hd = head.getBoundingClientRect(), b = panel.getBoundingClientRect()
@@ -1143,6 +1146,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     showPanel(current)
     measureText()
     drawWords()
+    document.body.classList.add('ready')
   }
 
   addEventListener('pointermove', e => { pointer.x = e.clientX; pointer.y = e.clientY }, { passive: true })
@@ -1152,6 +1156,8 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
   addEventListener('pointerup', unhover, { passive: true }); addEventListener('pointercancel', unhover, { passive: true })
   let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 200) })
 
+  // if the paint is slow to come (a slow font, a slow phone), the text doesn't wait for it
+  setTimeout(() => document.body.classList.add('ready'), 2500)
   await build()
   // on arrival, the open word unfolds by itself, just as a touch would, to show what the words do
   if (!STILL) setTimeout(() => choose(current, true), reduce ? 0 : 500)
