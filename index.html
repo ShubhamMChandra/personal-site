@@ -62,7 +62,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
 .panel.out { opacity: 0; }
 .panel h2 { margin: 0; font-family: var(--font-ui); font-size: .78em; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
 .panel p { margin: 0; font-size: 1.15em; line-height: 1.6; font-weight: 600; }
-.panel .lead { font-size: 1.4em; line-height: 1.35; }
+.panel .lead { margin: .7em 0; font-size: 1.62em; line-height: 1.28; font-weight: 480; font-style: italic; letter-spacing: -.005em; }
 .roles { list-style: none; margin: 0; padding: 0; display: grid; gap: .7rem; font-family: var(--font-ui); font-weight: 550; }
 .roles li { display: grid; grid-template-columns: 1fr auto; gap: .1rem 1rem; }
 .roles .what, .roles .when { color: var(--ink-soft); font-size: .96em; }
@@ -86,9 +86,9 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
   .text { align-content: start; gap: 1.3rem; }
   .panel { font-size: calc(1.06rem * var(--fit, 1)); }
   .panel p { font-size: 1.02em; line-height: 1.55; }
-  .panel .lead { font-size: 1.18em; }
+  .panel .lead { margin: .4em 0; font-size: 1.36em; }
   .panel.deep p, .panel.deep blockquote p, .roles.close .what { font-size: .9em; line-height: 1.45; }
-  .panel.deep .lead { font-size: 1.04em; }
+  .panel.deep .lead { margin: 0; font-size: 1.04em; }
   .panel.deep { gap: .6rem; } .roles.close { gap: .5rem; }
   /* a part too long to fit is set closer before it is set smaller */
   .panel.tight { gap: .55em; } .panel.tight :is(p, .close .what) { line-height: 1.4; }
