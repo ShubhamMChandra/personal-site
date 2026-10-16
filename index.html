@@ -47,18 +47,18 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
 #words { z-index: 1; }
 .stage { position: relative; z-index: 2; height: 100%; display: grid; grid-template-columns: 1fr 1fr;
   padding: calc(40px + env(safe-area-inset-top, 0px)) max(48px, env(safe-area-inset-right, 0px)) calc(40px + env(safe-area-inset-bottom, 0px)) max(56px, env(safe-area-inset-left, 0px)); }
-.text { display: grid; align-content: center; gap: 2.2rem; max-width: 30rem; text-shadow: 0 0 1.5px rgba(234, 228, 218, .95), 0 0 5px rgba(224, 217, 206, .75), 0 0 14px rgba(216, 208, 196, .45); }
+.text { display: grid; align-content: center; gap: 2.2rem; max-width: 34rem; text-shadow: 1px 0 0 rgba(240, 235, 226, .5), -1px 0 0 rgba(240, 235, 226, .5), 0 1px 0 rgba(240, 235, 226, .5), 0 -1px 0 rgba(240, 235, 226, .5), 0 0 1.5px rgba(234, 228, 218, .95), 0 0 5px rgba(224, 217, 206, .75), 0 0 14px rgba(216, 208, 196, .45); }
 .name { margin: 0; font-family: var(--font-ui); font-weight: 650; font-size: clamp(1.9rem, 1.3rem + 1.8vw, 2.7rem); letter-spacing: -.014em; line-height: 1.04; }
-.links { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; margin: .7rem 0 0; font-family: var(--font-ui); font-size: .95rem; }
+.links { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; margin: .7rem 0 0; font-family: var(--font-ui); font-size: 1rem; }
 .links a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--link); text-decoration-thickness: 1.5px; text-underline-offset: .28em; }
-.panel { display: grid; gap: 1em; font-size: calc(1rem * var(--fit, 1)); transition: opacity .35s ease; }
+.panel { display: grid; gap: 1em; font-size: calc(1.09rem * var(--fit, 1)); transition: opacity .35s ease; }
 .panel.out { opacity: 0; }
 .panel h2 { margin: 0; font-family: var(--font-ui); font-size: .78em; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
 .panel p { margin: 0; font-size: 1.15em; line-height: 1.6; font-weight: 450; }
 .panel .lead { font-size: 1.4em; line-height: 1.35; }
 .roles { list-style: none; margin: 0; padding: 0; display: grid; gap: .7rem; font-family: var(--font-ui); }
 .roles li { display: grid; grid-template-columns: 1fr auto; gap: .1rem 1rem; }
-.roles .what, .roles .when { color: var(--ink-soft); font-size: .92em; }
+.roles .what, .roles .when { color: var(--ink-soft); font-size: .96em; }
 .roles .when { font-variant-numeric: tabular-nums; }
 .roles .what { grid-column: 1 / -1; }
 .roles.close { gap: .85rem; }
@@ -77,6 +77,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
 @media (max-width: 760px) {
   .stage { grid-template-columns: 1fr; grid-template-rows: 58% 42%; padding: calc(28px + env(safe-area-inset-top, 0px)) 24px calc(16px + env(safe-area-inset-bottom, 0px)); }
   .text { align-content: start; gap: 1.3rem; }
+  .panel { font-size: calc(1rem * var(--fit, 1)); }
   .panel p { font-size: 1.02em; line-height: 1.55; }
   .panel .lead { font-size: 1.18em; }
   .panel.deep p, .panel.deep blockquote p, .roles.close .what { font-size: .9em; line-height: 1.45; }
@@ -221,6 +222,21 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     }
   }
 
+  // under the words the painter primes the canvas: a closer, paler layer of strokes, so no dark ground shows
+  // between the strokes behind the text. The paint stays; only its gaps close
+  function primeColumn () {
+    if (!textCol) return
+    const CALM = ['#b3aba1', '#bfb6aa', '#cdc2b2', '#b9ae9e'].map(hex), st = 13
+    for (let y = textCol.y0 - 40; y < textCol.y1 + 40; y += st) {
+      for (let x = textCol.x0 - 40; x < textCol.x1 + 40; x += st) {
+        const px = x + rnd(0, st), py = y + rnd(0, st), calm = clamp(1 - (colDist(px, py) + rnd(-12, 12)) / 48)
+        if (calm <= 0) continue
+        const len = rnd(22, 48), wd = rnd(5, 9.5)
+        paint(g, px, py, groundAngle(px, py) + rnd(-0.12, 0.12), shapeFor(len + wd * 0.6, wd * 1.3, rnd(-0.18, 0.18)), mix(pick(CALM), PALE, rnd(0.55, 0.8)), 0.92 * calm, wd, { streaks: [] })
+      }
+    }
+  }
+
   // the painting's own drift, so the words can lean with it
   const groundAngle = (px, py) => 0.85 * (Math.sin(px * 0.0042 + 1.3) + Math.cos(py * 0.0037) + 0.6 * Math.sin((px + py) * 0.0019))
   function glyphAt (px, py) {
@@ -296,13 +312,14 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
       const rb = Math.max(4, Math.round(fs * 0.12))
       let B = boxBlur(Float32Array.from(mask), NW, NH, rb); B = boxBlur(B, NW, NH, rb)
       const rad = Math.max(3, Math.round(fs * 0.075))
+      // which way the letter runs at each point: the gradients' structure tensor, averaged over a small window once
+      // for the whole word, rather than summed again round every stroke
+      const JXX = new Float32Array(NW * NH), JYY = new Float32Array(NW * NH), JXY = new Float32Array(NW * NH)
+      for (let k = 0; k < JXX.length; k++) { const gx = GX[k], gy = GY[k]; JXX[k] = gx * gx; JYY[k] = gy * gy; JXY[k] = gx * gy }
+      const AXX = boxBlur(JXX, NW, NH, rad), AYY = boxBlur(JYY, NW, NH, rad), AXY = boxBlur(JXY, NW, NH, rad), quietJ = 1e5 / ((rad + 1) * (rad + 1))
       const along = (sx, sy) => {
-        let jxx = 0, jyy = 0, jxy = 0
-        for (let dy = -rad; dy <= rad; dy += 2) for (let dx = -rad; dx <= rad; dx += 2) {
-          const xx = sx + dx, yy = sy + dy; if (xx < 0 || yy < 0 || xx >= NW || yy >= NH) continue
-          const gx = GX[yy * NW + xx], gy = GY[yy * NW + xx]; jxx += gx * gx; jyy += gy * gy; jxy += gx * gy
-        }
-        if (jxx + jyy < 1e5) return -Math.PI / 2
+        const k = sy * NW + sx, jxx = AXX[k], jyy = AYY[k], jxy = AXY[k]
+        if (jxx + jyy < quietJ) return -Math.PI / 2
         return 0.5 * Math.atan2(2 * jxy, jxx - jyy) + Math.PI / 2
       }
       const strokes = [], step = Math.max(2.6, fs * 0.05), far = step * step / 760
@@ -391,16 +408,34 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
   }
   // the plan for a painting is built a few milliseconds at a time, between frames, so a click never freezes the
   // page: the word jumps at once and the paint follows as soon as the plan is ready
-  let building = null
+  // Each word's next painting is also planned ahead, while nothing is moving, so a touch starts painting at once;
+  // a fresh plan for that word is made at the next quiet moment. A plan depends only on the layout, so a resize
+  // throws the plans away
+  let building = null, planner = null
+  const plans = {}
+  function startPlan (p) { queue = p; queue.t0 = performance.now(); queue.i = 0 }
   function swirl (L, reach = 1) {
+    if (reach === 1 && plans[L.t.id] && !STILL) { const p = plans[L.t.id]; delete plans[L.t.id]; building = null; startPlan(p); return }
+    if (planner && planner.id === L.t.id) planner = null
     building = swirlSteps(L, reach)
     if (STILL || reduce) { while (!building.next().done); building = null }
   }
   function stepBuild () {
-    const end = performance.now() + 7
+    const end = performance.now() + (wet.length ? 7 : 12)
     while (building && performance.now() < end) if (building.next().done) building = null
   }
-  function * swirlSteps (L, reach = 1) {
+  function stepPlanner () {
+    if (!planner) {
+      // on a phone only two plans are held at once (each is thousands of shapes); on a computer, all five
+      if (Object.keys(plans).length >= (wide ? TABS.length : 2)) return
+      const t = [current, ...TABS].find(t => !plans[t.id]); if (!t) return
+      const L = labels.find(l => l.t === t), id = t.id
+      planner = { id, gen: swirlSteps(L, 1, p => { plans[id] = p }) }
+    }
+    const end = performance.now() + 6
+    while (planner && performance.now() < end) if (planner.gen.next().done) planner = null
+  }
+  function * swirlSteps (L, reach = 1, sink = null) {
     const B = BURST[L.t.id] || FAN
     const ox = L.x + L.w / 2, oy = L.y + L.h / 2, seed = Math.random() * 100, fs = L.fs
     const LW = wide ? W * 0.64 : W, LH = wide ? H : H * 0.66, S = Math.min(LW, LH)
@@ -480,7 +515,9 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
       const lin = wide ? clamp((W * 0.9 - x) / (W * 0.52)) : clamp((H * 0.92 - y) / (H * 0.4))
       const side = smo(clamp(lin * 1.3 - 0.15 + (vnoise(x / 130 + seed, y / 130) - 0.5) * 0.75))
       const dW = Math.hypot(Math.max(L.x - x, 0, x - L.x - L.w), Math.max(L.y - y, 0, y - L.y - L.h))
-      let p = Math.max(side, clamp(1.3 - dW / (wide ? 320 : 260)))
+      // weave on a phone: its word sits on the bottom row, so its own reach must carry the cloth across the other
+      // words' rows to where the top side takes over; at 260 it fades out first, leaving a band of holes it can't cross
+      let p = Math.max(side, clamp(1.3 - dW / (wide ? 320 : B.weave ? 480 : 260)))
       if (reach < 1) p *= clamp(1 - Math.hypot(x - ox, y - oy) / (520 * reach))
       if (gatherAt(x, y) > (wide ? 0.3 : 0.55) || ownAt(x, y) > 0.3) return false
       for (const vd of voids) { const c = Math.cos(vd.t), sn = Math.sin(vd.t), dx = x - vd.x, dy = y - vd.y; if (((dx * c + dy * sn) / vd.rx) ** 2 + ((-dx * sn + dy * c) / vd.ry) ** 2 < 1) return false }
@@ -565,7 +602,9 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
             const gr = clothGrad(cx, cy, k), g2 = gr[0] * gr[0] + gr[1] * gr[1] || 1
             cx += gr[0] * (tgt - cC) / g2; cy += gr[1] * (tgt - cC) / g2
           }
-          if (!inRegion(cx, cy) || !free(cx, cy, sp * 0.85, -2, P.fm)) continue
+          // the occupancy grid counts distance in whole 4px cells, so on a phone (spacing 14.4px) the next thread can read
+          // as 3 cells, 12px, inside 0.85 of the spacing, and a straight row then refuses every seed along it: test under that
+          if (!inRegion(cx, cy) || !free(cx, cy, sp * (B.weave && !wide ? 0.78 : 0.85), -2, P.fm)) continue
           const id = lines.length, { pts, si } = trace(cx, cy, id, P.fm)
           if (pts.length < 5) continue
           mark(pts, id, P.fm)
@@ -992,9 +1031,9 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     const late = out.filter(m => m.t > tb).sort((m, k) => m.t - k.t), TE = 7.6 * reachK
     if (!B.weave) late.forEach((m, r) => { m.t = tb + (TE - tb) * Math.pow((r + 1) / late.length, 1.15) })
     out.sort((m, k) => m.t - k.t)
-    queue = out; queue.t0 = performance.now(); queue.i = 0
     const nSrc = lines.filter(l => l.gen === 0).length
-    queue.stats = { sources: nSrc, tried: srcs.length, lines: lines.length, strokes: out.length, maxGen: Math.max(...lines.map(l => l.gen)), why, breaks: breaks.concat(jumbo ? ['jumbo'] : []), firstThird: out.filter(m => m.t <= tb).length / out.length, tEnd: out.length ? out[out.length - 1].t : 0 }
+    out.stats = { sources: nSrc, tried: srcs.length, lines: lines.length, strokes: out.length, maxGen: Math.max(...lines.map(l => l.gen)), why, breaks: breaks.concat(jumbo ? ['jumbo'] : []), firstThird: out.filter(m => m.t <= tb).length / out.length, tEnd: out.length ? out[out.length - 1].t : 0 }
+    if (sink) sink(out); else startPlan(out)
   }
 
   let wet = []
@@ -1044,7 +1083,8 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     for (const l of labels) if (l !== L && l.fxUsed) { l.fxUsed = false; l.fx.style.opacity = 0; setTimeout(() => { l.fxc.setTransform(1, 0, 0, 1, 0, 0); l.fxc.clearRect(0, 0, l.fx.width, l.fx.height); l.fx.style.opacity = 1 }, 1700) }
     L.fxUsed = true
     if (!reduce) for (const c of [L.cv, L.fx]) c.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.045) rotate(-0.6deg)' }, { transform: 'scale(1)' }], { duration: 560, easing: 'cubic-bezier(.3,1.5,.5,1)' })
-    const again = t === current
+    const again = t === current && L.full
+    L.full = true
     depth = again && t.more ? 1 - depth : 0
     L.glintAt = performance.now() + 2600
     measureText(t)
@@ -1082,11 +1122,16 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
   }
   const colDist = (x, y) => textCol ? Math.hypot(Math.max(textCol.x0 - x, 0, x - textCol.x1), Math.max(textCol.y0 - y, 0, y - textCol.y1)) : 1e9
   async function build () {
+    for (const k in plans) delete plans[k]
+    planner = null
     W = innerWidth; H = innerHeight; wide = W > 760
     for (const c of [gc, wc, ec]) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr) }
+    // the words to read come first; the painted words follow as soon as they are built
+    if (!labels.length) showPanel(current)
     await writeWords()
     measureColumn()
     layGround()
+    primeColumn()
     showPanel(current)
     measureText()
     drawWords()
@@ -1125,6 +1170,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     }
     for (const L of labels) if (L.dirty) { drawLabel(L); L.dirty = false }
     if (building) stepBuild()
+    else if (!STILL && !queue.length && !wet.length) stepPlanner()
     if (queue.length && !STILL) stepQueue(now)
     if (wet.length || ec.dirty) { drawWet(now); ec.dirty = wet.length > 0 }
     requestAnimationFrame(frame)
