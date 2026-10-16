@@ -444,7 +444,14 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
   // throws the plans away
   let building = null, planner = null
   const plans = {}
-  function startPlan (p) { queue = p; queue.t0 = performance.now(); queue.i = 0 }
+  // the patches whose pale paint may still show on the ground, a bit per section and depth (zoneBit). A painting's
+  // fills are kept only over these, so a plan made ahead fits whatever came before it; the check is one pass over the
+  // plan at the touch. Once a painting has been laid in full, only its own patch is left
+  let onGround = 0
+  function startPlan (p) {
+    if (p.key) { const keep = p.filter(m => !m.near || (m.near & onGround & ~p.key)); keep.stats = p.stats; keep.key = p.key; p = keep }
+    queue = p; queue.t0 = performance.now(); queue.i = 0
+  }
   function swirl (L, reach = 1) {
     if (reach === 1 && plans[L.t.id] && !STILL) { const p = plans[L.t.id]; delete plans[L.t.id]; building = null; startPlan(p); return }
     if (planner && planner.id === L.t.id) planner = null
@@ -589,7 +596,8 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
 
     const fam = L.t.rich.slice().sort((p, q) => (p[0] + p[1] + p[2]) - (q[0] + q[1] + q[2]))
     const seq = [fam[0], fam[1], fam[2], mix(fam[2], PALE, 0.45)], comp = mix(hex(L.t.comp), GROUND, 0.12)
-    const lines = [], out = []
+    // trail: each stroke laid on the ground with the path it follows, so the gaps between them can be found (step 4)
+    const lines = [], out = [], trail = []
     const reachK = reach < 1 ? 0.75 : 1
 
     // 1. the sources: strokes in the letters, spaced apart, each leaving its letter along its own direction
@@ -894,6 +902,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
         const wvDur = rnd(300, 480) * bs.dur
         out.push({ x: p0[0] + ca * arc / 2, y: p0[1] + sa * arc / 2, a, len: arc, wd, col, al: Math.min(0.98, (0.94 - 0.12 * quiet) * bs.aB), sh: body, tex, hy: by + wd * 1.2, bx0,
           t, dur: wvDur, k: 0, L: inOwn ? L : null })
+        trail.push([out[out.length - 1], pts.slice(i, j + 1)])
         if (B.weave && !ln.fm) wvNote(pts.slice(i, j + 1), t, t + wvDur / 1000) // weave: the weft lies here from t, dry by then
         if (area === 'loose') { const m = out[out.length - 1]; m.a += rnd(-0.1, 0.1) }
         // a worked area: the painter comes back over it with a second layer, a little off the first, in a neighbouring colour
@@ -978,7 +987,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
         // the float's small shadow on the weft it lies across: laid first, and dry first
         out.push({ ...item, x: mx + 1.2, y: my + 1.6, col: [46, 34, 26], al: 0.22 * al * (1 - 0.8 * quiet), tex: { streaks: [] }, t: t - 0.001, dur: dur * 0.7 })
       }
-      out.push(item)
+      out.push(item); trail.push([item, seg])
     }
     const wovenRun = (ln, pts) => {
       const n = pts.length, sp = WV.sp, lseed = Math.random() * 50
@@ -1066,9 +1075,101 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     // easing off toward the end, so nothing piles up in the last second
     const late = out.filter(m => m.t > tb).sort((m, k) => m.t - k.t), TE = 7.6 * reachK
     if (!B.weave) late.forEach((m, r) => { m.t = tb + (TE - tb) * Math.pow((r + 1) / late.length, 1.15) })
+
+    // 4. the old patches: pale paint laid under another section's text shows through wherever this painting leaves a
+    //    gap. Where any section's patch can reach and nothing here lands, the painter fills the gap in this section's
+    //    colours: in a sliver, before the strokes it crosses, so it lies under them; in a hole, in longer drags, as the
+    //    paint comes in from its edges. Each fill notes which patches it paints over, so a fill over a patch that isn't
+    //    on the ground when the painting starts is dropped then (startPlan), and the plan needn't know what came before
+    // filled: cells this painting covers, at the spacing grid's 4px; laid: when the paint lands on them
+    const filled = new Uint8Array(gw * gh), laid = new Float32Array(gw * gh).fill(Infinity)
+    const lay = (pts, r, t) => {
+      for (const [px, py] of pts) {
+        for (let cy = Math.floor((py - r) / CG) + 1, ey = Math.floor((py + r) / CG) + 1; cy <= ey; cy++) {
+          for (let cx = Math.floor((px - r) / CG) + 1, ex = Math.floor((px + r) / CG) + 1; cx <= ex; cx++) {
+            if (cx < 0 || cy < 0 || cx >= gw || cy >= gh || ((cx - 0.5) * CG - px) ** 2 + ((cy - 0.5) * CG - py) ** 2 > r * r) continue
+            const k = cy * gw + cx; filled[k] = 1; if (t < laid[k]) laid[k] = t
+          }
+        }
+      }
+    }
+    for (let n = 0; n < trail.length; n++) { if ((n & 255) === 0) yield; const [m, pts] = trail[n]; lay(pts, m.wd * 0.45, m.t) }
+    // when the paint reaches each gap: from the strokes round it, spreading at about a brush's pace, 300px/s
+    const arrive = Float32Array.from(laid), d1 = CG / 300, d2 = d1 * Math.SQRT2
+    for (let y = 1; y < gh; y++) for (let x = 1; x < gw - 1; x++) { const k = y * gw + x; arrive[k] = Math.min(arrive[k], arrive[k - 1] + d1, arrive[k - gw] + d1, arrive[k - gw - 1] + d2, arrive[k - gw + 1] + d2) }
+    yield
+    for (let y = gh - 2; y >= 0; y--) for (let x = gw - 2; x > 0; x--) { const k = y * gw + x; arrive[k] = Math.min(arrive[k], arrive[k + 1] + d1, arrive[k + gw] + d1, arrive[k + gw + 1] + d2, arrive[k + gw - 1] + d2) }
+    // the fills go down in no particular order, as a painter fills an area, each leaving room for the next
+    const spots = []
+    for (let y = 3; y < H; y += 7) for (let x = 3; x < W; x += 7) if (zoneAt(x, y)) spots.push([x + rnd(-3, 3), y + rnd(-3, 3)])
+    for (let j = spots.length - 1; j > 0; j--) { const q = Math.floor(Math.random() * (j + 1)); const tmp = spots[j]; spots[j] = spots[q]; spots[q] = tmp }
+    let nCover = 0
+    for (let n = 0; n < spots.length; n++) {
+      if ((n & 511) === 0) yield
+      const [x, y] = spots[n], k = (Math.floor(y / CG) + 1) * gw + Math.floor(x / CG) + 1
+      if (k < 0 || k >= filled.length || filled[k] || !zoneAt(x, y)) continue
+      // the new text's own patch is this painting's to lay, and the words keep their ground
+      if (colDist(x, y, quietBox) < 8 || gatherAt(x, y) > 0.3 || ownAt(x, y) > 0.08) continue
+      const wd = sepAt(x, y) * rnd(0.85, 1.1)
+      if (clearOf(x, y) < margin + wd) continue
+      // the patches it paints over, counted a cell further out, so a fill dropped for one patch leaves no hole at the
+      // edge of another
+      let near = 0
+      for (const dy of [-ZC, 0, ZC]) for (const dx of [-ZC, 0, ZC]) near |= zoneAt(x + dx, y + dy)
+      let tn = Infinity
+      for (let j = -3; j <= 3; j++) for (let i = -3; i <= 3; i++) { const q = k + j * gw + i; if (q >= 0 && q < laid.length && laid[q] < tn) tn = laid[q] }
+      const hole = tn === Infinity
+      // a drag of the brush along the current. In a sliver it lies under the strokes beside it, so only a short one is
+      // needed; in a hole it is the only paint there, so it runs on as a current would, up to where this painting's
+      // strokes begin. In the cloth, a fill is a pull of weft. None runs into the new text's patch or the words
+      const len = B.weave ? rnd(60, 110) : hole ? rnd(60, 130) : rnd(24, 46), pts = [[x, y]]
+      for (const dir of [1, -1]) {
+        let px = x, py = y, pa = null
+        for (let s = 3; s <= len / 2; s += 3) {
+          let fa = fieldAt(px, py).a; if (pa !== null && Math.cos(fa - pa) < 0) fa += Math.PI; pa = fa
+          const nx = px + Math.cos(fa) * 3 * dir, ny = py + Math.sin(fa) * 3 * dir, q = (Math.floor(ny / CG) + 1) * gw + Math.floor(nx / CG) + 1
+          if ((hole && (q < 0 || q >= laid.length || laid[q] < Infinity)) || colDist(nx, ny, quietBox) < 8 || gatherAt(nx, ny) > 0.3 || clearOf(nx, ny) < margin + wd) break
+          px = nx; py = ny
+          if (dir > 0) pts.push([px, py]); else pts.unshift([px, py])
+        }
+      }
+      if (pts.length < 3) continue
+      // under every stroke it crosses: it is laid, and dry, before the first of them begins (a stroke goes down on the
+      // ground when it dries)
+      let tu = Infinity
+      if (!hole) {
+        const r = Math.ceil(0.6 * wd / CG)
+        for (const [px, py] of pts) {
+          const c = (Math.floor(py / CG) + 1) * gw + Math.floor(px / CG) + 1
+          for (let j = -r; j <= r; j++) for (let i = -r; i <= r; i++) { const q = c + j * gw + i; if (q >= 0 && q < laid.length && laid[q] < tu) tu = laid[q] }
+        }
+      }
+      const t = Math.min(TE, Math.max(0.3, hole ? arrive[k] + rnd(0.02, 0.15) : tu - rnd(0.25, 0.4))), dur = hole ? rnd(260, 380) : rnd(200, 250)
+      // its colour drifts slowly across the area, so neighbouring fills share a colour, as a bundle of strokes does
+      const ci = vnoise(x / 160 + seed * 5, y / 160 + 9), h = B.weave ? clamp(1.2 * ci + 0.5 * bHue(x, y), 0, 1.15) : clamp(2.4 * ci + bHue(x, y), 0, 3)
+      const quiet = clamp(1 - (colDist(x, y, quietBox) + rnd(-14, 14)) / 56)
+      let col = seqAt(h); const val = rnd(-1, 1) * 0.09
+      col = val > 0 ? mix(col, PALE, val) : mix(col, DEEP, -val * 0.8)
+      col = mix(mute(col, 0.2), PALE, 0.84 * quiet)
+      // in the stroke's own frame, as run() lays it; the brush itself is made only if the fill is laid (stepQueue)
+      const p0 = pts[0], a = Math.atan2(pts[1][1] - p0[1], pts[1][0] - p0[0]), ca = Math.cos(a), sa = Math.sin(a), arc = 3 * (pts.length - 1)
+      const P = pts.map(q => [(q[0] - p0[0]) * ca + (q[1] - p0[1]) * sa - arc / 2, -(q[0] - p0[0]) * sa + (q[1] - p0[1]) * ca])
+      const k2 = 1 - 0.85 * quiet
+      const make = () => {
+        const { body, tex } = ribbon(P, wd * 0.6, a, BK0)
+        for (const q of tex.streaks) { q.col = Math.random() < 0.5 ? mix(col, LIGHT, rnd(0.14, 0.22) * k2) : mix(col, DEEP, rnd(0.12, 0.2) * k2); q.al = rnd(0.7, 0.95) }
+        tex.hiCol = mix(col, LIGHT, 0.6); tex.loCol = mix(col, DEEP, 0.55); tex.ridge = rnd(0.25, 0.4) * k2
+        return { sh: body, tex }
+      }
+      out.push({ x: p0[0] + ca * arc / 2, y: p0[1] + sa * arc / 2, a, len: arc, wd, col, al: 0.92 - 0.12 * quiet, make,
+        hy: Math.max(...P.map(q => Math.abs(q[1]))) + wd * 1.2, bx0: P[0][0], t, dur, k: 0, L: null, near })
+      nCover++
+      lay(pts, wd * 0.55, Infinity)
+    }
     out.sort((m, k) => m.t - k.t)
+    out.key = zoneBit(L.t, sink ? 0 : depth)
     const nSrc = lines.filter(l => l.gen === 0).length
-    out.stats = { sources: nSrc, tried: srcs.length, lines: lines.length, strokes: out.length, maxGen: Math.max(...lines.map(l => l.gen)), why, breaks: breaks.concat(jumbo ? ['jumbo'] : []), firstThird: out.filter(m => m.t <= tb).length / out.length, tEnd: out.length ? out[out.length - 1].t : 0 }
+    out.stats = { sources: nSrc, tried: srcs.length, lines: lines.length, strokes: out.length, maxGen: Math.max(...lines.map(l => l.gen)), why, breaks: breaks.concat(jumbo ? ['jumbo'] : []), cover: nCover, firstThird: out.filter(m => m.t <= tb).length / out.length, tEnd: out.length ? out[out.length - 1].t : 0 }
     if (sink) sink(out); else startPlan(out)
   }
 
@@ -1078,10 +1179,11 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     const el = reduce ? 1e9 : (now - queue.t0) / 1000
     while (queue.i < queue.length && queue[queue.i].t <= el) {
       const m = queue[queue.i++]
+      if (m.make) Object.assign(m, m.make())
       m.sh = m.sh || shapeFor(m.len + m.wd * 0.4, m.wd * 1.15, m.k ?? rnd(-0.16, 0.16), true); m.born = now
       if (reduce) commit(m); else wet.push(m)
     }
-    if (queue.i >= queue.length) queue = []
+    if (queue.i >= queue.length) { if (queue.key) onGround = queue.key; queue = [] }
   }
   // the brush moving: each stroke grows from where it landed toward its tail, fading in as it goes
   function drawWet (now) {
@@ -1137,6 +1239,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
       setTimeout(() => { showPanel(t); panel.classList.remove('out') }, reduce ? 0 : 520)
     }
     swirl(L, again ? 0.55 : 1)
+    onGround |= zoneBit(t, depth)
   }
 
   // the words' own footprint: the header and the part's text, as they will stand once it has changed
@@ -1162,7 +1265,26 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     }
     depth = keep
     textCol = cols[current.id][depth]
+    measureZones()
   }
+  // how far a section's pale patch can show past its lines: the quiet strokes fade out over 56px (±14), the primed
+  // ground over 48px (±12). Each section and depth gets a bit, set on a coarse grid wherever its patch can reach, so a
+  // painting can tell which old patches a stroke would paint over
+  const REACH = 60, ZC = 8
+  let zones = null, zw = 0, zh = 0
+  const zoneBit = (t, d) => 1 << (TABS.indexOf(t) * 2 + d)
+  function measureZones () {
+    zw = Math.ceil(W / ZC) + 1; zh = Math.ceil(H / ZC) + 1; zones = new Uint16Array(zw * zh)
+    for (const t of TABS) for (const d of [0, 1]) {
+      const c = cols[t.id][d], bit = zoneBit(t, d)
+      if (c) for (const p of c.parts) {
+        for (let y = Math.max(0, Math.floor((p.y0 - REACH) / ZC)); y < Math.min(zh, Math.ceil((p.y1 + REACH) / ZC)); y++) {
+          for (let x = Math.max(0, Math.floor((p.x0 - REACH) / ZC)); x < Math.min(zw, Math.ceil((p.x1 + REACH) / ZC)); x++) if (boxDist((x + 0.5) * ZC, (y + 0.5) * ZC, p) < REACH) zones[y * zw + x] |= bit
+        }
+      }
+    }
+  }
+  const zoneAt = (x, y) => { const zx = Math.floor(x / ZC), zy = Math.floor(y / ZC); return zx >= 0 && zy >= 0 && zx < zw && zy < zh ? zones[zy * zw + zx] : 0 }
   // the text's own shape: a box for each line, as long as that line, so a short line gets a short patch and the
   // space beside it keeps its paint. `parts` are the lines; x0..y1 is their outline
   function boxNow () {
@@ -1203,6 +1325,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     measureColumn()
     seeded(layGround)
     seeded(primeColumn)
+    onGround = zoneBit(current, depth)
     showPanel(current)
     measureText()
     drawWords()
@@ -1256,8 +1379,8 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     requestAnimationFrame(frame)
   }
   requestAnimationFrame(frame)
-  window.__painted = { choose: id => choose(TABS.find(t => t.id === id)), settle: () => { if (queue.length) { queue.t0 = -1e12; stepQueue(performance.now()) } for (const m of wet) m.born = -1e9; drawWet(performance.now()) }, labels: () => labels.length,
-    at: T => { while (queue.i < queue.length && queue[queue.i].t <= T) { const m = queue[queue.i++]; m.sh = m.sh || shapeFor(m.len + m.wd * 0.4, m.wd * 1.15, m.k ?? 0, true); commit(m) } },
+  window.__painted = { choose: id => choose(TABS.find(t => t.id === id)), settle: () => { if (queue.length) { queue.t0 = -1e12; stepQueue(performance.now()) } wet.sort((m, k) => (m.t + m.dur / 1000) - (k.t + k.dur / 1000)); for (const m of wet) commit(m); wet.length = 0; drawWet(performance.now()) }, labels: () => labels.length,
+    at: T => { while (queue.i < queue.length && queue[queue.i].t <= T) { const m = queue[queue.i++]; if (m.make) Object.assign(m, m.make()); m.sh = m.sh || shapeFor(m.len + m.wd * 0.4, m.wd * 1.15, m.k ?? 0, true); commit(m) } },
     stats: () => queue.stats }
 })()
 </script>
