@@ -1168,8 +1168,9 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
       // wet: the chosen word glints while there is a closer look to have
       const wet = !reduce && L.t === current && depth === 0 && L.t.more && L.burst === 0 && L.glintAt
       const order = labels.filter(l => l.t !== current).indexOf(L)
-      const gph = wet ? (now - L.glintAt) % 4200 : !reduce && order >= 0 && now > shimmer0 + order * 260 ? (now - shimmer0 - order * 260) % 5200 : 1e9
-      const g = gph < 1100 ? -0.25 + 1.5 * ease(gph / 1100) : null
+      // a slow band: 2.4s to cross a word; the open word glints every 8s, the others every 14s, 0.9s apart down the column
+      const gph = wet ? (now - L.glintAt) % 8000 : !reduce && order >= 0 && now > shimmer0 + order * 900 ? (now - shimmer0 - order * 900) % 14000 : 1e9
+      const g = gph < 2400 ? -0.25 + 1.5 * ease(gph / 2400) : null
       L.glintK = wet ? 0.62 : 0.5
       if (g !== L.glint) { if (g !== null || L.glint != null) L.dirty = true; L.glint = g }
       if (L.burst > 0) { tgt = 1; L.burst *= 0.985; if (L.burst < 0.3) L.burst = 0 }
