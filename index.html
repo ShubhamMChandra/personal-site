@@ -386,7 +386,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
       const t = clamp((L.p - s.lag * (1 - near)) / 0.6) * (0.15 + 0.85 * s.l)
       const to = s.l === 1 ? (s.ink || (s.ink = deepen(mix(s.rich, L.t.rich[0], 0.45), lum(s.grey) * 0.85))) : (s.halo || (s.halo = lift(s.rich, 0.22)))
       let col = t <= 0 ? s.grey : mix(s.grey, to, ease(t))
-      if (L.glint != null && s.l === 1) { const u = (s.x - (L.x - L.nx)) / L.w + 0.18 * (s.y / L.nh), k = Math.max(0, 1 - Math.abs(u - L.glint) / 0.13); if (k > 0) col = mix(col, [252, 246, 232], 0.62 * k * k) }
+      if (L.glint != null && s.l === 1) { const u = (s.x - (L.x - L.nx)) / L.w + 0.18 * (s.y / L.nh), k = Math.max(0, 1 - Math.abs(u - L.glint) / 0.13); if (k > 0) col = mix(col, [252, 246, 232], (L.glintK || 0.62) * k * k) }
       paint(c, s.x, s.y, s.a, s.sh, col, 0.93, s.wd)
     }
   }
@@ -1079,7 +1079,8 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     const floor = innerHeight < 720 ? 0.72 : 0.78
     while (panel.getBoundingClientRect().bottom > limit && k > floor) { k -= 0.03; panel.style.setProperty('--fit', k) }
   }
-  function choose (t) {
+  // arrive: the page opens its first word as if it had been touched, without swapping the text already showing
+  function choose (t, arrive = false) {
     const L = labels.find(l => l.t === t)
     labels.forEach(l => l.button.setAttribute('aria-pressed', l.t === t ? 'true' : 'false'))
     L.burst = 1
@@ -1091,7 +1092,7 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
     depth = again && t.more ? 1 - depth : 0
     L.glintAt = performance.now() + 2600
     measureText(t)
-    if (!again || t.more) {
+    if (!arrive && (!again || t.more)) {
       current = t
       try { history.replaceState(null, '', '#' + t.id) } catch (e) {}
       panel.classList.add('out')
@@ -1148,8 +1149,10 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
   let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 200) })
 
   await build()
-  // on arrival, the first word unfolds a small swirl by itself, to show what the words do
-  if (!STILL) setTimeout(() => { const L = labels.find(l => l.t === current); L.burst = 1; L.fxUsed = true; L.glintAt = performance.now() + 2600; swirl(L, 0.45) }, reduce ? 0 : 1300)
+  // on arrival, the open word unfolds by itself, just as a touch would, to show what the words do
+  if (!STILL) setTimeout(() => choose(current, true), reduce ? 0 : 500)
+  // the other words shimmer now and then, a light band crossing each in turn down the column, so you can tell they open
+  const shimmer0 = performance.now() + 1800
 
   let lastPulse = performance.now(), pulsing = null
   function frame (now) {
@@ -1164,7 +1167,10 @@ canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: n
       if (pulsing && pulsing.L === L && now < pulsing.until) tgt = Math.max(tgt, 0.38)
       // wet: the chosen word glints while there is a closer look to have
       const wet = !reduce && L.t === current && depth === 0 && L.t.more && L.burst === 0 && L.glintAt
-      const gph = wet ? (now - L.glintAt) % 4200 : 1e9, g = gph < 1100 ? -0.25 + 1.5 * ease(gph / 1100) : null
+      const order = labels.filter(l => l.t !== current).indexOf(L)
+      const gph = wet ? (now - L.glintAt) % 4200 : !reduce && order >= 0 && now > shimmer0 + order * 260 ? (now - shimmer0 - order * 260) % 5200 : 1e9
+      const g = gph < 1100 ? -0.25 + 1.5 * ease(gph / 1100) : null
+      L.glintK = wet ? 0.62 : 0.5
       if (g !== L.glint) { if (g !== null || L.glint != null) L.dirty = true; L.glint = g }
       if (L.burst > 0) { tgt = 1; L.burst *= 0.985; if (L.burst < 0.3) L.burst = 0 }
       const np = L.p + (tgt - L.p) * (reduce ? 1 : 0.07)
